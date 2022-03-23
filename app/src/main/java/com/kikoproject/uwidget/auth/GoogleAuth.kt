@@ -53,7 +53,7 @@ fun GoogleAuthScreen() {
                             color = textColor
                         )
                     ) {
-                        append("Добро пожаловать в U")
+                        append("Weclome to U")
                     }
                     withStyle(
                         style = SpanStyle(
@@ -69,7 +69,7 @@ fun GoogleAuthScreen() {
                     fontSize = 24.sp,
                     modifier = Modifier.padding(top = 20.dp, start = 30.dp),
                     fontWeight = FontWeight.Medium,
-                    textAlign = TextAlign.Start,
+                    textAlign = TextAlign.Center,
                     color = textColor
                 )
                 Text(
@@ -78,7 +78,7 @@ fun GoogleAuthScreen() {
                     modifier = Modifier.padding(top = 20.dp, start = 30.dp, end = 30.dp),
                     fontWeight = FontWeight.Normal,
                     textAlign = TextAlign.Start,
-                    color = textColor.copy(alpha = 0.8f)
+                    color = textColor
                 )
                 Divider(
                     color = textColor.copy(alpha = 0.2f),
