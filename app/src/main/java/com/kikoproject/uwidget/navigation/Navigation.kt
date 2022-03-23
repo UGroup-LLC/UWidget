@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.kikoproject.uwidget.auth.GoogleAuthScreen
+import com.kikoproject.uwidget.auth.RegisterScreen
 
 @Composable
 fun NavigationSetup(
@@ -18,6 +19,10 @@ fun NavigationSetup(
         composable(route = ScreenNav.GoogleAuthNav.route)
         {
             GoogleAuthScreen()
+        }
+        composable(route = ScreenNav.RegistrationNav.route)
+        {
+            RegisterScreen()
         }
     }
 }

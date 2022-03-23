@@ -23,7 +23,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -42,7 +44,10 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.kikoproject.uwidget.R
+import com.kikoproject.uwidget.main.navController
+import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.ui.theme.UWidgetTheme
+import com.kikoproject.uwidget.ui.theme.themeTextColor
 
 @Composable
 fun GoogleAuthScreen() {
@@ -53,6 +58,7 @@ fun GoogleAuthScreen() {
             try {
                 val account = task.getResult(ApiException::class.java)!!
                 val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
+                navController.navigate(ScreenNav.RegistrationNav.route)
             } catch (e: ApiException) {
                 Log.w("TAG", "Google sign in failed", e)
             }
@@ -69,11 +75,7 @@ fun GoogleAuthScreen() {
                 horizontalAlignment = Alignment.Start
             ) {
 
-                val textColor = if (isSystemInDarkTheme()) {
-                    Color(0xFFEDF2F8)
-                } else {
-                    Color(0xFF000000)
-                }
+                val textColor = themeTextColor()
 
                 val colorTextAnnotation = buildAnnotatedString {
                     withStyle(
@@ -85,7 +87,7 @@ fun GoogleAuthScreen() {
                     }
                     withStyle(
                         style = SpanStyle(
-                            color = Color(0xFF84B7F9)
+                            color = MaterialTheme.colors.primary
                         )
                     ) {
                         append("Widget")
@@ -107,7 +109,7 @@ fun GoogleAuthScreen() {
                     )
                     withStyle(
                         style = SpanStyle(
-                            color = Color(0xFF84B7F9),
+                            color = MaterialTheme.colors.primary,
                             textDecoration = TextDecoration.Underline
                         )
                     ) {
@@ -130,7 +132,7 @@ fun GoogleAuthScreen() {
 
                     withStyle(
                         style = SpanStyle(
-                            color = Color(0xFF84B7F9),
+                            color = MaterialTheme.colors.primary,
                             textDecoration = TextDecoration.Underline
                         )
                     ) {
@@ -202,15 +204,23 @@ fun GoogleAuthScreen() {
                     ) {
                         Button(
                             modifier = Modifier.padding(top = 30.dp),
-                            onClick = { GoogleSignIn(context, launchSign) },
+                            onClick = { googleSignIn(context, launchSign) },
                             border = BorderStroke(
                                 1.dp,
-                                color = Color(0xBE347CE9)
+                                color = MaterialTheme.colors.primaryVariant.copy(alpha = 0.6f)
                             ),
-                            colors = ButtonDefaults.buttonColors(Color(0x203F81E6))
+                            colors = ButtonDefaults.buttonColors(
+                                MaterialTheme.colors.primaryVariant.copy(
+                                    alpha = 0.1f
+                                )
+                            )
                         ) {
                             Box(contentAlignment = Alignment.CenterStart) {
                                 Image(
+                                    colorFilter = ColorFilter.tint(
+                                        color = MaterialTheme.colors.primaryVariant,
+                                        blendMode = BlendMode.SrcAtop
+                                    ),
                                     painter = painterResource(id = R.drawable.google),
                                     contentDescription = null,
                                     modifier = Modifier
@@ -220,7 +230,7 @@ fun GoogleAuthScreen() {
                             }
                             Text(
                                 text = "Войти с помощью Google",
-                                color = Color(0xFF347CE9)
+                                color = MaterialTheme.colors.primaryVariant
                             )
                         }
                         OutlinedButton(
@@ -243,7 +253,7 @@ fun GoogleAuthScreen() {
     }
 }
 
-fun GoogleSignIn(
+fun googleSignIn( // Вход в гугл аккаунт
     context: Context,
     launcher: ManagedActivityResultLauncher<Intent, ActivityResult>
 ) {
@@ -254,10 +264,10 @@ fun GoogleSignIn(
     val googleSignInClient =
         com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(context, gso)
     val mAuth = FirebaseAuth.getInstance()
-    SignInOpen(googleSignInClient, context, launcher)
+    signInOpen(googleSignInClient, context, launcher) // Запуск активити
 }
 
-fun SignInOpen(
+fun signInOpen(
     googleSignInClient: GoogleSignInClient,
     context: Context,
     launcher: ManagedActivityResultLauncher<Intent, ActivityResult>
