@@ -1,9 +1,9 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.compose.ui:ui-geometry:1.1.0-rc01@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/cf75806df42ad56c4fd0a7c14fa82721/transformed/ui-geometry-1.1.0-rc01/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/cf75806df42ad56c4fd0a7c14fa82721/transformed/ui-geometry-1.1.0-rc01/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/cf75806df42ad56c4fd0a7c14fa82721/transformed/ui-geometry-1.1.0-rc01/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/51911cd2a7027b6c9050987aaa0dfaf2/transformed/ui-geometry-1.1.0-rc01/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/51911cd2a7027b6c9050987aaa0dfaf2/transformed/ui-geometry-1.1.0-rc01/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/51911cd2a7027b6c9050987aaa0dfaf2/transformed/ui-geometry-1.1.0-rc01/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

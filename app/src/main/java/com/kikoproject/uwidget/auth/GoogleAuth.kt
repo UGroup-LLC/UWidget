@@ -1,12 +1,19 @@
 package com.kikoproject.uwidget.auth
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Divider
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material.MaterialTheme
@@ -17,19 +24,40 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
+import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.ui.theme.UWidgetTheme
 
 @Composable
 fun GoogleAuthScreen() {
+    val context = LocalContext.current
+    val launchSign =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+            try {
+                val account = task.getResult(ApiException::class.java)!!
+                val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
+            } catch (e: ApiException) {
+                Log.w("TAG", "Google sign in failed", e)
+            }
+        }
+
     UWidgetTheme() {
         Box(
             modifier = Modifier
@@ -64,6 +92,54 @@ fun GoogleAuthScreen() {
                     }
                 }
 
+                val linksTextAnnotation = buildAnnotatedString {
+                    withStyle(
+                        style = SpanStyle(
+                            color = textColor
+                        )
+                    ) {
+                        append("Продолжая, вы соглашаетесь с ")
+                    }
+
+                    pushStringAnnotation(
+                        tag = "terms",
+                        annotation = "http://kikoproject.atwebpages.com/terms_of_use.html"
+                    )
+                    withStyle(
+                        style = SpanStyle(
+                            color = Color(0xFF84B7F9),
+                            textDecoration = TextDecoration.Underline
+                        )
+                    ) {
+                        append("пользовательским соглашением ")
+                    }
+                    pop()
+
+                    withStyle(
+                        style = SpanStyle(
+                            color = textColor
+                        )
+                    ) {
+                        append("и с ")
+                    }
+
+                    pushStringAnnotation(
+                        tag = "privacy",
+                        annotation = "http://kikoproject.atwebpages.com/privacy_policy.html"
+                    )
+
+                    withStyle(
+                        style = SpanStyle(
+                            color = Color(0xFF84B7F9),
+                            textDecoration = TextDecoration.Underline
+                        )
+                    ) {
+                        append("политикой конфидициальности")
+                    }
+                    pop()
+                }
+
+
                 Text(
                     text = colorTextAnnotation,
                     fontSize = 24.sp,
@@ -72,13 +148,28 @@ fun GoogleAuthScreen() {
                     textAlign = TextAlign.Center,
                     color = textColor
                 )
-                Text(
-                    text = "Продолжая, вы соглашаетесь с пользовательским соглашением и с политикой конфидициальности",
-                    fontSize = 18.sp,
+                ClickableText(
+                    text = linksTextAnnotation,
+                    onClick = { offset ->
+                        linksTextAnnotation.getStringAnnotations(
+                            tag = "terms",
+                            start = offset,
+                            end = offset
+                        ).firstOrNull()?.let {
+                            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(it.item))
+                            context.startActivity(browserIntent)
+                        }
+
+                        linksTextAnnotation.getStringAnnotations(
+                            tag = "privacy",
+                            start = offset,
+                            end = offset
+                        ).firstOrNull()?.let {
+                            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(it.item))
+                            context.startActivity(browserIntent)
+                        }
+                    },
                     modifier = Modifier.padding(top = 20.dp, start = 30.dp, end = 30.dp),
-                    fontWeight = FontWeight.Normal,
-                    textAlign = TextAlign.Start,
-                    color = textColor
                 )
                 Divider(
                     color = textColor.copy(alpha = 0.2f),
@@ -111,13 +202,22 @@ fun GoogleAuthScreen() {
                     ) {
                         Button(
                             modifier = Modifier.padding(top = 30.dp),
-                            onClick = {},
+                            onClick = { GoogleSignIn(context, launchSign) },
                             border = BorderStroke(
                                 1.dp,
                                 color = Color(0xBE347CE9)
                             ),
-                            colors = ButtonDefaults.buttonColors(Color(0x3B3F81E6))
+                            colors = ButtonDefaults.buttonColors(Color(0x203F81E6))
                         ) {
+                            Box(contentAlignment = Alignment.CenterStart) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.google),
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .size(ButtonDefaults.IconSize + 18.dp)
+                                        .padding(end = 10.dp),
+                                )
+                            }
                             Text(
                                 text = "Войти с помощью Google",
                                 color = Color(0xFF347CE9)
@@ -141,6 +241,28 @@ fun GoogleAuthScreen() {
             }
         }
     }
+}
+
+fun GoogleSignIn(
+    context: Context,
+    launcher: ManagedActivityResultLauncher<Intent, ActivityResult>
+) {
+    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        .requestEmail()
+        .requestIdToken("768135781097-2r401ogli9pc1fmsg20hh0nfie5jp99m.apps.googleusercontent.com")
+        .build()
+    val googleSignInClient =
+        com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(context, gso)
+    val mAuth = FirebaseAuth.getInstance()
+    SignInOpen(googleSignInClient, context, launcher)
+}
+
+fun SignInOpen(
+    googleSignInClient: GoogleSignInClient,
+    context: Context,
+    launcher: ManagedActivityResultLauncher<Intent, ActivityResult>
+) {
+    launcher.launch(googleSignInClient.signInIntent)
 }
 
 @Preview(showBackground = true)
