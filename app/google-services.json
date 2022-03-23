@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "768135781097",
+    "project_id": "kitwidget",
+    "storage_bucket": "kitwidget.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:768135781097:android:0df6d1682c90685b9b6e78",
+        "android_client_info": {
+          "package_name": "com.kikoproject.uwidget"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "768135781097-2r401ogli9pc1fmsg20hh0nfie5jp99m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzPXrGfrGevRztiRKToYsQE5UnO2DVsys"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "768135781097-2r401ogli9pc1fmsg20hh0nfie5jp99m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
