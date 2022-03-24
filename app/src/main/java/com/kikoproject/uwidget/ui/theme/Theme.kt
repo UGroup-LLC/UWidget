@@ -44,7 +44,7 @@ fun UWidgetTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composabl
                 background = colorResource(android.R.color.system_neutral1_900),
                 primary = colorResource(android.R.color.system_accent1_400),
                 primaryVariant = colorResource(android.R.color.system_accent1_500),
-                secondary = colorResource(android.R.color.system_accent1_600)
+                secondary = colorResource(android.R.color.system_accent1_800)
             )
         } else {
             systemUiController.setStatusBarColor(color = colorResource(android.R.color.system_neutral1_50))
@@ -54,7 +54,7 @@ fun UWidgetTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composabl
                 background = colorResource(android.R.color.system_neutral1_50),
                 primary = colorResource(android.R.color.system_accent1_400),
                 primaryVariant = colorResource(android.R.color.system_accent1_500),
-                secondary = colorResource(android.R.color.system_accent1_600)
+                secondary = colorResource(android.R.color.system_accent1_800)
             )
         }
     } else {
