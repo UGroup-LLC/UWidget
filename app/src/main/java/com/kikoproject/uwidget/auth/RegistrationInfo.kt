@@ -23,6 +23,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,10 +62,40 @@ fun RegisterScreen() {
                     modifier = Modifier.fillMaxWidth(0.6f)
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
+
                 SubcomposeAsyncImage(
+                    alignment = Alignment.Center,
                     model = account?.photoUrl,
                     loading = {
-                        CircularProgressIndicator(strokeWidth = 2.dp)
+                        CircularProgressIndicator(
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colors.primary
+                        )
+                    },
+                    error = {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(color = MaterialTheme.colors.primary)// clip to the circle shape
+                        ) {
+                            if (account != null && account.givenName != null) {
+                                    Text(
+                                        textAlign = TextAlign.Center,
+                                        text = account.givenName!![0].toString(),
+                                        color = Color.White,
+                                        fontSize = 64.sp,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                            } else {
+                                Text(
+                                    textAlign = TextAlign.Center,
+                                    text = "L",
+                                    color = Color.White,
+                                    fontSize = 64.sp,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            }
+                        }
                     },
                     contentDescription = "avatar",
                     modifier = Modifier
@@ -85,11 +117,10 @@ fun RegisterScreen() {
                     if (account.givenName != null) {
                         nameState.value = TextFieldValue(text = account.givenName!!)
                     }
-                    if(account.familyName != null){
+                    if (account.familyName != null) {
                         surnameState.value = TextFieldValue(text = account.familyName!!)
                     }
                 }
-
                 OutlinedTextField(
                     value = nameState.value,
                     onValueChange = { nameState.value = it },

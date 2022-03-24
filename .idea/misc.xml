@@ -3,8 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Work/AStudio/UWidget/app/src/main/res/drawable/icon_background.xml" value="0.3005" />
-        <entry key="..\:/Work/AStudio/UWidget/app/src/main/res/drawable/uicon_background.xml" value="0.2095" />
+        <entry key="..\:/Work/AndroidStudio/UWidget/app/src/main/res/drawable/ic_uwidget.xml" value="0.2095" />
+        <entry key="..\:/Work/AndroidStudio/UWidget/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.12" />
+        <entry key="..\:/Work/AndroidStudio/UWidget/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.2095" />
+        <entry key="..\:/Work/AndroidStudio/UWidget/app/src/main/res/mipmap-anydpi-v26/icon.xml" value="0.2095" />
       </map>
     </option>
   </component>

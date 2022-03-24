@@ -52,6 +52,11 @@ import com.kikoproject.uwidget.ui.theme.themeTextColor
 @Composable
 fun GoogleAuthScreen() {
     val context = LocalContext.current
+    val account = GoogleSignIn.getLastSignedInAccount(context)
+    if(account != null){
+        signOut(context)
+    }
+
     val launchSign =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
@@ -265,6 +270,16 @@ fun googleSignIn( // Вход в гугл аккаунт
         com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(context, gso)
     val mAuth = FirebaseAuth.getInstance()
     signInOpen(googleSignInClient, context, launcher) // Запуск активити
+}
+
+fun signOut(context: Context){
+    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        .requestEmail()
+        .requestIdToken("768135781097-2r401ogli9pc1fmsg20hh0nfie5jp99m.apps.googleusercontent.com")
+        .build()
+    val googleSignInClient =
+        com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(context, gso)
+    googleSignInClient.signOut()
 }
 
 fun signInOpen(
