@@ -1,23 +1,25 @@
 package com.kikoproject.uwidget.auth
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -25,25 +27,57 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.ui.theme.UWidgetTheme
 import com.kikoproject.uwidget.ui.theme.themeTextColor
 
 @Composable
 fun RegisterScreen() {
-    UWidgetTheme() {
-        val imageAddIcon = painterResource(R.drawable.imageadd)
+    UWidgetTheme {
         val textColor = themeTextColor()
         val context = LocalContext.current
         val account = GoogleSignIn.getLastSignedInAccount(context)
+
+        var customImageUri by remember {
+            mutableStateOf<Uri?>(null)
+        }
+        val customBitmap = remember {
+            mutableStateOf<Bitmap?>(null)
+        }
+
+        val imagePickerLauncher = rememberLauncherForActivityResult(
+            contract =
+            ActivityResultContracts.GetContent()
+        ) { uri: Uri? ->
+            customImageUri = uri
+        }
+        customImageUri?.let {
+            if (Build.VERSION.SDK_INT < 28) {
+                customBitmap.value = MediaStore.Images
+                    .Media.getBitmap(context.contentResolver, it)
+
+            } else {
+                val source = ImageDecoder
+                    .createSource(context.contentResolver, it)
+                customBitmap.value = ImageDecoder.decodeBitmap(source)
+            }
+
+            customBitmap.value?.let { btm ->
+                Image(
+                    bitmap = btm.asImageBitmap(),
+                    contentDescription = null,
+                    modifier = Modifier.size(400.dp)
+                )
+            }
+        }
+
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -73,6 +107,20 @@ fun RegisterScreen() {
                             strokeWidth = 2.dp,
                             color = MaterialTheme.colors.primary
                         )
+                    },
+                    success = {
+                        if (customBitmap.value != null) {
+                            customBitmap.value?.let { btm ->
+                                val tmpBmp = bitmapCrop(btm)
+                                Image(
+                                    bitmap = tmpBmp.asImageBitmap(),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(150.dp)
+                                )
+                            }
+                        } else {
+                            SubcomposeAsyncImageContent()
+                        }
                     },
                     error = {
                         Box(
@@ -104,7 +152,9 @@ fun RegisterScreen() {
                         .size(150.dp)
                         .clip(CircleShape)                       // clip to the circle shape
                         .border(1.dp, Color.Gray, CircleShape)
+                        .clickable { imagePickerLauncher.launch("image/*") }
                 )
+
                 Spacer(modifier = Modifier.padding(5.dp))
                 Text(
                     text = "Отображаемый аватар",
@@ -112,15 +162,17 @@ fun RegisterScreen() {
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
 
-                val nameState = remember { mutableStateOf(TextFieldValue(text = "")) }
-                val surnameState = remember { mutableStateOf(TextFieldValue(text = "")) }
-
-                if (account != null) {
+                var nameState = remember { mutableStateOf(TextFieldValue(text = "")) }
+                var surnameState = remember { mutableStateOf(TextFieldValue(text = "")) }
+                val settedInput = false
+                if (account != null && !settedInput) { // Если аккаунт есть то записываем в поля имя и фамилию аккаунта
                     if (account.givenName != null) {
-                        nameState.value = TextFieldValue(text = account.givenName!!)
+                        nameState =
+                            remember { mutableStateOf(TextFieldValue(text = account.givenName!!)) }
                     }
                     if (account.familyName != null) {
-                        surnameState.value = TextFieldValue(text = account.familyName!!)
+                        surnameState =
+                            remember { mutableStateOf(TextFieldValue(text = account.familyName!!)) }
                     }
                 }
                 OutlinedTextField(
@@ -168,4 +220,29 @@ fun RegisterScreen() {
 @Composable
 fun RegisterPreview() {
     RegisterScreen()
+}
+
+fun bitmapCrop(srcBmp: Bitmap, widthCompress: Int = 1, heightCompress: Int = 1): Bitmap { // Обрезает картику до квадрата
+    val dstBmp: Bitmap
+    if (srcBmp.getWidth() >= srcBmp.getHeight()) {
+
+        dstBmp = Bitmap.createBitmap(
+            srcBmp,
+            srcBmp.getWidth() / 2 - srcBmp.getHeight() / 2,
+            0,
+            srcBmp.getHeight() / heightCompress,
+            srcBmp.getHeight() / heightCompress
+        );
+
+    } else {
+
+        dstBmp = Bitmap.createBitmap(
+            srcBmp,
+            0,
+            srcBmp.getHeight() / 2 - srcBmp.getWidth() / 2,
+            srcBmp.getWidth() / widthCompress,
+            srcBmp.getWidth() / widthCompress
+        );
+    }
+    return dstBmp
 }

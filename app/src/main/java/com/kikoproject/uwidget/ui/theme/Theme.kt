@@ -39,7 +39,6 @@ fun UWidgetTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composabl
         if (darkTheme) {
             systemUiController.setStatusBarColor(color = colorResource(android.R.color.system_neutral1_900))
             systemUiController.setNavigationBarColor(color = colorResource(android.R.color.system_neutral1_900))
-
             darkColors(
                 background = colorResource(android.R.color.system_neutral1_900),
                 primary = colorResource(android.R.color.system_accent1_400),
