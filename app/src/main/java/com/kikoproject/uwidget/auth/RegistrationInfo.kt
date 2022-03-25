@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -28,8 +29,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
+import coil.compose.SubcomposeAsyncImageContent
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.kikoproject.uwidget.R
@@ -39,6 +40,7 @@ import com.kikoproject.uwidget.ui.theme.themeTextColor
 @Composable
 fun RegisterScreen() {
     UWidgetTheme() {
+        val imageAddIcon = painterResource(R.drawable.imageadd)
         val textColor = themeTextColor()
         val context = LocalContext.current
         val account = GoogleSignIn.getLastSignedInAccount(context)
@@ -79,13 +81,13 @@ fun RegisterScreen() {
                                 .background(color = MaterialTheme.colors.primary)// clip to the circle shape
                         ) {
                             if (account != null && account.givenName != null) {
-                                    Text(
-                                        textAlign = TextAlign.Center,
-                                        text = account.givenName!![0].toString(),
-                                        color = Color.White,
-                                        fontSize = 64.sp,
-                                        modifier = Modifier.fillMaxSize()
-                                    )
+                                Text(
+                                    textAlign = TextAlign.Center,
+                                    text = account.givenName!![0].toString(),
+                                    color = Color.White,
+                                    fontSize = 64.sp,
+                                    modifier = Modifier.fillMaxSize()
+                                )
                             } else {
                                 Text(
                                     textAlign = TextAlign.Center,
