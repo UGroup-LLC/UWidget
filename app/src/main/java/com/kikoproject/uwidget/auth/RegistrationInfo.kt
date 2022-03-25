@@ -111,7 +111,8 @@ fun RegisterScreen() {
                     success = {
                         if (customBitmap.value != null) {
                             customBitmap.value?.let { btm ->
-                                val tmpBmp = bitmapCrop(btm)
+                                var tmpBmp = bitmapCrop(btm)
+                                tmpBmp = bitmapResize(tmpBmp)
                                 Image(
                                     bitmap = tmpBmp.asImageBitmap(),
                                     contentDescription = null,
@@ -157,7 +158,8 @@ fun RegisterScreen() {
 
                 Spacer(modifier = Modifier.padding(5.dp))
                 Text(
-                    text = "Отображаемый аватар",
+                    textAlign = TextAlign.Center,
+                    text = "Отображаемый аватар\n(Нажмите для изменения)",
                     color = textColor.copy(alpha = 0.4f)
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
@@ -245,4 +247,8 @@ fun bitmapCrop(srcBmp: Bitmap, widthCompress: Int = 1, heightCompress: Int = 1):
         );
     }
     return dstBmp
+}
+
+fun bitmapResize(dstBmp: Bitmap, height: Int = 200, width: Int = 200) : Bitmap{
+    return Bitmap.createScaledBitmap(dstBmp, width, height, false)
 }
