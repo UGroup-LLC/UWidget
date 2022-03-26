@@ -43,6 +43,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.navigation.ScreenNav
@@ -60,9 +62,13 @@ fun GoogleAuthScreen() {
     val launchSign =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+            val credential = GoogleAuthProvider.getCredential(account?.idToken!!, null)
+            val auth = Firebase.auth
+
+            auth.signInWithCredential(credential)
+
             try {
                 val account = task.getResult(ApiException::class.java)!!
-                val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
                 navController.navigate(ScreenNav.RegistrationNav.route)
             } catch (e: ApiException) {
                 Log.w("TAG", "Google sign in failed", e)
