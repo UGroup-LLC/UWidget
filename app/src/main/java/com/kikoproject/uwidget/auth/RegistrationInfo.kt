@@ -1,6 +1,7 @@
 package com.kikoproject.uwidget.auth
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -33,13 +34,19 @@ import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.ui.theme.UWidgetTheme
 import com.kikoproject.uwidget.ui.theme.themeTextColor
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 
 @Composable
 fun RegisterScreen() {
     UWidgetTheme {
+        analyticsEnable() // Включение аналитики
         val textColor = themeTextColor()
         val context = LocalContext.current
         val account = GoogleSignIn.getLastSignedInAccount(context)
@@ -112,11 +119,13 @@ fun RegisterScreen() {
                         if (customBitmap.value != null) {
                             customBitmap.value?.let { btm ->
                                 var tmpBmp = bitmapCrop(btm)
-                                tmpBmp = bitmapResize(tmpBmp)
+                                tmpBmp = bitmapResize(tmpBmp, 500,500)
+                                tmpBmp = bitmapCompress(tmpBmp,90)
+                                tmpBmp.width
                                 Image(
                                     bitmap = tmpBmp.asImageBitmap(),
                                     contentDescription = null,
-                                    modifier = Modifier.size(150.dp)
+                                    modifier = Modifier.fillMaxSize()
                                 )
                             }
                         } else {
@@ -224,6 +233,10 @@ fun RegisterPreview() {
     RegisterScreen()
 }
 
+fun analyticsEnable(){
+    val analytics = Firebase.analytics
+}
+
 fun bitmapCrop(srcBmp: Bitmap, widthCompress: Int = 1, heightCompress: Int = 1): Bitmap { // Обрезает картику до квадрата
     val dstBmp: Bitmap
     if (srcBmp.getWidth() >= srcBmp.getHeight()) {
@@ -251,4 +264,10 @@ fun bitmapCrop(srcBmp: Bitmap, widthCompress: Int = 1, heightCompress: Int = 1):
 
 fun bitmapResize(dstBmp: Bitmap, height: Int = 200, width: Int = 200) : Bitmap{
     return Bitmap.createScaledBitmap(dstBmp, width, height, false)
+}
+
+fun bitmapCompress(dstBmp: Bitmap, quality: Int = 30) : Bitmap{
+    val out = ByteArrayOutputStream()
+    dstBmp.compress(Bitmap.CompressFormat.JPEG, quality, out)
+    return BitmapFactory.decodeStream(ByteArrayInputStream(out.toByteArray()));
 }
