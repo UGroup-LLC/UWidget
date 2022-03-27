@@ -50,6 +50,8 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.kikoproject.uwidget.R
+import com.kikoproject.uwidget.main.navController
+import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.CheckUserInDB
 import com.kikoproject.uwidget.ui.theme.UWidgetTheme
 import com.kikoproject.uwidget.ui.theme.themeTextColor
@@ -57,27 +59,27 @@ import com.kikoproject.uwidget.ui.theme.themeTextColor
 @Composable
 fun GoogleAuthScreen() {
     val context = LocalContext.current
-    var account = GoogleSignIn.getLastSignedInAccount(context)
-    if (account != null) {
-        signOut(context)
-    }
+
+    val account = remember { mutableStateOf(GoogleSignIn.getLastSignedInAccount(context)) }
+
     val stateLoading = remember { mutableStateOf(false) }
 
     if (stateLoading.value) { // Если нужен переход то вызываем Loading
-        if (account != null) {
-            LoadNextNav(context = context, state = stateLoading, account)
+        if (account.value != null) {
+            LoadNextNav(context = context, state = stateLoading, account.value!!)
         }
     }
 
     val launchSign =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
-            val auth = Firebase.auth
+            account.value = task.getResult(ApiException::class.java)!!
+            val credential = GoogleAuthProvider.getCredential(account.value!!.idToken!!, null)
+
             try {
-                account = task.result
-                val credential: AuthCredential =
-                    GoogleAuthProvider.getCredential(account?.idToken!!, null)
+                val auth = Firebase.auth
                 auth.signInWithCredential(credential)
+
                 stateLoading.value = true // Перезод в Navigation
             } catch (e: ApiException) {
                 Log.w("TAG", "Google sign in failed", e)
@@ -253,6 +255,9 @@ fun GoogleAuthScreen() {
                                 color = MaterialTheme.colors.primaryVariant
                             )
                         }
+
+                        SignOutCheck(account, context)
+
                         OutlinedButton(
                             modifier = Modifier.padding(top = 10.dp),
                             onClick = {},
@@ -321,4 +326,27 @@ fun LoadNextNav(context: Context, state: MutableState<Boolean>, account: GoogleS
         account = account,
         "Отмена"
     ) // Перед тем как вводить в регистрацию смотрим есть ли юзер в бд уже
+}
+
+@Composable
+fun SignOutCheck(account: MutableState<GoogleSignInAccount?>, context: Context) { // Показывает кнопку выхода из аккаунта если юзер уже залогинен и находится в этом окне
+    val textColor = themeTextColor()
+    if (account.value != null) {
+        OutlinedButton(
+            modifier = Modifier.padding(top = 10.dp),
+            onClick = {
+                signOut(context = context) // Выходим из аккаунта
+                account.value = null // Чтобы скрыть кнопку
+            },
+            border = BorderStroke(
+                1.dp,
+                color = Color(0xFF4D4D4D)
+            ),
+        ) {
+            Text(
+                text = "Выйти из текущего аккаунта",
+                color = textColor
+            )
+        }
+    }
 }
