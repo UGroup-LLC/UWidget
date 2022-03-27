@@ -11,7 +11,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Divider
@@ -21,6 +20,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.BlendMode
@@ -38,38 +40,45 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.kikoproject.uwidget.R
-import com.kikoproject.uwidget.main.navController
-import com.kikoproject.uwidget.navigation.ScreenNav
+import com.kikoproject.uwidget.networking.CheckUserInDB
 import com.kikoproject.uwidget.ui.theme.UWidgetTheme
 import com.kikoproject.uwidget.ui.theme.themeTextColor
 
 @Composable
 fun GoogleAuthScreen() {
     val context = LocalContext.current
-    val account = GoogleSignIn.getLastSignedInAccount(context)
-    if(account != null){
+    var account = GoogleSignIn.getLastSignedInAccount(context)
+    if (account != null) {
         signOut(context)
+    }
+    val stateLoading = remember { mutableStateOf(false) }
+
+    if (stateLoading.value) { // Если нужен переход то вызываем Loading
+        if (account != null) {
+            LoadNextNav(context = context, state = stateLoading, account)
+        }
     }
 
     val launchSign =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
-            val credential = GoogleAuthProvider.getCredential(account?.idToken!!, null)
             val auth = Firebase.auth
-
-            auth.signInWithCredential(credential)
-
             try {
-                val account = task.getResult(ApiException::class.java)!!
-                navController.navigate(ScreenNav.RegistrationNav.route)
+                account = task.result
+                val credential: AuthCredential =
+                    GoogleAuthProvider.getCredential(account?.idToken!!, null)
+                auth.signInWithCredential(credential)
+                stateLoading.value = true // Перезод в Navigation
             } catch (e: ApiException) {
                 Log.w("TAG", "Google sign in failed", e)
             }
@@ -215,7 +224,7 @@ fun GoogleAuthScreen() {
                     ) {
                         Button(
                             modifier = Modifier.padding(top = 30.dp),
-                            onClick = { googleSignIn(context, launchSign) },
+                            onClick = { googleSignIn(context, launchSign, state = stateLoading) },
                             border = BorderStroke(
                                 1.dp,
                                 color = MaterialTheme.colors.primaryVariant.copy(alpha = 0.6f)
@@ -266,7 +275,8 @@ fun GoogleAuthScreen() {
 
 fun googleSignIn( // Вход в гугл аккаунт
     context: Context,
-    launcher: ManagedActivityResultLauncher<Intent, ActivityResult>
+    launcher: ManagedActivityResultLauncher<Intent, ActivityResult>,
+    state: MutableState<Boolean>
 ) {
     val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
         .requestEmail()
@@ -275,10 +285,10 @@ fun googleSignIn( // Вход в гугл аккаунт
     val googleSignInClient =
         com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(context, gso)
     val mAuth = FirebaseAuth.getInstance()
-    signInOpen(googleSignInClient, context, launcher) // Запуск активити
+    signInOpen(googleSignInClient, context, launcher, state) // Запуск активити
 }
 
-fun signOut(context: Context){
+fun signOut(context: Context) {
     val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
         .requestEmail()
         .requestIdToken("768135781097-2r401ogli9pc1fmsg20hh0nfie5jp99m.apps.googleusercontent.com")
@@ -291,7 +301,8 @@ fun signOut(context: Context){
 fun signInOpen(
     googleSignInClient: GoogleSignInClient,
     context: Context,
-    launcher: ManagedActivityResultLauncher<Intent, ActivityResult>
+    launcher: ManagedActivityResultLauncher<Intent, ActivityResult>,
+    state: MutableState<Boolean>
 ) {
     launcher.launch(googleSignInClient.signInIntent)
 }
@@ -300,4 +311,14 @@ fun signInOpen(
 @Composable
 fun AuthPreview() {
     GoogleAuthScreen()
+}
+
+@Composable
+fun LoadNextNav(context: Context, state: MutableState<Boolean>, account: GoogleSignInAccount) {
+    CheckUserInDB(
+        context = context,
+        state,
+        account = account,
+        "Отмена"
+    ) // Перед тем как вводить в регистрацию смотрим есть ли юзер в бд уже
 }

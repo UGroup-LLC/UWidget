@@ -6,6 +6,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.kikoproject.uwidget.auth.GoogleAuthScreen
 import com.kikoproject.uwidget.auth.RegisterScreen
+import com.kikoproject.uwidget.main.MainActivity
+import com.kikoproject.uwidget.schedules.ChooseSchedule
+import com.kikoproject.uwidget.ui.theme.Main
 
 @Composable
 fun NavigationSetup(
@@ -14,7 +17,7 @@ fun NavigationSetup(
 
     NavHost(
         navController = navController,
-        startDestination = ScreenNav.GoogleAuthNav.route
+        startDestination = ScreenNav.MainNav.route
     ) {
         composable(route = ScreenNav.GoogleAuthNav.route)
         {
@@ -23,6 +26,13 @@ fun NavigationSetup(
         composable(route = ScreenNav.RegistrationNav.route)
         {
             RegisterScreen()
+        }
+        composable(route = ScreenNav.ScheduleChooseNav.route)
+        {
+            ChooseSchedule()
+        }
+        composable(route = ScreenNav.MainNav.route){
+            MainActivity()
         }
     }
 }
