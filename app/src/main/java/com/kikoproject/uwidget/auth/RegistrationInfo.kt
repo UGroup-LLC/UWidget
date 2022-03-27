@@ -203,31 +203,8 @@ fun RegisterScreen() {
                             remember { mutableStateOf(TextFieldValue(text = account.familyName!!)) }
                     }
                 }
-                OutlinedTextField(
-                    value = nameState.value,
-                    onValueChange = { nameState.value = it },
-                    label = {
-                        Text(
-                            text = "Введите отображаемое имя",
-                            color = textColor.copy(alpha = 0.4f)
-                        )
-                    },
-                    shape = RoundedCornerShape(16.dp),
-                    textStyle = TextStyle(color = textColor)
-                )
-                Spacer(modifier = Modifier.padding(4.dp))
-                OutlinedTextField(
-                    value = surnameState.value,
-                    onValueChange = { surnameState.value = it },
-                    label = {
-                        Text(
-                            text = "Введите отображаемую фамилию",
-                            color = textColor.copy(alpha = 0.4f)
-                        )
-                    },
-                    shape = RoundedCornerShape(16.dp),
-                    textStyle = TextStyle(color = textColor)
-                )
+
+                TextsInput(nameState, textColor, surnameState)
 
                 Spacer(modifier = Modifier.padding(4.dp))
 
@@ -253,6 +230,39 @@ fun RegisterScreen() {
             }
         }
     }
+}
+
+@Composable
+private fun TextsInput(
+    nameState: MutableState<TextFieldValue>,
+    textColor: Color,
+    surnameState: MutableState<TextFieldValue>
+) {
+    OutlinedTextField(
+        value = nameState.value,
+        onValueChange = { nameState.value = it },
+        label = {
+            Text(
+                text = "Введите отображаемое имя",
+                color = textColor.copy(alpha = 0.4f)
+            )
+        },
+        shape = RoundedCornerShape(16.dp),
+        textStyle = TextStyle(color = textColor)
+    )
+    Spacer(modifier = Modifier.padding(4.dp))
+    OutlinedTextField(
+        value = surnameState.value,
+        onValueChange = { surnameState.value = it },
+        label = {
+            Text(
+                text = "Введите отображаемую фамилию",
+                color = textColor.copy(alpha = 0.4f)
+            )
+        },
+        shape = RoundedCornerShape(16.dp),
+        textStyle = TextStyle(color = textColor)
+    )
 }
 
 @Preview(showBackground = true)

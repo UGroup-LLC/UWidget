@@ -99,183 +99,209 @@ fun GoogleAuthScreen() {
 
                 val textColor = themeTextColor()
 
-                val colorTextAnnotation = buildAnnotatedString {
-                    withStyle(
-                        style = SpanStyle(
-                            color = textColor
-                        )
-                    ) {
-                        append("Weclome to U")
-                    }
-                    withStyle(
-                        style = SpanStyle(
-                            color = MaterialTheme.colors.primary
-                        )
-                    ) {
-                        append("Widget")
-                    }
-                }
+                LinkTermsText(textColor, context)
 
-                val linksTextAnnotation = buildAnnotatedString {
-                    withStyle(
-                        style = SpanStyle(
-                            color = textColor
-                        )
-                    ) {
-                        append("Продолжая, вы соглашаетесь с ")
-                    }
+                MainText(textColor)
 
-                    pushStringAnnotation(
-                        tag = "terms",
-                        annotation = "http://kikoproject.atwebpages.com/terms_of_use.html"
-                    )
-                    withStyle(
-                        style = SpanStyle(
-                            color = MaterialTheme.colors.primary,
-                            textDecoration = TextDecoration.Underline
-                        )
-                    ) {
-                        append("пользовательским соглашением ")
-                    }
-                    pop()
-
-                    withStyle(
-                        style = SpanStyle(
-                            color = textColor
-                        )
-                    ) {
-                        append("и с ")
-                    }
-
-                    pushStringAnnotation(
-                        tag = "privacy",
-                        annotation = "http://kikoproject.atwebpages.com/privacy_policy.html"
-                    )
-
-                    withStyle(
-                        style = SpanStyle(
-                            color = MaterialTheme.colors.primary,
-                            textDecoration = TextDecoration.Underline
-                        )
-                    ) {
-                        append("политикой конфидициальности")
-                    }
-                    pop()
-                }
-
-
-                Text(
-                    text = colorTextAnnotation,
-                    fontSize = 24.sp,
-                    modifier = Modifier.padding(top = 20.dp, start = 30.dp),
-                    fontWeight = FontWeight.Medium,
-                    textAlign = TextAlign.Center,
-                    color = textColor
-                )
-                ClickableText(
-                    text = linksTextAnnotation,
-                    onClick = { offset ->
-                        linksTextAnnotation.getStringAnnotations(
-                            tag = "terms",
-                            start = offset,
-                            end = offset
-                        ).firstOrNull()?.let {
-                            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(it.item))
-                            context.startActivity(browserIntent)
-                        }
-
-                        linksTextAnnotation.getStringAnnotations(
-                            tag = "privacy",
-                            start = offset,
-                            end = offset
-                        ).firstOrNull()?.let {
-                            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(it.item))
-                            context.startActivity(browserIntent)
-                        }
-                    },
-                    modifier = Modifier.padding(top = 20.dp, start = 30.dp, end = 30.dp),
-                )
-                Divider(
-                    color = textColor.copy(alpha = 0.2f),
-                    modifier = Modifier.padding(top = 20.dp, start = 30.dp, end = 30.dp)
-                )
-                Text(
-                    text = "Войдите в ваш Google аккаунт для продолжения",
-                    fontSize = 24.sp,
-                    modifier = Modifier.padding(top = 20.dp, start = 50.dp, end = 50.dp),
-                    fontWeight = FontWeight.Medium,
-                    textAlign = TextAlign.Center,
-                    color = textColor
-                )
-                Text(
-                    text = "Вход в аккаунт Google будет использован UWidget для:\n• Индексации другими пользователями вашего аккаунта\n• Индексации вашего аккаунта системой\n• Создания публичных расписаний",
-                    fontSize = 18.sp,
-                    lineHeight = 24.sp,
-                    modifier = Modifier.padding(top = 20.dp, start = 30.dp, end = 30.dp),
-                    fontWeight = FontWeight.Normal,
-                    textAlign = TextAlign.Start,
-                    color = textColor.copy(alpha = 0.8f)
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.TopCenter
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Button(
-                            modifier = Modifier.padding(top = 30.dp),
-                            onClick = { googleSignIn(context, launchSign, state = stateLoading) },
-                            border = BorderStroke(
-                                1.dp,
-                                color = MaterialTheme.colors.primaryVariant.copy(alpha = 0.6f)
-                            ),
-                            colors = ButtonDefaults.buttonColors(
-                                MaterialTheme.colors.primaryVariant.copy(
-                                    alpha = 0.1f
-                                )
-                            )
-                        ) {
-                            Box(contentAlignment = Alignment.CenterStart) {
-                                Image(
-                                    colorFilter = ColorFilter.tint(
-                                        color = MaterialTheme.colors.primaryVariant,
-                                        blendMode = BlendMode.SrcAtop
-                                    ),
-                                    painter = painterResource(id = R.drawable.google),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(ButtonDefaults.IconSize + 18.dp)
-                                        .padding(end = 10.dp),
-                                )
-                            }
-                            Text(
-                                text = "Войти с помощью Google",
-                                color = MaterialTheme.colors.primaryVariant
-                            )
-                        }
-
-                        SignOutCheck(account, context)
-
-                        OutlinedButton(
-                            modifier = Modifier.padding(top = 10.dp),
-                            onClick = {},
-                            border = BorderStroke(
-                                1.dp,
-                                color = Color(0xFF4D4D4D)
-                            ),
-                        ) {
-                            Text(
-                                text = "Продолжить без аккаунта",
-                                color = textColor
-                            )
-                        }
-                    }
-                }
+                AllButtons(context, launchSign, stateLoading, account, textColor)
             }
         }
     }
+}
+
+@Composable
+private fun AllButtons(
+    context: Context,
+    launchSign: ManagedActivityResultLauncher<Intent, ActivityResult>,
+    stateLoading: MutableState<Boolean>,
+    account: MutableState<GoogleSignInAccount?>,
+    textColor: Color
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Button(
+                modifier = Modifier.padding(top = 30.dp),
+                onClick = { googleSignIn(context, launchSign, state = stateLoading) },
+                border = BorderStroke(
+                    1.dp,
+                    color = MaterialTheme.colors.primaryVariant.copy(alpha = 0.6f)
+                ),
+                colors = ButtonDefaults.buttonColors(
+                    MaterialTheme.colors.primaryVariant.copy(
+                        alpha = 0.1f
+                    )
+                )
+            ) {
+                Box(contentAlignment = Alignment.CenterStart) {
+                    Image(
+                        colorFilter = ColorFilter.tint(
+                            color = MaterialTheme.colors.primaryVariant,
+                            blendMode = BlendMode.SrcAtop
+                        ),
+                        painter = painterResource(id = R.drawable.google),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(ButtonDefaults.IconSize + 18.dp)
+                            .padding(end = 10.dp),
+                    )
+                }
+                Text(
+                    text = "Войти с помощью Google",
+                    color = MaterialTheme.colors.primaryVariant
+                )
+            }
+
+            SignOutCheck(account, context)
+
+            OutlinedButton(
+                modifier = Modifier.padding(top = 10.dp),
+                onClick = {},
+                border = BorderStroke(
+                    1.dp,
+                    color = Color(0xFF4D4D4D)
+                ),
+            ) {
+                Text(
+                    text = "Продолжить без аккаунта",
+                    color = textColor
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun MainText(textColor: Color) {
+    Divider(
+        color = textColor.copy(alpha = 0.2f),
+        modifier = Modifier.padding(top = 20.dp, start = 30.dp, end = 30.dp)
+    )
+    Text(
+        text = "Войдите в ваш Google аккаунт для продолжения",
+        fontSize = 24.sp,
+        modifier = Modifier.padding(top = 20.dp, start = 50.dp, end = 50.dp),
+        fontWeight = FontWeight.Medium,
+        textAlign = TextAlign.Center,
+        color = textColor
+    )
+    Text(
+        text = "Вход в аккаунт Google будет использован UWidget для:\n• Индексации другими пользователями вашего аккаунта\n• Индексации вашего аккаунта системой\n• Создания публичных расписаний",
+        fontSize = 18.sp,
+        lineHeight = 24.sp,
+        modifier = Modifier.padding(top = 20.dp, start = 30.dp, end = 30.dp),
+        fontWeight = FontWeight.Normal,
+        textAlign = TextAlign.Start,
+        color = textColor.copy(alpha = 0.8f)
+    )
+}
+
+@Composable
+private fun LinkTermsText(
+    textColor: Color,
+    context: Context
+) {
+    val colorTextAnnotation = buildAnnotatedString {
+        withStyle(
+            style = SpanStyle(
+                color = textColor
+            )
+        ) {
+            append("Weclome to U")
+        }
+        withStyle(
+            style = SpanStyle(
+                color = MaterialTheme.colors.primary
+            )
+        ) {
+            append("Widget")
+        }
+    }
+
+    val linksTextAnnotation = buildAnnotatedString {
+        withStyle(
+            style = SpanStyle(
+                color = textColor
+            )
+        ) {
+            append("Продолжая, вы соглашаетесь с ")
+        }
+
+        pushStringAnnotation(
+            tag = "terms",
+            annotation = "http://kikoproject.atwebpages.com/terms_of_use.html"
+        )
+        withStyle(
+            style = SpanStyle(
+                color = MaterialTheme.colors.primary,
+                textDecoration = TextDecoration.Underline
+            )
+        ) {
+            append("пользовательским соглашением ")
+        }
+        pop()
+
+        withStyle(
+            style = SpanStyle(
+                color = textColor
+            )
+        ) {
+            append("и с ")
+        }
+
+        pushStringAnnotation(
+            tag = "privacy",
+            annotation = "http://kikoproject.atwebpages.com/privacy_policy.html"
+        )
+
+        withStyle(
+            style = SpanStyle(
+                color = MaterialTheme.colors.primary,
+                textDecoration = TextDecoration.Underline
+            )
+        ) {
+            append("политикой конфидициальности")
+        }
+        pop()
+    }
+
+
+    Text(
+        text = colorTextAnnotation,
+        fontSize = 24.sp,
+        modifier = Modifier.padding(top = 20.dp, start = 30.dp),
+        fontWeight = FontWeight.Medium,
+        textAlign = TextAlign.Center,
+        color = textColor
+    )
+    ClickableText(
+        text = linksTextAnnotation,
+        onClick = { offset ->
+            linksTextAnnotation.getStringAnnotations(
+                tag = "terms",
+                start = offset,
+                end = offset
+            ).firstOrNull()?.let {
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(it.item))
+                context.startActivity(browserIntent)
+            }
+
+            linksTextAnnotation.getStringAnnotations(
+                tag = "privacy",
+                start = offset,
+                end = offset
+            ).firstOrNull()?.let {
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(it.item))
+                context.startActivity(browserIntent)
+            }
+        },
+        modifier = Modifier.padding(top = 20.dp, start = 30.dp, end = 30.dp),
+    )
 }
 
 fun googleSignIn( // Вход в гугл аккаунт
