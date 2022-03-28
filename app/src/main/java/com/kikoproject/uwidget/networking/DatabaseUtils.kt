@@ -61,7 +61,8 @@ fun getAllSchedules(scheduleResult: ScheduleResult) {
                     doc.get("name").toString(),
                     doc.get("admin").toString(),
                     doc.get("users_ids") as List<String>,
-                    doc.get("days") as List<Map<String, String>>
+                    doc.get("days") as List<Map<String, String>>,
+                    doc.get("category").toString()
                 )
             )
         }
