@@ -41,9 +41,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.dialogs.ShowLoadingDialog
+import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.models.SchedulesModel
+import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.ScheduleResult
 import com.kikoproject.uwidget.networking.getAllSchedules
+import com.kikoproject.uwidget.objects.ExpandableScheduleCategory
 import com.kikoproject.uwidget.ui.theme.Shapes
 import com.kikoproject.uwidget.ui.theme.themeTextColor
 import kotlin.math.exp
@@ -59,6 +62,7 @@ fun ChooseSchedule() {
     val textColor = themeTextColor()
     val context = LocalContext.current
 
+    val categoryNames = remember { mutableListOf<String>() }
     val notCategorySchedulesModel = remember { mutableListOf<SchedulesModel>() }
     val withCategorySchedulesModel = remember { mutableListOf<SchedulesModel>() }
 
@@ -68,12 +72,16 @@ fun ChooseSchedule() {
 
             notCategorySchedulesModel.clear()
             withCategorySchedulesModel.clear()
+            categoryNames.clear()
 
             loadingState.value = false
             schedules.forEach { schedule ->
                 if (schedule.Category == "") {
                     notCategorySchedulesModel.add(schedule)
                 } else {
+                    if(!categoryNames.contains(schedule.Category)) { // Если этой категории еще нет
+                        categoryNames.add(schedule.Category)
+                    }
                     withCategorySchedulesModel.add(schedule)
                 }
             }
@@ -98,7 +106,7 @@ fun ChooseSchedule() {
                 modifier = Modifier
                     .padding(top = 10.dp)
                     .fillMaxWidth(0.9f),
-                onClick = { /*TODO*/ },
+                onClick = { navController.navigate(ScreenNav.AddScheduleNav.route) },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colors.primary.copy(
                         alpha = 0.2f
@@ -141,9 +149,9 @@ fun ChooseSchedule() {
 
             if (withCategorySchedulesModel.size != 0) {
                 LazyColumn() {
-                    items(withCategorySchedulesModel) { schedule ->
+                    items(categoryNames) { name ->
                         ExpandableScheduleCategory(
-                            title = schedule.Category,
+                            title = name,
                             schedulesModel = withCategorySchedulesModel,
                             textColor = textColor
                         )
@@ -194,78 +202,13 @@ private fun FlexibleSchedulesButtons(
 @Composable
 fun PreviewChooseSchedule() {
     ChooseSchedule()
-    //ExpandableScheduleCategory("Title")
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ExpandableScheduleCategory(
-    title: String,
-    schedulesModel: MutableList<SchedulesModel>,
-    textColor: Color
-) {
-    val expandedState = remember { mutableStateOf(false) }
-    val rotateState by animateFloatAsState(targetValue = if (expandedState.value) 180f else 0f)
-
-    Card(
-        modifier = Modifier
-            .padding(bottom = 10.dp, start = 20.dp, end = 20.dp)
-            .fillMaxWidth()
-            .animateContentSize(animationSpec = tween(durationMillis = 30, easing = LinearEasing)),
-        border = BorderStroke(
-            1.dp,
-            color = MaterialTheme.colors.primary
-        ),
-        shape = RoundedCornerShape(20.dp),
-        onClick = { expandedState.value = !expandedState.value },
-        containerColor = MaterialTheme.colors.primary.copy(alpha = 0.3f),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = title,
-                    modifier = Modifier
-                        .weight(6f)
-                        .padding(5.dp),
-                    color = textColor,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Medium,
-                    textAlign = TextAlign.Center
-                )
-                IconButton(
-                    onClick = { expandedState.value = !expandedState.value },
-                    modifier = Modifier
-                        .weight(1f)
-                        .rotate(rotateState)
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.ArrowDropDown,
-                        contentDescription = "Arrow dropdown",
-                        tint = textColor,
-                        modifier = Modifier.weight(2f)
-                    )
-                }
-            }
-            if (expandedState.value) {
-                DrawAllSchedulesInCategory(schedulesModel, textColor)
-            }
-        }
-    }
-
 }
 
 @Composable
-private fun DrawAllSchedulesInCategory(
+fun DrawAllSchedulesInCategory(
     schedulesModel: MutableList<SchedulesModel>,
-    textColor: Color
+    textColor: Color,
+    categoryName: String
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -277,29 +220,30 @@ private fun DrawAllSchedulesInCategory(
                 .padding(10.dp), color = textColor.copy(alpha = 0.4f)
         )
         schedulesModel.forEach { schedule ->
-            OutlinedButton(
-                modifier = Modifier
-                    .padding(top = 10.dp, bottom = 10.dp)
-                    .fillMaxWidth(0.9f),
-                onClick = { /*TODO*/ },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colors.primary.copy(
-                        alpha = 0.2f
+            if(schedule.Category == categoryName) {
+                OutlinedButton(
+                    modifier = Modifier
+                        .padding(top = 10.dp, bottom = 10.dp)
+                        .fillMaxWidth(0.9f),
+                    onClick = { /*TODO*/ },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colors.primary.copy(
+                            alpha = 0.2f
+                        )
+                    ),
+                    border = BorderStroke(
+                        1.dp,
+                        color = MaterialTheme.colors.primary
+                    ),
+                ) {
+                    Text(
+                        schedule.Name,
+                        color = textColor,
+                        fontSize = 18.sp,
+                        textAlign = TextAlign.Center
                     )
-                ),
-                border = BorderStroke(
-                    1.dp,
-                    color = MaterialTheme.colors.primary
-                ),
-            ) {
-                Text(
-                    schedule.Name,
-                    color = textColor,
-                    fontSize = 18.sp,
-                    textAlign = TextAlign.Center
-                )
+                }
             }
-
         }
     }
 }

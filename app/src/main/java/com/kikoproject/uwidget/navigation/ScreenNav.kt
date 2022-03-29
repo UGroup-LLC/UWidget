@@ -6,4 +6,5 @@ sealed class ScreenNav(val route: String)
     object GoogleAuthNav : ScreenNav("google_auth_nav")
     object RegistrationNav : ScreenNav("reg_nav")
     object ScheduleChooseNav : ScreenNav("schedule_nav")
+    object AddScheduleNav : ScreenNav("add_schedule_nav")
 }
