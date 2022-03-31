@@ -37,7 +37,7 @@ fun ExpandableTextHelper(
     titleSize: TextUnit = 18.sp,
     titleColor: Color = themeTextColor(),
     text: String,
-    textAlign: TextAlign = TextAlign.Justify,
+    textAlign: TextAlign = TextAlign.Center,
     textWidthFraction: Float = 0.9f,
     textPadding: Dp = 10.dp,
     fontSize: TextUnit = 12.sp,
