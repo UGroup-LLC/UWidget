@@ -1,32 +1,23 @@
 package com.kikoproject.uwidget.schedules
 
 import android.annotation.SuppressLint
-import android.view.ViewGroup
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowDropDown
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -36,13 +27,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
+import com.kikoproject.uwidget.*
 import com.kikoproject.uwidget.R
-import com.kikoproject.uwidget.ScheduleGetter
-import com.kikoproject.uwidget.getSchedule
-import com.kikoproject.uwidget.getSelectorDivider
-import com.kikoproject.uwidget.models.SchedulesModel
-import com.kikoproject.uwidget.networking.ScheduleResult
+import com.kikoproject.uwidget.dialogs.ScheduleDialogSelector
+import com.kikoproject.uwidget.dialogs.ShowSearchSelector
+import com.kikoproject.uwidget.dialogs.WebPageScreen
 import com.kikoproject.uwidget.objects.ExpandableTextHelper
 import com.kikoproject.uwidget.objects.IncreaseButtons
 import com.kikoproject.uwidget.objects.ScheduleCardCreator
@@ -72,19 +61,7 @@ fun AddSchedule() {
                     fontSize = 24.sp
                 )
 
-                //AndroidView(factory = {
-                  //  WebView(it).apply {
-                      //  layoutParams = ViewGroup.LayoutParams(
-                    //        ViewGroup.LayoutParams.MATCH_PARENT,
-                        //    ViewGroup.LayoutParams.MATCH_PARENT
-                        //)
-                        //webViewClient = WebViewClient()
-                        //settings.javaScriptEnabled = true
-                        //loadUrl("http://www.spbkit.edu.ru/index.php?option=com_timetable&Itemid=82")
-                    //}
-                //}, update = {
-                  //  it.loadUrl("http://www.spbkit.edu.ru/index.php?option=com_timetable&Itemid=82")
-                //})
+
 
                 Divider(
                     modifier = Modifier
@@ -146,6 +123,7 @@ fun AddSchedule() {
 
                 val scheduleAccessMode = IncreaseButtons(
                     texts = listOf("Локальное", "По ссылке", "Публичное"),
+                    roundStrength = 30f,
                     inactiveColor = textColor.copy(0.1f),
                     activeColor = primaryColor.copy(0.5f),
                     fontSize = 12.sp
@@ -162,6 +140,7 @@ fun AddSchedule() {
                 val scheduleGetMode = IncreaseButtons(
                     texts = listOf("Ручное заполнение", "Получение с сайта"),
                     inactiveColor = textColor.copy(0.1f),
+                    roundStrength = 30f,
                     activeColor = primaryColor.copy(0.5f),
                     fontSize = 11.5.sp
                 )
@@ -258,16 +237,37 @@ fun AddSchedule() {
                                     remember { mutableStateOf(TextFieldValue("")) }
                                 val sruState =
                                     remember { mutableStateOf(TextFieldValue("")) }
-
                                 FastOutlineTextField("Сайт для парсинга", urlState, textColor)
-                                FastOutlineTextField(
-                                    "Сколько пар/уроков на сайте в день",
-                                    pairsState,
-                                    textColor
-                                )
-                                FastOutlineTextField("Selector left up", sluState, textColor)
-                                FastOutlineTextField("Selector left down", sldState, textColor)
-                                FastOutlineTextField("Selector right up", sruState, textColor)
+                                if(urlState.value.text.contains(".")) {
+                                    FastOutlineTextField(
+                                        "Сколько пар/уроков на сайте в день",
+                                        pairsState,
+                                        textColor
+                                    )
+                                }
+                                if(urlState.value.text.contains(".") && pairsState.value.text != "") {
+                                    FastOutlineTextField(
+                                        "Понедельник - 1 пара",
+                                        sluState,
+                                        textColor,
+                                        Icons.Rounded.Search,
+                                        urlState.value.text
+                                    )
+                                    FastOutlineTextField(
+                                        "Понедельник - 2 пара",
+                                        sldState,
+                                        textColor,
+                                        Icons.Rounded.Search,
+                                        urlState.value.text
+                                    )
+                                    FastOutlineTextField(
+                                        "Вторник - 1 пара",
+                                        sruState,
+                                        textColor,
+                                        Icons.Rounded.Search,
+                                        urlState.value.text
+                                    )
+                                }
 
                                 val schedulesTemp =
                                     remember { mutableStateOf(mutableListOf<Pair<Int, String>>()) }
@@ -281,6 +281,8 @@ fun AddSchedule() {
                                     )
                                 }
                                 val scope = rememberCoroutineScope()
+                                val scopeSchedule = rememberCoroutineScope()
+
                                 Button(
                                     modifier = Modifier
                                         .padding(bottom = 10.dp)
@@ -319,7 +321,7 @@ fun AddSchedule() {
                                     Text(
                                         text = "Пропарсить сайт",
                                         color = textColor,
-                                        fontSize = 18.sp,
+                                        fontSize = 12.sp,
                                         textAlign = TextAlign.Center
                                     )
                                 }
@@ -337,10 +339,10 @@ fun AddSchedule() {
 }
 
 @Composable
-private fun FastOutlineTextField(
+fun FastOutlineTextField(
     text: String,
     state: MutableState<TextFieldValue>,
-    textColor: Color
+    textColor: Color,
 ) {
     OutlinedTextField(
         modifier = Modifier.padding(
@@ -351,6 +353,61 @@ private fun FastOutlineTextField(
         value = state.value,
         onValueChange = {
             state.value = it
+        },
+        label = {
+            Text(
+                text = text,
+                color = textColor.copy(alpha = 0.4f)
+            )
+        },
+        shape = RoundedCornerShape(16.dp),
+        textStyle = TextStyle(color = textColor)
+    )
+}
+
+@Composable
+fun FastOutlineTextField(
+    text: String,
+    state: MutableState<TextFieldValue>,
+    textColor: Color,
+    imageVector: ImageVector? = null,
+    url: String
+) {
+    val dialogState = remember {
+        mutableStateOf(false)
+    }
+
+    if (dialogState.value) {
+        ShowSearchSelector(state = dialogState, url, object : ScheduleDialogSelector{
+            override fun onResult(scheduleCSS: String) {
+                state.value = TextFieldValue(scheduleCSS)
+            }
+
+        })
+    }
+
+    OutlinedTextField(
+        modifier = Modifier.padding(
+            bottom = 10.dp,
+            start = 10.dp,
+            end = 10.dp
+        ),
+        value = state.value,
+        onValueChange = {
+            state.value = it
+        },
+        leadingIcon = {
+            if (imageVector != null) {
+                IconButton(
+                    onClick = { dialogState.value = true },
+                ) {
+                    Icon(
+                        imageVector = imageVector,
+                        contentDescription = "Search",
+                        tint = MaterialTheme.colors.primary,
+                    )
+                }
+            }
         },
         label = {
             Text(
