@@ -10,7 +10,6 @@ import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -27,11 +26,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kikoproject.uwidget.*
+import androidx.compose.ui.viewinterop.AndroidView
 import com.kikoproject.uwidget.R
+import com.kikoproject.uwidget.ScheduleGetter
 import com.kikoproject.uwidget.dialogs.ScheduleDialogSelector
 import com.kikoproject.uwidget.dialogs.ShowSearchSelector
-import com.kikoproject.uwidget.dialogs.WebPageScreen
+import com.kikoproject.uwidget.getSchedule
+import com.kikoproject.uwidget.getSelectorDivider
 import com.kikoproject.uwidget.objects.ExpandableTextHelper
 import com.kikoproject.uwidget.objects.IncreaseButtons
 import com.kikoproject.uwidget.objects.ScheduleCardCreator
@@ -51,6 +52,7 @@ fun AddSchedule() {
             .background(MaterialTheme.colors.background),
         contentAlignment = Alignment.TopCenter
     ) {
+
         LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
             item {
                 Text(
@@ -60,8 +62,6 @@ fun AddSchedule() {
                     color = textColor,
                     fontSize = 24.sp
                 )
-
-
 
                 Divider(
                     modifier = Modifier
@@ -238,14 +238,14 @@ fun AddSchedule() {
                                 val sruState =
                                     remember { mutableStateOf(TextFieldValue("")) }
                                 FastOutlineTextField("Сайт для парсинга", urlState, textColor)
-                                if(urlState.value.text.contains(".")) {
+                                if (urlState.value.text.contains(".")) {
                                     FastOutlineTextField(
                                         "Сколько пар/уроков на сайте в день",
                                         pairsState,
                                         textColor
                                     )
                                 }
-                                if(urlState.value.text.contains(".") && pairsState.value.text != "") {
+                                if (urlState.value.text.contains(".") && pairsState.value.text != "") {
                                     FastOutlineTextField(
                                         "Понедельник - 1 пара",
                                         sluState,
@@ -260,6 +260,7 @@ fun AddSchedule() {
                                         Icons.Rounded.Search,
                                         urlState.value.text
                                     )
+
                                     FastOutlineTextField(
                                         "Вторник - 1 пара",
                                         sruState,
@@ -298,12 +299,13 @@ fun AddSchedule() {
                                             sruState.value.text
                                         )
 
+
                                         getSchedule(
                                             scope,
                                             url = urlState.value.text,
                                             sluState.value.text,
-                                            firstDivider,
-                                            secondDivider,
+                                            firstDivider.first,
+                                            secondDivider.first,
                                             pairsState.value.text.toInt(),
                                             object : ScheduleGetter {
                                                 override fun onResult(schedules: MutableList<Pair<Int, String>>) {
@@ -378,7 +380,7 @@ fun FastOutlineTextField(
     }
 
     if (dialogState.value) {
-        ShowSearchSelector(state = dialogState, url, object : ScheduleDialogSelector{
+        ShowSearchSelector(state = dialogState, url, object : ScheduleDialogSelector {
             override fun onResult(scheduleCSS: String) {
                 state.value = TextFieldValue(scheduleCSS)
             }

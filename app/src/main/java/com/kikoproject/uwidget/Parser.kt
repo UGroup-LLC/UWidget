@@ -1,68 +1,81 @@
 package com.kikoproject.uwidget
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import com.kikoproject.uwidget.models.SchedulesModel
+import android.content.Context
+import com.gargoylesoftware.htmlunit.WebClient
+import com.gargoylesoftware.htmlunit.html.HtmlPage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
 import kotlin.math.abs
 
 
-fun getSelectorDivider(first: String, second: String): MutableList<Triple<Int, Int, Int>> {
+fun getSelectorDivider(firstString: String, secondString: String): Triple<List<Triple<Int, Int, Int>>, String, List<Int>> {
+    val firstList = mutableListOf<Int>()
+    val secondList = mutableListOf<Int>()
 
-    var beginPos = 0
-    var endPos = 0
-    var finishedFirstString = ""
-    var finishedSecondString = ""
+    val returnList = mutableListOf<Triple<Int, Int, Int>>()
 
-    val tempList = mutableListOf<Triple<Int, Int, Int>>()
+    var returnAll = Triple(listOf<Triple<Int, Int, Int>>(), String(), listOf<Int>())
 
-    second.forEachIndexed { index, letter ->
+    var tempStringDigital = ""
+    var tempStringForNotDigital = ""
+    val indexedPos = mutableListOf<Int>()
 
-        if (letter.toString().toIntOrNull() != null) {
-            if (beginPos == 0) {
-                beginPos = index
-            }
-            if (first[index].toString().toIntOrNull() != null) {
-                finishedFirstString += first[index]
-            }
-            finishedSecondString += letter
-        } else {
-            if (finishedFirstString != "" && finishedFirstString != finishedSecondString) {
-                endPos = index
-                val diff = finishedFirstString.toInt() - finishedSecondString.toInt()
-                tempList.add(Triple(beginPos, endPos, abs(diff)))
 
-                finishedFirstString = ""
-                beginPos = 0
-                finishedSecondString = ""
-            } else {
-                finishedFirstString = ""
-                beginPos = 0
-                finishedSecondString = ""
-            }
+    /* Вытаскиваем все числа в массив и затем проверим одинакова ли длинна масивов */
+    firstString.forEachIndexed { index, it ->
+        if(it.isDigit()){
+            tempStringDigital += it
+        }
+        else if(tempStringDigital.isNotEmpty()){
+            firstList.add(tempStringDigital.toInt())
+            indexedPos.add(index)
+            tempStringDigital = ""
         }
 
+        if(!it.isDigit()){
+            tempStringForNotDigital += it
+        }
     }
 
-    return tempList
+    secondString.forEach {
+        if(it.isDigit()){
+            tempStringDigital += it
+        }
+        else if(tempStringDigital.isNotEmpty()){
+            secondList.add(tempStringDigital.toInt())
+            tempStringDigital = ""
+        }
+    }
+
+    if(secondList.size == firstList.size){
+        secondList.forEach{ second ->
+            firstList.forEach{first ->
+                returnList.add(Triple(first, second, abs(first-second)))
+            }
+        }
+    }
+
+    returnAll = Triple(returnList, tempStringForNotDigital, indexedPos)
+
+    return returnAll
 }
 
-fun getSelectors(
+fun findSelectors(
     scope: CoroutineScope,
     url: String,
     textFind: String,
     result: ScheduleGetterSelectors
 ) {
     val tempList = Pair(mutableListOf<String>(), mutableListOf<String>())
+    val webClient = WebClient()
+    webClient.options.isJavaScriptEnabled = false
+
     scope.launch(Dispatchers.IO) {
-        Jsoup.connect(url).get().also { doc ->
+        val page = webClient.getPage<HtmlPage>(url)
+        val doc = Jsoup.parse(page.webResponse.contentAsString)
             doc.getElementsContainingOwnText(textFind).forEach {
                 val text = (it.parent()
                     ?.text() ?: "")
@@ -74,20 +87,18 @@ fun getSelectors(
 
             result.onResult(tempList)
         }
-    }
-
 }
 
 fun getSchedule( // Получение расписания
     scope: CoroutineScope,
     url: String,
     selector: String,
-    lessonSelector: MutableList<Triple<Int, Int, Int>>, // Селектор для пары
-    daySelector: MutableList<Triple<Int, Int, Int>>, // Селектор для дня
+    lessonSelector: List<Triple<Int, Int, Int>>, // Селектор для пары
+    daySelector: List<Triple<Int, Int, Int>>, // Селектор для дня
     lessonCount: Int,
     result: ScheduleGetter
 ) {
-    var calibration = mutableStateOf("")
+    //var calibration = mutableStateOf("")
 
     val tempList = mutableListOf<Pair<Int, String>>()
     scope.launch(Dispatchers.IO) {
@@ -100,9 +111,9 @@ fun getSchedule( // Получение расписания
             {
                 for (lesson: Int in 0..lessonCount) {
                     var fUrl = selector
-                    if(calibration.value != selector) {
+                   /* if(calibration.value != selector) {
                         fUrl = calibration.value
-                    }
+                    }*/
                     lessonSelector.forEach { lessonSelector ->
                         val realSecLength = fUrl.substring(lessonSelector.first)
                             .filter { it.isDigit() }.length
