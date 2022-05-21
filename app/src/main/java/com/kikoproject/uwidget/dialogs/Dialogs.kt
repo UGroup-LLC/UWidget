@@ -8,6 +8,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
@@ -21,15 +22,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.core.content.getSystemService
 import com.kikoproject.uwidget.*
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.navigation.ScreenNav
+import com.kikoproject.uwidget.schedules.FastOutlineTextField
 import com.kikoproject.uwidget.ui.theme.themeTextColor
 import kotlin.time.Duration.Companion.seconds
 
@@ -116,14 +122,12 @@ fun ShowSearchSelector(state: MutableState<Boolean>, url: String, result: Schedu
             WebPageScreen(urlToRender = url)
         })
 
-        val context = LocalContext.current
-
         val clipManager =
             LocalContext.current.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
         clipManager.addPrimaryClipChangedListener {
             loadingState.value = true
-            findSelectors(
+            getSelectors(
                 scope,
                 url,
                 clipManager.primaryClip!!.getItemAt(0).text.toString(),
