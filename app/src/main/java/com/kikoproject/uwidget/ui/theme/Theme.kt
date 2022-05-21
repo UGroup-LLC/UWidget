@@ -35,7 +35,7 @@ private val LightColorPalette = lightColors(
 @Composable
 fun UWidgetTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     val systemUiController = rememberSystemUiController()
-    val colors = if (Build.VERSION.SDK_INT >= 31) { // Включаем Monet
+    var colors = /*if (Build.VERSION.SDK_INT >= 31) { // Включаем Monet
         if (darkTheme) {
             systemUiController.setStatusBarColor(color = colorResource(android.R.color.system_neutral1_900))
             systemUiController.setNavigationBarColor(color = colorResource(android.R.color.system_neutral1_900))
@@ -56,7 +56,7 @@ fun UWidgetTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composabl
                 secondary = colorResource(android.R.color.system_accent1_800)
             )
         }
-    } else {
+    } else {*/
         if (darkTheme) {
             systemUiController.setStatusBarColor(color = Background)
             systemUiController.setNavigationBarColor(color = Background)
@@ -68,8 +68,8 @@ fun UWidgetTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composabl
 
             LightColorPalette
         }
-    }
-
+    //}
+    colors = colors.copy(surface = themeTextColor())
 
     MaterialTheme(
         colors = colors,

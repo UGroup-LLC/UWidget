@@ -8,6 +8,7 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -22,6 +23,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowDropDown
+import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,6 +35,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.fontResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -53,55 +58,24 @@ import kotlin.math.exp
 
 @Composable
 fun ChooseSchedule() {
-    val loadingState = remember { mutableStateOf(true) }
-
-    if (loadingState.value) {
-        ShowLoadingDialog(state = loadingState)
-    }
-
-    val textColor = themeTextColor()
-    val context = LocalContext.current
-
-    val categoryNames = remember { mutableListOf<String>() }
-    val notCategorySchedulesModel = remember { mutableListOf<SchedulesModel>() }
-    val withCategorySchedulesModel = remember { mutableListOf<SchedulesModel>() }
-
-
-    getAllSchedules(object : ScheduleResult {
-        override fun onResult(schedules: List<SchedulesModel>) {
-
-            notCategorySchedulesModel.clear()
-            withCategorySchedulesModel.clear()
-            categoryNames.clear()
-
-            loadingState.value = false
-            schedules.forEach { schedule ->
-                if (schedule.Category == "") {
-                    notCategorySchedulesModel.add(schedule)
-                } else {
-                    if(!categoryNames.contains(schedule.Category)) { // Если этой категории еще нет
-                        categoryNames.add(schedule.Category)
-                    }
-                    withCategorySchedulesModel.add(schedule)
-                }
-            }
-        }
-
-        override fun onError(error: Throwable) {
-            error.message?.let { Log.e(TAG, it) }
-        }
-    })
-
+    val textColor = MaterialTheme.colors.surface
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background),
-        contentAlignment = Alignment.TopCenter
+        contentAlignment = Alignment.Center
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Text(
+                "У вас еще нет ни одного расписания\nНе пора ли его создать?",
+                color = textColor,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold
+            )
+            Image(painter = painterResource(id = R.drawable.ic_undraw_choose_schedule), contentDescription = null, modifier = Modifier.padding(45.dp))
             OutlinedButton(
                 modifier = Modifier
                     .padding(top = 10.dp)
@@ -124,75 +98,53 @@ fun ChooseSchedule() {
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Icon(
-                        modifier = Modifier.padding(end = 10.dp),
+                        modifier = Modifier.weight(1f),
                         imageVector = Icons.Rounded.Add,
                         contentDescription = "Add schedule",
                         tint = textColor
                     )
                     Text(
                         "Добавить новое расписание",
+                        modifier = Modifier.weight(10f),
                         color = textColor,
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Center
+                        fontSize = 15.sp,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Normal
                     )
                 }
             }
-            Divider(color = textColor.copy(alpha = 0.3f), modifier = Modifier.padding(20.dp))
-            Text(
-                "Публичные расписания",
-                color = textColor,
-                fontSize = 24.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(bottom = 20.dp),
-                fontWeight = FontWeight.Bold
-            )
-
-            if (withCategorySchedulesModel.size != 0) {
-                LazyColumn() {
-                    items(categoryNames) { name ->
-                        ExpandableScheduleCategory(
-                            title = name,
-                            schedulesModel = withCategorySchedulesModel,
-                            textColor = textColor
-                        )
-                    }
-                }
-            }
-            if (notCategorySchedulesModel.size != 0) {
-                FlexibleSchedulesButtons(notCategorySchedulesModel, textColor)
-            }
-        }
-    }
-}
-
-@Composable
-private fun FlexibleSchedulesButtons(
-    schedulesModel: MutableList<SchedulesModel>,
-    textColor: Color
-) {
-    LazyColumn() {
-        items(schedulesModel) { schedule ->
-            OutlinedButton(
+            Button(
                 modifier = Modifier
-                    .padding(bottom = 10.dp)
+                    .padding(top = 10.dp, bottom = 70.dp)
                     .fillMaxWidth(0.9f),
-                onClick = { /*TODO*/ },
+                onClick = { navController.navigate(ScreenNav.AddScheduleNav.route) },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colors.primary.copy(
                         alpha = 0.2f
                     )
-                ),
-                border = BorderStroke(
-                    1.dp,
-                    color = MaterialTheme.colors.primary
-                ),
-            ) {
-                Text(
-                    schedule.Name,
-                    color = textColor,
-                    fontSize = 18.sp,
-                    textAlign = TextAlign.Center
                 )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(5.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        modifier = Modifier.weight(1f),
+                        imageVector = Icons.Rounded.Lock,
+                        contentDescription = "Add schedule",
+                        tint = textColor
+                    )
+                    Text(
+                        "Войти в уже созданное",
+                        modifier = Modifier.weight(10f),
+                        color = textColor,
+                        fontSize = 15.sp,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Normal
+                    )
+                }
             }
         }
     }

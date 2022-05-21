@@ -36,7 +36,7 @@ import com.kikoproject.uwidget.ui.theme.themeTextColor
 fun ScheduleCardCreator(
 
     //card options
-    cardColor: Color = themeTextColor(),
+    cardColor: Color = MaterialTheme.colors.surface,
     cardShapeRadius: Dp = 20.dp,
     cardBorderSize: Dp = 1.dp,
 
@@ -44,14 +44,14 @@ fun ScheduleCardCreator(
     titleText: String,
     titleFontSize: TextUnit = 14.sp,
     titleFontWeight: FontWeight = FontWeight.Medium,
-    titleColor: Color = themeTextColor(),
+    titleColor: Color = MaterialTheme.colors.surface,
 
     //divider options
-    dividerColor: Color = themeTextColor(),
+    dividerColor: Color = MaterialTheme.colors.surface,
 
     //textfield
-    textFieldColor: Color = themeTextColor()
-) : MutableState<Int>{
+    textFieldColor: Color = MaterialTheme.colors.surface
+) : MutableList<MutableState<TextFieldValue>>{
     val states = remember { mutableListOf(mutableStateOf(TextFieldValue(text = ""))) }
     val count = remember {
         mutableStateOf(1)
@@ -120,7 +120,7 @@ fun ScheduleCardCreator(
             }
         }
     }
-    return count
+    return states
 }
 
 
@@ -132,7 +132,7 @@ fun ScheduleCardCreator(
     cardsInt: Int,
 
     //card options
-    cardColor: Color = themeTextColor(),
+    cardColor: Color = MaterialTheme.colors.surface,
     cardShapeRadius: Dp = 20.dp,
     cardBorderSize: Dp = 1.dp,
 
@@ -140,14 +140,14 @@ fun ScheduleCardCreator(
     titleText: String,
     titleFontSize: TextUnit = 14.sp,
     titleFontWeight: FontWeight = FontWeight.Medium,
-    titleColor: Color = themeTextColor(),
+    titleColor: Color = MaterialTheme.colors.surface,
 
     //divider options
-    dividerColor: Color = themeTextColor(),
+    dividerColor: Color = MaterialTheme.colors.surface,
 
     //textfield
-    textFieldColor: Color = themeTextColor()
-) {
+    textFieldColor: Color = MaterialTheme.colors.surface
+) : MutableList<MutableState<TextFieldValue>> {
     val states = mutableListOf<MutableState<TextFieldValue>>()
 
     for(cardIndex: Int in 0..cardsInt){
@@ -202,6 +202,7 @@ fun ScheduleCardCreator(
             }
         }
     }
+    return states
 }
 
 

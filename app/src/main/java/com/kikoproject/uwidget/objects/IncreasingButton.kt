@@ -57,7 +57,7 @@ fun IncreaseButtons(
                     bottomEnd = rightStrength
                 )
             ) {
-                Text(text = text, color = themeTextColor(), fontSize = fontSize)
+                Text(text = text, color = MaterialTheme.colors.surface, fontSize = fontSize)
             }
         }
     }

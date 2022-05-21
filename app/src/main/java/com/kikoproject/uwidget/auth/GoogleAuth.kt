@@ -97,7 +97,7 @@ fun GoogleAuthScreen() {
                 horizontalAlignment = Alignment.Start
             ) {
 
-                val textColor = themeTextColor()
+                val textColor = MaterialTheme.colors.surface
 
                 LinkTermsText(textColor, context)
 
@@ -356,7 +356,7 @@ fun LoadNextNav(context: Context, state: MutableState<Boolean>, account: GoogleS
 
 @Composable
 fun SignOutCheck(account: MutableState<GoogleSignInAccount?>, context: Context) { // Показывает кнопку выхода из аккаунта если юзер уже залогинен и находится в этом окне
-    val textColor = themeTextColor()
+    val textColor = MaterialTheme.colors.surface
     if (account.value != null) {
         OutlinedButton(
             modifier = Modifier.padding(top = 10.dp),

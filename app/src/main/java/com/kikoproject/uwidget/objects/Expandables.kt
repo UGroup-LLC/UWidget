@@ -35,14 +35,14 @@ fun ExpandableTextHelper(
     title: String,
     titleWeight: FontWeight = FontWeight.Medium,
     titleSize: TextUnit = 18.sp,
-    titleColor: Color = themeTextColor(),
+    titleColor: Color = MaterialTheme.colors.surface,
     text: String,
     textAlign: TextAlign = TextAlign.Center,
     textWidthFraction: Float = 0.9f,
     textPadding: Dp = 10.dp,
     fontSize: TextUnit = 12.sp,
     textWeight: FontWeight = FontWeight.Thin,
-    textColor: Color = themeTextColor(),
+    textColor: Color = MaterialTheme.colors.surface,
     cardColor: Color = MaterialTheme.colors.primary
 ) {
     val expandedState = remember { mutableStateOf(false) }

@@ -46,6 +46,7 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.kikoproject.uwidget.R
+import com.kikoproject.uwidget.main.db
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.ui.theme.UWidgetTheme
@@ -57,7 +58,7 @@ import java.io.ByteArrayOutputStream
 @Composable
 fun RegisterScreen() {
     UWidgetTheme {
-        val textColor = themeTextColor()
+        val textColor = MaterialTheme.colors.surface
         val context = LocalContext.current
         val account = GoogleSignIn.getLastSignedInAccount(context)
         lateinit var customResizedBitmap: Bitmap
@@ -316,11 +317,11 @@ fun sendToDBMainInfo(
     bitmapBase64: String,
     account: GoogleSignInAccount
 ) {
-    val db = Firebase.firestore
     val user = hashMapOf(
         "name" to name,
         "surname" to surname,
-        "image" to bitmapBase64
+        "image" to bitmapBase64,
+        "id" to account.id
     )
     db.collection("users").document(account.id.toString()).set(user)
         .addOnSuccessListener { documentReference ->

@@ -35,7 +35,7 @@ import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun ShowLoadingDialog(state: MutableState<Boolean>) {
-    val textColor = themeTextColor()
+    val textColor = MaterialTheme.colors.surface
     if (state.value) {
         AlertDialog(
             properties = DialogProperties(dismissOnClickOutside = false),
@@ -90,7 +90,7 @@ fun ShowLoadingDialog(state: MutableState<Boolean>) {
 @SuppressLint("MutableCollectionMutableState")
 @Composable
 fun ShowSearchSelector(state: MutableState<Boolean>, url: String, result: ScheduleDialogSelector) {
-    val textColor = themeTextColor()
+    val textColor = MaterialTheme.colors.surface
     var found = remember { mutableStateOf(Pair(mutableListOf<String>(), mutableListOf<String>())) }
     val scope = rememberCoroutineScope()
 
@@ -208,7 +208,7 @@ fun ShowFoundResult(
     foundCollection: Pair<List<String>, List<String>>,
     result: ScheduleDialogSelector
 ) {
-    val textColor = themeTextColor()
+    val textColor = MaterialTheme.colors.surface
     var returned = ""
     if (state.value) {
         AlertDialog(
@@ -264,7 +264,7 @@ fun ShowFoundResult(
 @Composable
 fun ShowErrorDialog(text: String) {
     val state = remember { mutableStateOf(true) }
-    val textColor = themeTextColor()
+    val textColor = MaterialTheme.colors.surface
     if (state.value) {
         AlertDialog(
             properties = DialogProperties(dismissOnClickOutside = false),

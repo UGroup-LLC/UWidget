@@ -18,6 +18,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.kikoproject.uwidget.navigation.NavigationSetup
 import com.kikoproject.uwidget.networking.CheckUserInDB
@@ -25,6 +26,8 @@ import com.kikoproject.uwidget.ui.theme.UWidgetTheme
 
 @SuppressLint("StaticFieldLeak")
 lateinit var navController: NavHostController
+@SuppressLint("StaticFieldLeak")
+val db = Firebase.firestore
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

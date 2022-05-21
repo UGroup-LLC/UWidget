@@ -1,4 +1,10 @@
 package com.kikoproject.uwidget.models
 
-class User {
-}
+import android.graphics.Bitmap
+
+data class User (
+    val Name: String,
+    val Surname: String,
+    val Avatar: Bitmap,
+    val Id: String
+)
