@@ -16,10 +16,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.kikoproject.uwidget.localdb.MainDataBase
+import com.kikoproject.uwidget.models.User
+import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.NavigationSetup
 import com.kikoproject.uwidget.networking.CheckUserInDB
 import com.kikoproject.uwidget.ui.theme.UWidgetTheme
@@ -28,6 +33,16 @@ import com.kikoproject.uwidget.ui.theme.UWidgetTheme
 lateinit var navController: NavHostController
 @SuppressLint("StaticFieldLeak")
 val db = Firebase.firestore
+@SuppressLint("StaticFieldLeak")
+lateinit var roomDb: MainDataBase
+@SuppressLint("StaticFieldLeak")
+lateinit var curUser: User
+@SuppressLint("StaticFieldLeak")
+lateinit var curSchedules: MutableList<Schedule>
+@SuppressLint("StaticFieldLeak")
+lateinit var curSchedule: Schedule
+@SuppressLint("StaticFieldLeak")
+lateinit var allSchedules: MutableList<Schedule>
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +55,12 @@ class MainActivity : ComponentActivity() {
                 navController = rememberNavController()
                 NavigationSetup(navController = navController)
                 val state = remember { mutableStateOf(true) }
+
+                roomDb = Room.databaseBuilder(
+                    applicationContext,
+                    MainDataBase::class.java, "main_database"
+                ).allowMainThreadQueries().build()
+
                 CheckUserInDB(
                     context = context,
                     state = state,

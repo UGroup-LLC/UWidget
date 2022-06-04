@@ -8,6 +8,9 @@ sealed class ScreenNav(val route: String)
     object ScheduleChooseNav : ScreenNav("schedule_nav")
     object AddScheduleNav : ScreenNav("add_schedule_nav")
     object Dashboard : ScreenNav("dashboard_nav")
+    object AllSchedulesNav : ScreenNav("all_schedule_nav")
+    object EditScheduleNav : ScreenNav("edit_schedule_nav")
+
 }
 sealed class PermissionNav(val route: String)
 {

@@ -25,7 +25,6 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,15 +34,17 @@ import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.dialogs.ScheduleDialogSelector
 import com.kikoproject.uwidget.dialogs.ShowSearchSelector
 import com.kikoproject.uwidget.main.navController
-import com.kikoproject.uwidget.models.SchedulesModel
+import com.kikoproject.uwidget.models.schedules.DefaultScheduleOption
+import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.PermissionNav
 import com.kikoproject.uwidget.networking.createScheduleInDB
+import com.kikoproject.uwidget.networking.createScheduleInRoomDB
 import com.kikoproject.uwidget.objects.ExpandableTextHelper
 import com.kikoproject.uwidget.objects.IncreaseButtons
 import com.kikoproject.uwidget.objects.ScheduleCardCreator
 import com.kikoproject.uwidget.ui.theme.Typography
-import com.kikoproject.uwidget.ui.theme.themeTextColor
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 @SuppressLint("SetJavaScriptEnabled")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,6 +59,7 @@ fun AddSchedule() {
     val coroutineScope = rememberCoroutineScope()
     val timeCount = remember { mutableStateOf(0) }
     var timeState = mutableListOf<MutableState<TextFieldValue>>()
+    val materialColor = MaterialTheme.colors
 
     Box(
         modifier = Modifier
@@ -427,16 +429,19 @@ fun AddSchedule() {
                             if (nameState.value.text.filter { !it.isWhitespace() } != "") {
                                 val adminId = GoogleSignIn.getLastSignedInAccount(context)
                                 if (adminId?.id != null) {
-
+                                    val schedule = Schedule(
+                                        "0",
+                                        nameState.value.text,
+                                        adminId.id!!,
+                                        listOf(""),
+                                        tempMap,
+                                        tempTimeState,
+                                        categoryState.value.text,
+                                        DefaultScheduleOption(materialColor)
+                                    )
+                                    createScheduleInRoomDB(schedule)
                                     createScheduleInDB(
-                                        schedule = SchedulesModel(
-                                            nameState.value.text,
-                                            adminId.id!!,
-                                            listOf(""),
-                                            tempMap,
-                                            tempTimeState,
-                                            categoryState.value.text
-                                        )
+                                        schedule = schedule
                                     )
                                     navController.navigate(PermissionNav.BackgroundActivity.route)
                                 }

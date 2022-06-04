@@ -110,7 +110,7 @@ fun ScheduleCardCreator(
                         },
                         label = {
                             Text(
-                                text = "Поле $index",
+                                text = "Поле ${index+1}",
                                 color = textFieldColor.copy(alpha = 0.4f)
                             )
                         },
@@ -192,7 +192,7 @@ fun ScheduleCardCreator(
                         },
                         label = {
                             Text(
-                                text = "Поле $cardIndex",
+                                text = "Поле ${cardIndex+1}",
                                 color = textFieldColor.copy(alpha = 0.4f)
                             )
                         },

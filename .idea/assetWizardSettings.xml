@@ -302,8 +302,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_undraw_permission_unlock" />
-                            <entry key="sourceFile" value="C:\Users\Kiko\Downloads\undraw_unlock_re_a558 (1).svg" />
+                            <entry key="outputName" value="ic_account_circle" />
+                            <entry key="sourceFile" value="C:\Users\Kiko\Downloads\account_circle.svg" />
                           </map>
                         </option>
                       </PersistentState>

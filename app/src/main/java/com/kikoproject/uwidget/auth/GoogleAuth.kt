@@ -51,6 +51,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.main.navController
+import com.kikoproject.uwidget.main.roomDb
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.CheckUserInDB
 import com.kikoproject.uwidget.ui.theme.UWidgetTheme
@@ -67,6 +68,7 @@ fun GoogleAuthScreen() {
     if (stateLoading.value) { // Если нужен переход то вызываем Loading
         if (account.value != null) {
             LoadNextNav(context = context, state = stateLoading, account.value!!)
+
         }
     }
 

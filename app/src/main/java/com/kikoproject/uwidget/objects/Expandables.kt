@@ -25,9 +25,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kikoproject.uwidget.models.SchedulesModel
+import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.schedules.DrawAllSchedulesInCategory
-import com.kikoproject.uwidget.ui.theme.themeTextColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -117,7 +116,7 @@ fun ExpandableTextHelper(
 @Composable
 fun ExpandableScheduleCategory(
     title: String,
-    schedulesModel: MutableList<SchedulesModel>,
+    schedule: MutableList<Schedule>,
     textColor: Color
 ) {
     val expandedState = remember { mutableStateOf(false) }
@@ -171,7 +170,7 @@ fun ExpandableScheduleCategory(
                 }
             }
             if (expandedState.value) {
-                DrawAllSchedulesInCategory(schedulesModel, textColor, title)
+                DrawAllSchedulesInCategory(schedule, textColor, title)
             }
         }
     }
