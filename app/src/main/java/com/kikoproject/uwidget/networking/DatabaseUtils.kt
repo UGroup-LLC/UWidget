@@ -75,7 +75,18 @@ fun CheckUserInDB(
                                                 }
                                             }
 
-                                            curSchedules = roomDb.scheduleDao().getByAdminId(curUser.Id).toMutableList()
+                                            // Поскольку при создании мы не можем получить ID документа, расписание создается с 0 ид и в следующем запуске
+                                            // добавляется ID расписанию, из за этого расписания раздваиваются из за разных ID
+                                            // удаляем все расписания с 0 ID
+                                            roomDb.scheduleDao().getAll().forEach { schedule ->
+                                                if (schedule.ID == "0") {
+                                                    roomDb.scheduleDao().delete(schedule)
+                                                }
+                                            }
+
+                                            curSchedules =
+                                                roomDb.scheduleDao().getByAdminId(curUser.Id)
+                                                    .toMutableList()
 
                                             navController.navigate(ScreenNav.ScheduleChooseNav.route)
                                             schedules.forEach { schedule ->
@@ -99,10 +110,11 @@ fun CheckUserInDB(
                     }
                 }
         } else {
-            ShowErrorDialog(textError)
+            ShowErrorDialog(textError) // Показываем автономный режим
+            TODO("Сделать переход в автономный режим")
         }
     } else {
-        navController.navigate(ScreenNav.GoogleAuthNav.route) // Если нет то гуглимся
+        navController.navigate(ScreenNav.GoogleAuthNav.route) // Если нет аккаунта то отправляем на регистрацию/вход
     }
 }
 
@@ -120,18 +132,50 @@ fun createScheduleInRoomDB(schedule: Schedule) {
     curSchedules.add(schedule)
 }
 
+// Удаление БД из всех БД
+fun deleteSchedule(schedule: Schedule) {
+    roomDb.scheduleDao().delete(schedule = schedule)
+    db.collection("schedules").document(schedule.ID).delete()
+    curSchedules.remove(schedule)
+}
+
 fun createScheduleInDB(schedule: Schedule) {
     if (schedule.Name != "") {
         val user = hashMapOf(
             "admin_id" to schedule.AdminID,
             "users_ids" to schedule.UsersID,
             "category" to schedule.Category,
+            "code" to schedule.JoinCode,
             "name" to schedule.Name,
             "schedule" to schedule.Schedule,
             "time" to schedule.Time
         )
         db.collection("schedules").document().set(user)
     }
+}
+
+fun enterInSchedule(code: String): Boolean {
+    curSchedules.forEach { schedule ->
+        val users = schedule.UsersID.toMutableList()
+
+        // Проверяем не состоим ли мы уже в расписании, а так же не являемся ли мы админом этого расписания
+        if (schedule.JoinCode == code
+            && schedule.AdminID != curUser.Id
+            && !schedule.UsersID.contains(curUser.Id)
+        ) {
+            users.add(curUser.Id)
+            // Добавляем пользователя в расписание
+            db.collection("schedules").document(schedule.ID).update(
+                mapOf(
+                    Pair(
+                        "users_ids", users
+                    )
+                )
+            )
+            return true
+        }
+    }
+    return false
 }
 
 fun getUserBitmap(account: GoogleSignInAccount, avatarResult: AvatarResult) {
@@ -162,6 +206,7 @@ fun getAllSchedules(materialColors: Colors, scheduleResult: ScheduleResult) {
                     doc.get("admin_id").toString(),
                     doc.get("users_ids") as List<String>,
                     doc.get("schedule") as Map<String, MutableList<String>>,
+                    doc.get("code").toString() as String?,
                     doc.get("time") as List<String>,
                     doc.get("category").toString(),
                     DefaultScheduleOption(materialColors = materialColors)

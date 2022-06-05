@@ -9,12 +9,8 @@ import com.kikoproject.uwidget.auth.GoogleAuthScreen
 import com.kikoproject.uwidget.auth.RegisterScreen
 import com.kikoproject.uwidget.main.DashboardActivity
 import com.kikoproject.uwidget.main.MainActivity
-import com.kikoproject.uwidget.permissions.BackgroundPermissionActivity
 import com.kikoproject.uwidget.permissions.CreateWidgetActivity
-import com.kikoproject.uwidget.schedules.AddSchedule
-import com.kikoproject.uwidget.schedules.AllSchedulesActivity
-import com.kikoproject.uwidget.schedules.ChooseSchedule
-import com.kikoproject.uwidget.schedules.EditSchedule
+import com.kikoproject.uwidget.schedules.*
 import com.kikoproject.uwidget.ui.theme.Main
 
 @Composable
@@ -52,12 +48,18 @@ fun NavigationSetup(
         composable(route = ScreenNav.EditScheduleNav.route){
             EditSchedule()
         }
+        composable(route = ScreenNav.ShowJoinCodeNav.route){
+            ShowJoinCode()
+        }
+        composable(route = ScreenNav.EditScheduleMenuNav.route){
+            EditSheduleMenu()
+        }
+        composable(route = ScreenNav.JoinToScheduleNav.route){
+            JoinSchedule()
+        }
 
 
         //permission
-        composable(route = PermissionNav.BackgroundActivity.route){
-            BackgroundPermissionActivity()
-        }
         composable(route = PermissionNav.CreateWidget.route){
             CreateWidgetActivity()
         }

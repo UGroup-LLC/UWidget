@@ -61,6 +61,7 @@ import com.kikoproject.uwidget.ui.theme.themeTextColor
 fun GoogleAuthScreen() {
     val context = LocalContext.current
 
+    // Получаем аккаунт пользователя, если он есть, если нет то null
     val account = remember { mutableStateOf(GoogleSignIn.getLastSignedInAccount(context)) }
 
     val stateLoading = remember { mutableStateOf(false) }
@@ -68,10 +69,13 @@ fun GoogleAuthScreen() {
     if (stateLoading.value) { // Если нужен переход то вызываем Loading
         if (account.value != null) {
             LoadNextNav(context = context, state = stateLoading, account.value!!)
-
+        }
+        else{
+            TODO("Выкинуть ошибку")
         }
     }
 
+    // Отвечает за запуск входа в аккаунт Google
     val launchSign =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
@@ -79,10 +83,11 @@ fun GoogleAuthScreen() {
             val credential = GoogleAuthProvider.getCredential(account.value!!.idToken!!, null)
 
             try {
+                // Показывает FireBase что есть вход из под аккаунта пользователя
                 val auth = Firebase.auth
                 auth.signInWithCredential(credential)
 
-                stateLoading.value = true // Перезод в Navigation
+                stateLoading.value = true
             } catch (e: ApiException) {
                 Log.w("TAG", "Google sign in failed", e)
             }
@@ -98,13 +103,15 @@ fun GoogleAuthScreen() {
             Column(
                 horizontalAlignment = Alignment.Start
             ) {
-
                 val textColor = MaterialTheme.colors.surface
 
+                // Весь текст где у нас правила использования приложения
                 LinkTermsText(textColor, context)
 
+                // Текст по середине где описано для чего будет использован аккаунт
                 MainText(textColor)
 
+                // Кнопки Входа и тд
                 AllButtons(context, launchSign, stateLoading, account, textColor)
             }
         }
@@ -159,11 +166,12 @@ private fun AllButtons(
                 )
             }
 
+            // Если получится так что уже зарегестрированный пользователь будет на этом экране он сможет выйти из аккаунта
             SignOutCheck(account, context)
 
             OutlinedButton(
                 modifier = Modifier.padding(top = 10.dp),
-                onClick = {},
+                onClick = {TODO("Сделать вход без аккаунта")},
                 border = BorderStroke(
                     1.dp,
                     color = Color(0xFF4D4D4D)
@@ -306,7 +314,7 @@ private fun LinkTermsText(
     )
 }
 
-fun googleSignIn( // Вход в гугл аккаунт
+fun googleSignIn(
     context: Context,
     launcher: ManagedActivityResultLauncher<Intent, ActivityResult>,
     state: MutableState<Boolean>
@@ -318,7 +326,7 @@ fun googleSignIn( // Вход в гугл аккаунт
     val googleSignInClient =
         com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(context, gso)
     val mAuth = FirebaseAuth.getInstance()
-    signInOpen(googleSignInClient, context, launcher, state) // Запуск активити
+    signInOpen(googleSignInClient, launcher) // Запуск активити
 }
 
 fun signOut(context: Context) {
@@ -333,19 +341,13 @@ fun signOut(context: Context) {
 
 fun signInOpen(
     googleSignInClient: GoogleSignInClient,
-    context: Context,
     launcher: ManagedActivityResultLauncher<Intent, ActivityResult>,
-    state: MutableState<Boolean>
 ) {
     launcher.launch(googleSignInClient.signInIntent)
 }
 
-@Preview(showBackground = true)
-@Composable
-fun AuthPreview() {
-    GoogleAuthScreen()
-}
 
+// Переход далее
 @Composable
 fun LoadNextNav(context: Context, state: MutableState<Boolean>, account: GoogleSignInAccount) {
     CheckUserInDB(
@@ -353,7 +355,7 @@ fun LoadNextNav(context: Context, state: MutableState<Boolean>, account: GoogleS
         state,
         account = account,
         "Отмена"
-    ) // Перед тем как вводить в регистрацию смотрим есть ли юзер в бд уже
+    )
 }
 
 @Composable
@@ -377,4 +379,10 @@ fun SignOutCheck(account: MutableState<GoogleSignInAccount?>, context: Context) 
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AuthPreview() {
+    GoogleAuthScreen()
 }

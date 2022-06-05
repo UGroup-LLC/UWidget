@@ -10,6 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.kikoproject.uwidget.R
@@ -48,7 +51,7 @@ fun ScheduleButton(schedule: Schedule, isAdmin: Boolean) {
             FloatingActionButton(
                 onClick = {
                     curSchedule = schedule
-                    navController.navigate(ScreenNav.EditScheduleNav.route)
+                    navController.navigate(ScreenNav.EditScheduleMenuNav.route)
                 },
                 modifier = Modifier
                     .requiredSize(45.dp)
@@ -69,10 +72,34 @@ fun ScheduleButton(schedule: Schedule, isAdmin: Boolean) {
     }
 }
 
+
 @Composable
-fun AddScheduleButton(text: String) {
+fun StandardButton(content: () -> Unit, text: String){
     Button(
-        onClick = { navController.navigate(ScreenNav.AddScheduleNav.route) },
+        onClick = {content()},
+        shape = RoundedCornerShape(17.dp),
+        border = BorderStroke(0.dp, Color.Transparent),
+        elevation = ButtonDefaults.elevation(0.dp, 0.dp, 0.dp),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = MaterialTheme.colors.primary.copy(
+                0.15f
+            )
+        ),
+        modifier = Modifier.fillMaxWidth(0.9f)
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.button,
+            color = MaterialTheme.colors.surface,
+            modifier = Modifier.weight(4f)
+        )
+    }
+}
+
+@Composable
+fun StandardButton(content: () -> Unit, text: String, icon: ImageVector){
+    Button(
+        onClick = {content()},
         shape = RoundedCornerShape(17.dp),
         border = BorderStroke(0.dp, Color.Transparent),
         elevation = ButtonDefaults.elevation(0.dp, 0.dp, 0.dp),
@@ -95,7 +122,42 @@ fun AddScheduleButton(text: String) {
             )
 
             Icon(
-                imageVector = Icons.Rounded.Add,
+                imageVector = icon,
+                modifier = Modifier.padding(12.dp),
+                contentDescription = null,
+                tint = MaterialTheme.colors.primary,
+            )
+        }
+    }
+}
+
+@Composable
+fun StandardButton(content: () -> Unit, text: String, icon: Painter){
+    Button(
+        onClick = {content()},
+        shape = RoundedCornerShape(17.dp),
+        border = BorderStroke(0.dp, Color.Transparent),
+        elevation = ButtonDefaults.elevation(0.dp, 0.dp, 0.dp),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = MaterialTheme.colors.primary.copy(
+                0.15f
+            )
+        ),
+        modifier = Modifier.fillMaxWidth(0.9f)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.button,
+                color = MaterialTheme.colors.surface,
+                modifier = Modifier.weight(4f)
+            )
+
+            Icon(
+                painter = icon,
                 modifier = Modifier.padding(12.dp),
                 contentDescription = null,
                 tint = MaterialTheme.colors.primary,

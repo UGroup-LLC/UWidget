@@ -14,6 +14,7 @@ data class Schedule(
     val AdminID: String,
     val UsersID: List<String>,
     val Schedule: Map<String, MutableList<String>>,
+    val JoinCode: String?,
     val Time: List<String>,
     val Category: String,
     val Options: ScheduleOptions?

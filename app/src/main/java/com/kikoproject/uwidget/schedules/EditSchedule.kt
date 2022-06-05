@@ -38,8 +38,10 @@ import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.models.schedules.DefaultScheduleOption
 import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.PermissionNav
+import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.createScheduleInDB
 import com.kikoproject.uwidget.networking.createScheduleInRoomDB
+import com.kikoproject.uwidget.networking.deleteSchedule
 import com.kikoproject.uwidget.objects.ExpandableTextHelper
 import com.kikoproject.uwidget.objects.IncreaseButtons
 import com.kikoproject.uwidget.objects.ScheduleCardCreator
@@ -420,6 +422,7 @@ fun EditSchedule() {
                                         adminId.id!!,
                                         listOf(""),
                                         tempMap,
+                                        0.toString(), // TODO()
                                         tempTimeState,
                                         categoryState.value.text,
                                         DefaultScheduleOption(materialColor)
@@ -428,7 +431,7 @@ fun EditSchedule() {
                                     createScheduleInDB(
                                         schedule = schedule
                                     )
-                                    navController.navigate(PermissionNav.BackgroundActivity.route)
+                                    navController.navigate(ScreenNav.Dashboard.route)
                                 }
                             } else {
                                 Toast.makeText(
@@ -462,13 +465,18 @@ fun EditSchedule() {
                     modifier = Modifier
                         .padding(horizontal = 20.dp, vertical = 10.dp)
                         .fillMaxWidth(0.9f),
-                    onClick = {},
+                    onClick = {
+                        deleteSchedule(curSchedule)
+                        navController.popBackStack()
+                        navController.popBackStack()
+                        navController.navigate(ScreenNav.AllSchedulesNav.route)
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Red.copy(
                             alpha = 0.5f
                         )
                     )
-                ){
+                ) {
                     Text(
                         text = "Удалить расписание",
                         color = Color.White,

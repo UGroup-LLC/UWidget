@@ -10,10 +10,12 @@ sealed class ScreenNav(val route: String)
     object Dashboard : ScreenNav("dashboard_nav")
     object AllSchedulesNav : ScreenNav("all_schedule_nav")
     object EditScheduleNav : ScreenNav("edit_schedule_nav")
+    object ShowJoinCodeNav : ScreenNav("show_join_code_nav")
+    object EditScheduleMenuNav : ScreenNav("edit_scheduleMenu_nav")
+    object JoinToScheduleNav : ScreenNav("join_to_schedule_nav")
 
 }
 sealed class PermissionNav(val route: String)
 {
-    object BackgroundActivity : PermissionNav("back_activity")
     object CreateWidget : PermissionNav("create_widget")
 }

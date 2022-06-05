@@ -11,6 +11,9 @@ interface SchedulesDao {
     @Query("SELECT * FROM schedules WHERE ID LIKE :id")
     fun getWithId(id: String): Schedule
 
+    @Query("SELECT ABS(RANDOM()/1E+13) AS random_num FROM schedules WHERE random_num NOT IN (SELECT JoinCode FROM schedules) LIMIT 1")
+    fun getJoinCode(): String
+
     @Query("SELECT * FROM schedules WHERE adminId LIKE :mAdminId")
     fun getByAdminId(mAdminId: String): List<Schedule>
 

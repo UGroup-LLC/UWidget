@@ -52,6 +52,9 @@ import com.kikoproject.uwidget.models.User
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.ui.theme.UWidgetTheme
 import com.kikoproject.uwidget.ui.theme.themeTextColor
+import com.kikoproject.uwidget.utils.bitmapCompress
+import com.kikoproject.uwidget.utils.bitmapCrop
+import com.kikoproject.uwidget.utils.bitmapResize
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
@@ -74,22 +77,18 @@ fun RegisterScreen() {
         var nameState = remember { mutableStateOf(TextFieldValue(text = "")) }
         var surnameState = remember { mutableStateOf(TextFieldValue(text = "")) }
 
+        // Активити который откроет выбор изображения из локальных фото
         val imagePickerLauncher = rememberLauncherForActivityResult(
             contract =
             ActivityResultContracts.GetContent()
         ) { uri: Uri? ->
+            // После получения фото передаем его в основную переменную
             customImageUri = uri
         }
         customImageUri?.let {
-            if (Build.VERSION.SDK_INT < 28) {
-                customBitmap.value = MediaStore.Images
-                    .Media.getBitmap(context.contentResolver, it)
-
-            } else {
-                val source = ImageDecoder
-                    .createSource(context.contentResolver, it)
-                customBitmap.value = ImageDecoder.decodeBitmap(source)
-            }
+            val source = ImageDecoder
+                .createSource(context.contentResolver, it)
+            customBitmap.value = ImageDecoder.decodeBitmap(source)
 
             customBitmap.value?.let { btm ->
                 Image(
@@ -101,10 +100,6 @@ fun RegisterScreen() {
         }
 
         val showLoadingDialog = remember { mutableStateOf(false) }
-
-        //if(showLoadingDialog.value){
-        //  ShowLoadingDialog()
-        //}
 
         Box(
             modifier = Modifier
@@ -127,20 +122,27 @@ fun RegisterScreen() {
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
 
+
+                // Подгружаемая картинка из сети, фото аккаунта пользователя
                 SubcomposeAsyncImage(
                     alignment = Alignment.Center,
                     model = account?.photoUrl,
                     loading = {
+                        // При загрузке показываем индикатор загрузки
                         CircularProgressIndicator(
                             strokeWidth = 2.dp,
                             color = MaterialTheme.colors.primary
                         )
                     },
                     success = {
+                        // Если пользователь использует свою фотографию
                         if (customBitmap.value != null) {
                             customBitmap.value?.let { btm ->
+                                // Обрезаем фото до квадрата
                                 customResizedBitmap = bitmapCrop(btm)
+                                // Уменьшаем
                                 customResizedBitmap = bitmapResize(customResizedBitmap, 200, 200)
+                                // Сжимаем
                                 customResizedBitmap = bitmapCompress(customResizedBitmap, 90)
                                 Image(
                                     bitmap = customResizedBitmap.asImageBitmap(),
@@ -157,7 +159,7 @@ fun RegisterScreen() {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(color = MaterialTheme.colors.primary)// clip to the circle shape
+                                .background(color = MaterialTheme.colors.primary)
                         ) {
                             if (account != null && account.givenName != null) {
                                 Text(
@@ -181,7 +183,7 @@ fun RegisterScreen() {
                     contentDescription = "avatar",
                     modifier = Modifier
                         .size(150.dp)
-                        .clip(CircleShape)                       // clip to the circle shape
+                        .clip(CircleShape)
                         .border(1.dp, Color.Gray, CircleShape)
                         .clickable { imagePickerLauncher.launch("image/*") }
                 )
@@ -206,6 +208,7 @@ fun RegisterScreen() {
                     }
                 }
 
+                // Поля для ввода
                 TextsInput(nameState, textColor, surnameState)
 
                 Spacer(modifier = Modifier.padding(4.dp))
@@ -273,44 +276,6 @@ fun RegisterPreview() {
     RegisterScreen()
 }
 
-fun bitmapCrop(
-    srcBmp: Bitmap,
-    widthCompress: Int = 1,
-    heightCompress: Int = 1
-): Bitmap { // Обрезает картику до квадрата
-    val dstBmp: Bitmap
-    if (srcBmp.getWidth() >= srcBmp.getHeight()) {
-
-        dstBmp = Bitmap.createBitmap(
-            srcBmp,
-            srcBmp.getWidth() / 2 - srcBmp.getHeight() / 2,
-            0,
-            srcBmp.getHeight() / heightCompress,
-            srcBmp.getHeight() / heightCompress
-        );
-
-    } else {
-
-        dstBmp = Bitmap.createBitmap(
-            srcBmp,
-            0,
-            srcBmp.getHeight() / 2 - srcBmp.getWidth() / 2,
-            srcBmp.getWidth() / widthCompress,
-            srcBmp.getWidth() / widthCompress
-        );
-    }
-    return dstBmp
-}
-
-fun bitmapResize(dstBmp: Bitmap, height: Int = 200, width: Int = 200): Bitmap {
-    return Bitmap.createScaledBitmap(dstBmp, width, height, false)
-}
-
-fun bitmapCompress(dstBmp: Bitmap, quality: Int = 30): Bitmap {
-    val out = ByteArrayOutputStream()
-    dstBmp.compress(Bitmap.CompressFormat.JPEG, quality, out)
-    return BitmapFactory.decodeStream(ByteArrayInputStream(out.toByteArray()));
-}
 
 fun sendToDBMainInfo(
     name: String,

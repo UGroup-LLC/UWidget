@@ -1,8 +1,150 @@
 package com.kikoproject.uwidget.schedules
 
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.kikoproject.uwidget.main.navController
+import com.kikoproject.uwidget.navigation.ScreenNav
+import com.kikoproject.uwidget.networking.enterInSchedule
+import com.kikoproject.uwidget.objects.BackHeader
 
 @Composable
-fun JoinSchedule(){
+fun JoinSchedule() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background)
+            .padding(horizontal = 30.dp, vertical = 10.dp),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            BackHeader("Код приглашения")
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Text(
+                        text = "Введите код приглашения ниже",
+                        style = MaterialTheme.typography.caption,
+                        color = MaterialTheme.colors.surface
+                    )
+                    val isError = remember{mutableStateOf(false)}
+                    val code = joinCodeInput(isError)
+                    if(code.value.length == 6){
+                        if(enterInSchedule(code.value)){
+                            isError.value = false
+                            navController.navigate(ScreenNav.Dashboard.route)
+                        }
+                        else{
+                            isError.value = true
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
+@Composable
+fun joinCodeInput(isError: MutableState<Boolean>): MutableState<String> {
+    val returningValue = remember{mutableStateOf("")}
+    val focusRequester = remember {
+        mutableListOf(
+            FocusRequester(),
+            FocusRequester(),
+            FocusRequester(),
+            FocusRequester(),
+            FocusRequester(),
+            FocusRequester()
+        )
+    }
+    val textFieldValues = remember {
+        mutableListOf(
+            mutableStateOf(
+                TextFieldValue("")
+            ),
+            mutableStateOf(
+                TextFieldValue("")
+            ),
+            mutableStateOf(
+                TextFieldValue("")
+            ),
+            mutableStateOf(
+                TextFieldValue("")
+            ),
+            mutableStateOf(
+                TextFieldValue("")
+            ),
+            mutableStateOf(
+                TextFieldValue("")
+            )
+        )
+    }
+
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(7.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(10.dp)
+    ) {
+        itemsIndexed(textFieldValues) { index, textFieldValue ->
+            OutlinedTextField(
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                value = textFieldValue.value,
+                shape = RoundedCornerShape(10.dp),
+                isError = isError.value,
+                onValueChange = {
+                    if (it.text.length <= 1) {
+                        textFieldValue.value = it
+                        if(index+1 < focusRequester.size && it.text.length == 1)
+                            focusRequester[index + 1].requestFocus()
+                        else if(index-1 != -1 && it.text.length == 0) {
+                            isError.value = false
+                            focusRequester[index - 1].requestFocus()
+                        }
+
+                    }
+                    returningValue.value = ""
+                    textFieldValues.forEach { field ->
+                        returningValue.value += field.value.text
+                    }
+                },
+                modifier = Modifier
+                    .width(42.dp)
+                    .height(50.dp)
+                    .focusRequester(focusRequester[index]),
+                singleLine = true,
+                textStyle = TextStyle(
+                    fontSize = 15.sp,
+                    textAlign = TextAlign.Center
+                ),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    cursorColor = Color.Transparent,
+                    textColor = MaterialTheme.colors.surface
+                )
+            )
+        }
+    }
+    return returningValue
 }

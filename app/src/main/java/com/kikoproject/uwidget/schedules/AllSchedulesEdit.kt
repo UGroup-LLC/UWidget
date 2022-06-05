@@ -5,16 +5,21 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.kikoproject.uwidget.main.curSchedules
 import com.kikoproject.uwidget.main.curUser
+import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.main.roomDb
-import com.kikoproject.uwidget.objects.AddScheduleButton
+import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.objects.BackHeader
 import com.kikoproject.uwidget.objects.ScheduleButton
+import com.kikoproject.uwidget.objects.StandardButton
 
 @Composable
 fun AllSchedulesActivity(){
@@ -30,15 +35,15 @@ fun AllSchedulesActivity(){
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             BackHeader("Мои расписания")
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)){
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp), horizontalAlignment = Alignment.CenterHorizontally){
                 items(curSchedules) { schedule ->
                     ScheduleButton(schedule, true)
                 }
                 item {
-                    AddScheduleButton(text = "Создать расписание")
+                    StandardButton(content = { navController.navigate(ScreenNav.AddScheduleNav.route)},text = "Создать расписание", Icons.Rounded.Add)
                 }
                 item{
-                    AddScheduleButton(text = "Присоедениться к расписанию")
+                    StandardButton(content = { navController.navigate(ScreenNav.JoinToScheduleNav.route)},text = "Присоедениться к расписанию",  Icons.Rounded.Lock)
                 }
             }
         }

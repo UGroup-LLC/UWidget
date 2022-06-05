@@ -33,10 +33,13 @@ import com.kikoproject.uwidget.*
 import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.dialogs.ScheduleDialogSelector
 import com.kikoproject.uwidget.dialogs.ShowSearchSelector
+import com.kikoproject.uwidget.main.curSchedule
 import com.kikoproject.uwidget.main.navController
+import com.kikoproject.uwidget.main.roomDb
 import com.kikoproject.uwidget.models.schedules.DefaultScheduleOption
 import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.PermissionNav
+import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.createScheduleInDB
 import com.kikoproject.uwidget.networking.createScheduleInRoomDB
 import com.kikoproject.uwidget.objects.ExpandableTextHelper
@@ -60,6 +63,7 @@ fun AddSchedule() {
     val timeCount = remember { mutableStateOf(0) }
     var timeState = mutableListOf<MutableState<TextFieldValue>>()
     val materialColor = MaterialTheme.colors
+    var scheduleAccessMode = 0
 
     Box(
         modifier = Modifier
@@ -122,7 +126,7 @@ fun AddSchedule() {
                     shape = RoundedCornerShape(16.dp),
                     textStyle = TextStyle(color = textColor)
                 )
-            }
+            } //
             item {
                 ExpandableTextHelper(
                     cardColor = textColor.copy(alpha = 0.2f),
@@ -142,7 +146,7 @@ fun AddSchedule() {
                     fontWeight = FontWeight.Medium
                 )
 
-                val scheduleAccessMode = IncreaseButtons(
+                scheduleAccessMode = IncreaseButtons(
                     texts = listOf("Локальное", "По ссылке"),
                     roundStrength = 30f,
                     inactiveColor = textColor.copy(0.1f),
@@ -368,7 +372,7 @@ fun AddSchedule() {
                                     Text(
                                         text = "Предпросмотр",
 
-                                    )
+                                        )
                                 }
                             }
                         }
@@ -378,7 +382,7 @@ fun AddSchedule() {
                 if (timeCount.value >= 0) {
                     timeState = ScheduleCardCreator(cardsInt = timeCount.value, titleText = "Время")
                 }
-            }
+            } // Распологается
             item {
                 Button(
                     modifier = Modifier
@@ -397,10 +401,10 @@ fun AddSchedule() {
 
                         var allSchedulesNull = 0
                         schedulesState.value.forEach { schedule ->
-                            if(schedule.size == 0) {
+                            if (schedule.size == 0) {
                                 allSchedulesNull++
                             }
-                            if(allSchedulesNull == 7){
+                            if (allSchedulesNull == 7) {
                                 Toast.makeText(
                                     context,
                                     "Ошибка, ни в одном из полей расписания ничего не введенно",
@@ -435,6 +439,7 @@ fun AddSchedule() {
                                         adminId.id!!,
                                         listOf(""),
                                         tempMap,
+                                        roomDb.scheduleDao().getJoinCode(), // Генерация ключа приглашения
                                         tempTimeState,
                                         categoryState.value.text,
                                         DefaultScheduleOption(materialColor)
@@ -443,7 +448,10 @@ fun AddSchedule() {
                                     createScheduleInDB(
                                         schedule = schedule
                                     )
-                                    navController.navigate(PermissionNav.BackgroundActivity.route)
+                                    curSchedule = schedule
+
+                                    // Проверка локальная ли бд или по ссылке
+                                    navController.navigate(ScreenNav.Dashboard.route)
                                 }
                             } else {
                                 Toast.makeText(
