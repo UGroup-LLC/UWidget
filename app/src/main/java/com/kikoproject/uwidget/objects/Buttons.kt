@@ -25,17 +25,20 @@ import com.kikoproject.uwidget.auth.signOut
 import com.kikoproject.uwidget.main.curSchedule
 import com.kikoproject.uwidget.main.curUser
 import com.kikoproject.uwidget.main.navController
+import com.kikoproject.uwidget.main.prefs
 import com.kikoproject.uwidget.models.User
 import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.deleteSchedule
 import com.kikoproject.uwidget.networking.getNextUserSchedule
 import com.kikoproject.uwidget.networking.outFromSchedule
+import com.kikoproject.uwidget.networking.updateAllData
 
 @Composable
-fun ScheduleButton(schedule: Schedule, isAdmin: Boolean) {
+fun ScheduleButton(schedule: Schedule, isAdmin: Boolean, mySheduleAdmin: List<Schedule>, mySheduleUser: List<Schedule>) {
     Button(
         onClick = {
+            prefs.edit().putString(schedule.ID, "null").apply()
             curSchedule = schedule
             navController.popBackStack()
         },
@@ -65,8 +68,9 @@ fun ScheduleButton(schedule: Schedule, isAdmin: Boolean) {
                         curSchedule = schedule
                         navController.navigate(ScreenNav.EditScheduleMenuNav.route)
                     } else {
-                        val nextSchedule = getNextUserSchedule()
+                        val nextSchedule = getNextUserSchedule(mySchedulesUser = mySheduleUser, mySchedulesAdmin = mySheduleAdmin)
                         if (nextSchedule != null) {
+                            prefs.edit().putString(nextSchedule.ID, "null").apply()
                             curSchedule = nextSchedule
                             navController.popBackStack()
                         } else {
@@ -217,8 +221,11 @@ fun StandardButton(content: () -> Unit, text: String, icon: ImageVector) {
 
 @Composable
 fun StandardButton(content: () -> Unit, text: String, icon: Painter) {
+    val materialColors = MaterialTheme.colors
     Button(
-        onClick = { content() },
+        onClick = {
+            content()
+        },
         shape = RoundedCornerShape(17.dp),
         border = BorderStroke(0.dp, Color.Transparent),
         elevation = ButtonDefaults.elevation(0.dp, 0.dp, 0.dp),

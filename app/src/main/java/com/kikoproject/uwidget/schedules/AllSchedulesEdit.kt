@@ -13,47 +13,67 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.kikoproject.uwidget.main.mySchedulesAdmin
-import com.kikoproject.uwidget.main.mySchedulesUser
+import com.kikoproject.uwidget.main.curUser
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.navigation.ScreenNav
+import com.kikoproject.uwidget.networking.OnlineContent
+import com.kikoproject.uwidget.networking.updateAllData
 import com.kikoproject.uwidget.objects.BackHeader
 import com.kikoproject.uwidget.objects.ScheduleButton
 import com.kikoproject.uwidget.objects.StandardButton
 
 @Composable
-fun AllSchedulesActivity(){
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.background)
-            .padding(horizontal = 30.dp, vertical = 10.dp),
-        contentAlignment = Alignment.TopCenter
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+fun AllSchedulesActivity() {
+    OnlineContent(user = curUser, content = { myScheduleUser, myScheduleAdmin ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.background)
+                .padding(horizontal = 30.dp, vertical = 10.dp),
+            contentAlignment = Alignment.TopCenter
         ) {
-            BackHeader("Мои расписания")
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp), horizontalAlignment = Alignment.CenterHorizontally){
-                item {
-                    StandardButton(content = { navController.navigate(ScreenNav.AddScheduleNav.route)},text = "Создать расписание", Icons.Rounded.Add)
-                }
-                item{
-                    StandardButton(content = { navController.navigate(ScreenNav.JoinToScheduleNav.route)},text = "Присоедениться к расписанию",  Icons.Rounded.Lock)
-                }
-                item{
-                    Divider(modifier = Modifier.fillMaxWidth(0.6f).padding(5.dp), color = MaterialTheme.colors.primary.copy(0.2f), thickness = 1.dp)
-                }
-                // Раписания где юзер админ
-                items(mySchedulesAdmin) { schedule ->
-                    ScheduleButton(schedule, true)
-                }
-                // Расписания где юзер это простой смертный
-                items(mySchedulesUser) { schedule ->
-                    ScheduleButton(schedule, false)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                BackHeader("Мои расписания")
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    item {
+                        StandardButton(
+                            content = { navController.navigate(ScreenNav.AddScheduleNav.route) },
+                            text = "Создать расписание",
+                            Icons.Rounded.Add
+                        )
+                    }
+                    item {
+                        StandardButton(
+                            content = { navController.navigate(ScreenNav.JoinToScheduleNav.route) },
+                            text = "Присоедениться к расписанию",
+                            Icons.Rounded.Lock
+                        )
+                    }
+                    item {
+                        Divider(
+                            modifier = Modifier
+                                .fillMaxWidth(0.6f)
+                                .padding(5.dp),
+                            color = MaterialTheme.colors.primary.copy(0.2f),
+                            thickness = 1.dp
+                        )
+                    }
+                    // Раписания где юзер админ
+                    items(myScheduleAdmin) { schedule ->
+                        ScheduleButton(schedule, true, myScheduleAdmin, myScheduleUser)
+                    }
+                    // Расписания где юзер это простой смертный
+                    items(myScheduleUser) { schedule ->
+                        ScheduleButton(schedule, false, myScheduleAdmin, myScheduleUser)
+                    }
                 }
             }
         }
-    }
+    })
 }

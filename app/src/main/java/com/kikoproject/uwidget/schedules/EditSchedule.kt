@@ -433,7 +433,7 @@ fun EditSchedule() {
                                         0.toString(), // TODO()
                                         tempTimeState,
                                         categoryState.value.text,
-                                        DefaultScheduleOption(materialColor)
+                                        DefaultScheduleOption()
                                     )
                                     createScheduleInRoomDB(schedule)
                                     createScheduleInDB(

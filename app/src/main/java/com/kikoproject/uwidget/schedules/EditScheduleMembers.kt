@@ -11,47 +11,42 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.kikoproject.uwidget.R
-import com.kikoproject.uwidget.main.allUsers
 import com.kikoproject.uwidget.main.curSchedule
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.models.User
 import com.kikoproject.uwidget.navigation.ScreenNav
+import com.kikoproject.uwidget.networking.MembersOnlineContent
 import com.kikoproject.uwidget.objects.BackHeader
 import com.kikoproject.uwidget.objects.StandardButton
 import com.kikoproject.uwidget.objects.UserButton
 
 @Composable
 // Меню удаления мемберов расписания
-fun EditScheduleMembers(){
-    val users = mutableListOf<User>()
+fun EditScheduleMembers() {
+    MembersOnlineContent(schedule = curSchedule, content = { users ->
 
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.background)
-            .padding(horizontal = 30.dp, vertical = 10.dp),
-        contentAlignment = Alignment.TopCenter
-    ) {
-
-        allUsers.forEach { user ->
-            curSchedule.UsersID.forEach { id ->
-                if(user.Id == id){
-                    users.add(user)
-                }
-            }
-        }
-
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.background)
+                .padding(horizontal = 30.dp, vertical = 10.dp),
+            contentAlignment = Alignment.TopCenter
         ) {
-            BackHeader("Пользователи")
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp), horizontalAlignment = Alignment.CenterHorizontally){
-                items(users) { user ->
-                    UserButton(schedule = curSchedule, user = user)
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                BackHeader("Пользователи")
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    items(users) { user ->
+                        UserButton(schedule = curSchedule, user = user)
+                    }
                 }
             }
         }
-    }
+    })
 }

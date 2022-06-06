@@ -1,11 +1,14 @@
 package com.kikoproject.uwidget.main
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -17,8 +20,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
-import androidx.room.RoomDatabase
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -29,6 +30,7 @@ import com.kikoproject.uwidget.navigation.NavigationSetup
 import com.kikoproject.uwidget.networking.CheckUserInDB
 import com.kikoproject.uwidget.ui.theme.UWidgetTheme
 
+
 @SuppressLint("StaticFieldLeak")
 lateinit var navController: NavHostController
 @SuppressLint("StaticFieldLeak")
@@ -38,15 +40,11 @@ lateinit var roomDb: MainDataBase
 @SuppressLint("StaticFieldLeak")
 lateinit var curUser: User
 @SuppressLint("StaticFieldLeak")
-var mySchedulesAdmin: MutableList<Schedule> = mutableListOf()
-@SuppressLint("StaticFieldLeak")
-var mySchedulesUser: MutableList<Schedule> = mutableListOf()
+lateinit var materialColors: Colors
 @SuppressLint("StaticFieldLeak")
 lateinit var curSchedule: Schedule
 @SuppressLint("StaticFieldLeak")
-lateinit var allSchedules: MutableList<Schedule>
-@SuppressLint("StaticFieldLeak")
-lateinit var allUsers: MutableList<User>
+lateinit var prefs: SharedPreferences
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +57,11 @@ class MainActivity : ComponentActivity() {
                 navController = rememberNavController()
                 NavigationSetup(navController = navController)
                 val state = remember { mutableStateOf(true) }
+
+                materialColors = MaterialTheme.colors
+
+                prefs =  this.getSharedPreferences(
+                context.packageName, Context.MODE_PRIVATE)
 
                 roomDb = Room.databaseBuilder(
                     applicationContext,

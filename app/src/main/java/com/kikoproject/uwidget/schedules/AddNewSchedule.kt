@@ -63,7 +63,6 @@ fun AddSchedule() {
     val timeCount = remember { mutableStateOf(0) }
     var timeState = mutableListOf<MutableState<TextFieldValue>>()
     val materialColor = MaterialTheme.colors
-    var scheduleAccessMode = 0
 
     // Штука которая будет нам показывать что мы чето не правильно сделали и тд
     var message: CustomToastBar? by remember { mutableStateOf(null) }
@@ -149,22 +148,6 @@ fun AddSchedule() {
                     text = "Если у вас множество расписаний, вы можете сгруппировать их в одну категорию (Например: Колледж моды - 1 курс), если вам не нужна категория оставьте поле пустым"
                 )
                 val primaryColor = MaterialTheme.colors.primary
-
-                Text(
-                    text = "Видимость расписания",
-                    color = textColor,
-                    modifier = Modifier.padding(top = 20.dp, bottom = 10.dp),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
-
-                scheduleAccessMode = IncreaseButtons(
-                    texts = listOf("Локальное", "По ссылке"),
-                    roundStrength = 30f,
-                    inactiveColor = textColor.copy(0.1f),
-                    activeColor = primaryColor.copy(0.5f),
-                    fontSize = 12.sp
-                )
 
                 Text(
                     text = "Способ получения расписания",
@@ -390,8 +373,27 @@ fun AddSchedule() {
                         }
                     }
                 }
+                Text(
+                    text = "Способ заполнения времени",
+                    color = textColor,
+                    modifier = Modifier.padding(top = 20.dp, bottom = 10.dp),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium
+                )
+                val scheduleTimeMode = IncreaseButtons(
+                    texts = listOf("Уроки", "Пары", "Ручное"),
+                    inactiveColor = textColor.copy(0.1f),
+                    roundStrength = 30f,
+                    activeColor = primaryColor.copy(0.5f),
+                    fontSize = 11.5.sp
+                )
+                if(scheduleTimeMode == 0){
 
-                if (timeCount.value >= 0) {
+                }
+                else if(scheduleTimeMode == 1){
+
+                }
+                else{
                     timeState = ScheduleCardCreator(cardsInt = timeCount.value, titleText = "Время")
                 }
             } // Распологается
@@ -454,7 +456,7 @@ fun AddSchedule() {
                                             .getJoinCode(), // Генерация ключа приглашения
                                         tempTimeState,
                                         categoryState.value.text,
-                                        DefaultScheduleOption(materialColor)
+                                        DefaultScheduleOption()
                                     )
                                     createScheduleInRoomDB(schedule)
                                     createScheduleInDB(

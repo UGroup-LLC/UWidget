@@ -5,6 +5,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.text.font.FontWeight
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.kikoproject.uwidget.main.materialColors
 import com.kikoproject.uwidget.models.schedules.options.*
 
 @Entity(tableName = "schedules")
@@ -21,7 +22,7 @@ data class Schedule(
 )
 
 
-fun DefaultScheduleOption(materialColors: Colors): ScheduleOptions
+fun DefaultScheduleOption(): ScheduleOptions
 {
     return ScheduleOptions(
         generalSettings = ScheduleGeneralSettings(
@@ -35,7 +36,7 @@ fun DefaultScheduleOption(materialColors: Colors): ScheduleOptions
         ),
         scheduleMorningSettings = ScheduleMorningSettings(
             7,
-            "Доброе утро %n",
+            "Доброе утро, %n",
             true,
             true,
             true,

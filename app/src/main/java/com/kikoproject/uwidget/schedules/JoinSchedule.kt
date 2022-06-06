@@ -24,11 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.navigation.ScreenNav
+import com.kikoproject.uwidget.networking.EnterInScheduleResult
 import com.kikoproject.uwidget.networking.enterInSchedule
 import com.kikoproject.uwidget.objects.BackHeader
 import com.kikoproject.uwidget.objects.CustomToastBar
 import com.kikoproject.uwidget.objects.customToastBarMessage
 import com.radusalagean.infobarcompose.InfoBar
+
 @Composable
 fun JoinSchedule() {
     // Штука которая будет нам показывать что мы чето не правильно сделали и тд
@@ -56,16 +58,20 @@ fun JoinSchedule() {
                         style = MaterialTheme.typography.caption,
                         color = MaterialTheme.colors.surface
                     )
-                    val isError = remember{mutableStateOf(false)}
+                    val isError = remember { mutableStateOf(false) }
                     val code = joinCodeInput(isError)
-                    if(code.value.length == 6){
-                        if(enterInSchedule(code.value)){
-                            isError.value = false
-                            navController.navigate(ScreenNav.Dashboard.route)
-                        }
-                        else{
-                            isError.value = true
-                        }
+                    if (code.value.length == 6) {
+                        // Проверка есть ли такое расписание с таким кодом, состоим ли мы уже в нем или админ ли мы в нем
+                        enterInSchedule(code.value, object : EnterInScheduleResult {
+                            override fun onResult(isEntered: Boolean) {
+                                if (isEntered) {
+                                    isError.value = false
+                                    navController.navigate(ScreenNav.Dashboard.route)
+                                } else {
+                                    isError.value = true
+                                }
+                            }
+                        })
                     }
                 }
             }
@@ -76,7 +82,7 @@ fun JoinSchedule() {
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun joinCodeInput(isError: MutableState<Boolean>): MutableState<String> {
-    val returningValue = remember{mutableStateOf("")}
+    val returningValue = remember { mutableStateOf("") }
     val focusRequester = remember {
         mutableListOf(
             FocusRequester(),
@@ -109,7 +115,7 @@ fun joinCodeInput(isError: MutableState<Boolean>): MutableState<String> {
             )
         )
     }
-    if(isError.value){
+    if (isError.value) {
         textFieldValues.forEach { field ->
             field.value = TextFieldValue("")
             focusRequester[0].requestFocus()
@@ -131,9 +137,9 @@ fun joinCodeInput(isError: MutableState<Boolean>): MutableState<String> {
                 onValueChange = {
                     if (it.text.length <= 1) {
                         textFieldValue.value = it
-                        if(index+1 < focusRequester.size && it.text.length == 1)
+                        if (index + 1 < focusRequester.size && it.text.length == 1)
                             focusRequester[index + 1].requestFocus()
-                        else if(index-1 != -1 && it.text.length == 0) {
+                        else if (index - 1 != -1 && it.text.length == 0) {
                             isError.value = false
                             focusRequester[index - 1].requestFocus()
                         }
