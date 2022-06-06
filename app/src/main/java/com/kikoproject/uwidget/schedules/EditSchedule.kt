@@ -46,6 +46,8 @@ import com.kikoproject.uwidget.objects.ExpandableTextHelper
 import com.kikoproject.uwidget.objects.IncreaseButtons
 import com.kikoproject.uwidget.objects.ScheduleCardCreator
 import com.kikoproject.uwidget.ui.theme.Typography
+import com.radusalagean.infobarcompose.InfoBar
+import com.radusalagean.infobarcompose.InfoBarMessage
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
@@ -64,12 +66,18 @@ fun EditSchedule() {
     var timeState = mutableListOf<MutableState<TextFieldValue>>()
     val materialColor = MaterialTheme.colors
 
+    // Штука которая будет нам показывать что мы чето не правильно сделали и тд
+    var message: InfoBarMessage? by remember { mutableStateOf(null) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background),
         contentAlignment = Alignment.TopCenter
     ) {
+        InfoBar(offeredMessage = message) {
+            message = null
+        }
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -434,18 +442,13 @@ fun EditSchedule() {
                                     navController.navigate(ScreenNav.Dashboard.route)
                                 }
                             } else {
-                                Toast.makeText(
-                                    context,
-                                    "Ошибка, пустое название",
-                                    Toast.LENGTH_LONG
-                                ).show()
+                                message = InfoBarMessage(text = "Ошибка, пустое название")
                                 coroutineScope.launch {
                                     listState.animateScrollToItem(0)
                                 }
                             }
                         } else {
-                            Toast.makeText(context, "Ошибка, пустое расписание", Toast.LENGTH_LONG)
-                                .show()
+                            message = InfoBarMessage(text = "Ошибка, пустое расписание")
                         }
                     },
                     colors = ButtonDefaults.buttonColors(

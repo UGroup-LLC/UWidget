@@ -20,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.kikoproject.uwidget.R
+import com.kikoproject.uwidget.main.curUser
 import com.kikoproject.uwidget.main.navController
 
 @Composable
@@ -27,7 +28,7 @@ fun MainHeader(account: GoogleSignInAccount?) {
     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.Top) {
         if (account != null) {
             Avatar(
-                account = account, modifier = Modifier
+                user = curUser, modifier = Modifier
                     .requiredSize(36.dp)
                     .clip(CircleShape)
                     .weight(2f)

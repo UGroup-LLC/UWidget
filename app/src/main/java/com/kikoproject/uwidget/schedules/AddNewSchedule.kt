@@ -42,10 +42,10 @@ import com.kikoproject.uwidget.navigation.PermissionNav
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.createScheduleInDB
 import com.kikoproject.uwidget.networking.createScheduleInRoomDB
-import com.kikoproject.uwidget.objects.ExpandableTextHelper
-import com.kikoproject.uwidget.objects.IncreaseButtons
-import com.kikoproject.uwidget.objects.ScheduleCardCreator
+import com.kikoproject.uwidget.objects.*
 import com.kikoproject.uwidget.ui.theme.Typography
+import com.radusalagean.infobarcompose.InfoBar
+import com.radusalagean.infobarcompose.InfoBarMessage
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
@@ -65,12 +65,24 @@ fun AddSchedule() {
     val materialColor = MaterialTheme.colors
     var scheduleAccessMode = 0
 
+    // Штука которая будет нам показывать что мы чето не правильно сделали и тд
+    var message: CustomToastBar? by remember { mutableStateOf(null) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background),
         contentAlignment = Alignment.TopCenter
     ) {
+
+        // Ошибка сверху
+        InfoBar(
+            offeredMessage = message,
+            content = customToastBarMessage(),
+            modifier = Modifier.padding(12.dp)
+        ) {
+            message = null
+        }
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -405,11 +417,10 @@ fun AddSchedule() {
                                 allSchedulesNull++
                             }
                             if (allSchedulesNull == 7) {
-                                Toast.makeText(
-                                    context,
-                                    "Ошибка, ни в одном из полей расписания ничего не введенно",
-                                    Toast.LENGTH_LONG
-                                ).show()
+                                message = CustomToastBar(
+                                    text = "Ошибка, ни в одном из полей расписания ничего не введенно",
+                                    materialColor = materialColor
+                                )
                                 return@Button
                             }
                         }
@@ -420,11 +431,11 @@ fun AddSchedule() {
                                 !time.value.text.contains(":")
                                 && time.value.text.filter { it.isDigit() }.length != 4
                             ) {
-                                Toast.makeText(
-                                    context,
-                                    "Ошибка, время введенно некорректно, пример: 09:08",
-                                    Toast.LENGTH_LONG
-                                ).show()
+                                message =
+                                    CustomToastBar(
+                                        text = "Ошибка, время введенно некорректно, пример: 09:08",
+                                        materialColor = materialColor
+                                    )
                                 return@Button
                             }
                         }
@@ -439,7 +450,8 @@ fun AddSchedule() {
                                         adminId.id!!,
                                         listOf(""),
                                         tempMap,
-                                        roomDb.scheduleDao().getJoinCode(), // Генерация ключа приглашения
+                                        roomDb.scheduleDao()
+                                            .getJoinCode(), // Генерация ключа приглашения
                                         tempTimeState,
                                         categoryState.value.text,
                                         DefaultScheduleOption(materialColor)
@@ -454,18 +466,19 @@ fun AddSchedule() {
                                     navController.navigate(ScreenNav.Dashboard.route)
                                 }
                             } else {
-                                Toast.makeText(
-                                    context,
-                                    "Ошибка, пустое название",
-                                    Toast.LENGTH_LONG
-                                ).show()
+                                message = CustomToastBar(
+                                    text = "Ошибка, пустое название",
+                                    materialColor = materialColor
+                                )
                                 coroutineScope.launch {
                                     listState.animateScrollToItem(0)
                                 }
                             }
                         } else {
-                            Toast.makeText(context, "Ошибка, пустое расписание", Toast.LENGTH_LONG)
-                                .show()
+                            message = CustomToastBar(
+                                text = "Ошибка, пустое расписание",
+                                materialColor = materialColor
+                            )
                         }
                     },
                     colors = ButtonDefaults.buttonColors(

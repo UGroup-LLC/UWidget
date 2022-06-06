@@ -1,5 +1,6 @@
 package com.kikoproject.uwidget.schedules
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -25,14 +26,19 @@ import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.enterInSchedule
 import com.kikoproject.uwidget.objects.BackHeader
-
+import com.kikoproject.uwidget.objects.CustomToastBar
+import com.kikoproject.uwidget.objects.customToastBarMessage
+import com.radusalagean.infobarcompose.InfoBar
 @Composable
 fun JoinSchedule() {
+    // Штука которая будет нам показывать что мы чето не правильно сделали и тд
+    var message: CustomToastBar? by remember { mutableStateOf(null) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background)
-            .padding(horizontal = 30.dp, vertical = 10.dp),
+            .padding(horizontal = 15.dp, vertical = 10.dp),
         contentAlignment = Alignment.TopCenter
     ) {
         Column(
@@ -67,6 +73,7 @@ fun JoinSchedule() {
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun joinCodeInput(isError: MutableState<Boolean>): MutableState<String> {
     val returningValue = remember{mutableStateOf("")}
@@ -101,6 +108,13 @@ fun joinCodeInput(isError: MutableState<Boolean>): MutableState<String> {
                 TextFieldValue("")
             )
         )
+    }
+    if(isError.value){
+        textFieldValues.forEach { field ->
+            field.value = TextFieldValue("")
+            focusRequester[0].requestFocus()
+        }
+        isError.value = false
     }
 
     LazyRow(

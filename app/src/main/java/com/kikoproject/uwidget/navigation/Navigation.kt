@@ -57,7 +57,9 @@ fun NavigationSetup(
         composable(route = ScreenNav.JoinToScheduleNav.route){
             JoinSchedule()
         }
-
+        composable(route = ScreenNav.EditMembersNav.route){
+            EditScheduleMembers()
+        }
 
         //permission
         composable(route = PermissionNav.CreateWidget.route){

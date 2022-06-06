@@ -38,11 +38,15 @@ lateinit var roomDb: MainDataBase
 @SuppressLint("StaticFieldLeak")
 lateinit var curUser: User
 @SuppressLint("StaticFieldLeak")
-lateinit var curSchedules: MutableList<Schedule>
+var mySchedulesAdmin: MutableList<Schedule> = mutableListOf()
+@SuppressLint("StaticFieldLeak")
+var mySchedulesUser: MutableList<Schedule> = mutableListOf()
 @SuppressLint("StaticFieldLeak")
 lateinit var curSchedule: Schedule
 @SuppressLint("StaticFieldLeak")
 lateinit var allSchedules: MutableList<Schedule>
+@SuppressLint("StaticFieldLeak")
+lateinit var allUsers: MutableList<User>
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

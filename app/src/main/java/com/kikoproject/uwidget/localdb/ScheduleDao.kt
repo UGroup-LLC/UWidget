@@ -15,7 +15,7 @@ interface SchedulesDao {
     fun getJoinCode(): String
 
     @Query("SELECT * FROM schedules WHERE adminId LIKE :mAdminId")
-    fun getByAdminId(mAdminId: String): List<Schedule>
+    fun getByUserId(mAdminId: String): List<Schedule>
 
     @Query("DELETE FROM schedules")
     fun deleteAll()
