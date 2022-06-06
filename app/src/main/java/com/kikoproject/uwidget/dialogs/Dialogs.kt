@@ -266,32 +266,34 @@ fun ShowFoundResult(
 
 
 @Composable
-fun ShowErrorDialog(text: String) {
+fun ShowErrorDialog(text: String, needButton: Boolean) {
     val state = remember { mutableStateOf(true) }
     val textColor = MaterialTheme.colors.surface
     if (state.value) {
         AlertDialog(
-            properties = DialogProperties(dismissOnClickOutside = false),
+            properties = DialogProperties(dismissOnClickOutside = false, dismissOnBackPress = false),
             containerColor = MaterialTheme.colors.background,
             onDismissRequest = { state.value = false },
             title = {
                 Text(
-                    text = "Ошибка! Нет интернет соединения",
+                    text = text,
                     textAlign = TextAlign.Center,
                     color = textColor
                 )
             },
             text = {},
             dismissButton = {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Button(onClick = {
-                        state.value = false
-                        navController.navigate(ScreenNav.GoogleAuthNav.route)
-                    }) {
-                        Text(text = text, color = MaterialTheme.colors.secondary)
+                if(needButton) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Button(onClick = {
+                            state.value = false
+                            navController.navigate(ScreenNav.GoogleAuthNav.route)
+                        }) {
+                            Text(text = text, color = MaterialTheme.colors.secondary)
+                        }
                     }
                 }
             },
