@@ -225,6 +225,8 @@ fun RegisterScreen() {
                                 account
                             )
                         }
+
+                        navController.navigate(ScreenNav.Dashboard.route)
                     }, colors = ButtonDefaults.buttonColors(
                         MaterialTheme.colors.primaryVariant
                     ),

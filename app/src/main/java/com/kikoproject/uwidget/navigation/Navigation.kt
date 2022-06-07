@@ -29,10 +29,6 @@ fun NavigationSetup(
         {
             RegisterScreen()
         }
-        composable(route = ScreenNav.ScheduleChooseNav.route)
-        {
-            ChooseSchedule()
-        }
         composable(route = ScreenNav.MainNav.route){
             MainActivity()
         }

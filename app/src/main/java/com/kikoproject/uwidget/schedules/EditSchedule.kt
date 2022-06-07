@@ -55,9 +55,10 @@ import kotlin.random.Random
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditSchedule() {
+
     val textColor = MaterialTheme.colors.surface
-    val nameState = remember { mutableStateOf(TextFieldValue(text = curSchedule.Name)) }
-    val categoryState = remember { mutableStateOf(TextFieldValue(text = curSchedule.Category)) }
+    var nameState = remember { mutableStateOf(TextFieldValue("Error")) }
+    var categoryState = remember { mutableStateOf(TextFieldValue("Error")) }
     val schedulesState = remember { mutableStateOf(mutableListOf<MutableList<String>>()) }
     val context = LocalContext.current
     val listState = rememberLazyListState()
@@ -65,6 +66,11 @@ fun EditSchedule() {
     val timeCount = remember { mutableStateOf(0) }
     var timeState = mutableListOf<MutableState<TextFieldValue>>()
     val materialColor = MaterialTheme.colors
+
+    if (curSchedule != null) {
+        nameState = remember { mutableStateOf(TextFieldValue(text = curSchedule!!.Name)) }
+        categoryState = remember { mutableStateOf(TextFieldValue(text = curSchedule!!.Category)) }
+    }
 
     // Штука которая будет нам показывать что мы чето не правильно сделали и тд
     var message: InfoBarMessage? by remember { mutableStateOf(null) }
@@ -464,27 +470,29 @@ fun EditSchedule() {
                     )
                 }
 
-                Button(
-                    modifier = Modifier
-                        .padding(horizontal = 20.dp, vertical = 10.dp)
-                        .fillMaxWidth(0.9f),
-                    onClick = {
-                        deleteSchedule(curSchedule)
-                        navController.popBackStack()
-                        navController.popBackStack()
-                        navController.navigate(ScreenNav.AllSchedulesNav.route)
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Red.copy(
-                            alpha = 0.5f
+                if (curSchedule != null) {
+                    Button(
+                        modifier = Modifier
+                            .padding(horizontal = 20.dp, vertical = 10.dp)
+                            .fillMaxWidth(0.9f),
+                        onClick = {
+                            deleteSchedule(curSchedule!!)
+                            navController.popBackStack()
+                            navController.popBackStack()
+                            navController.navigate(ScreenNav.AllSchedulesNav.route)
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Red.copy(
+                                alpha = 0.5f
+                            )
                         )
-                    )
-                ) {
-                    Text(
-                        text = "Удалить расписание",
-                        color = Color.White,
-                        style = Typography.button
-                    )
+                    ) {
+                        Text(
+                            text = "Удалить расписание",
+                            color = Color.White,
+                            style = Typography.button
+                        )
+                    }
                 }
             }
         }

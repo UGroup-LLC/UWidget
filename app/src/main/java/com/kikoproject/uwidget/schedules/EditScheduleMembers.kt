@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.kikoproject.uwidget.R
+import com.kikoproject.uwidget.dialogs.ShowErrorDialog
 import com.kikoproject.uwidget.main.curSchedule
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.models.User
@@ -23,30 +24,35 @@ import com.kikoproject.uwidget.objects.UserButton
 @Composable
 // Меню удаления мемберов расписания
 fun EditScheduleMembers() {
-    MembersOnlineContent(schedule = curSchedule, content = { users ->
+    if(curSchedule != null) {
+        MembersOnlineContent(schedule = curSchedule!!, content = { users ->
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background)
-                .padding(horizontal = 30.dp, vertical = 10.dp),
-            contentAlignment = Alignment.TopCenter
-        ) {
-
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colors.background)
+                    .padding(horizontal = 30.dp, vertical = 10.dp),
+                contentAlignment = Alignment.TopCenter
             ) {
-                BackHeader("Пользователи")
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                    items(users) { user ->
-                        UserButton(schedule = curSchedule, user = user)
+                    BackHeader("Пользователи")
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        items(users) { user ->
+                            UserButton(schedule = curSchedule!!, user = user)
+                        }
                     }
                 }
             }
-        }
-    })
+        })
+    }
+    else{
+        ShowErrorDialog(text = "Schedule error", needButton = true)
+    }
 }

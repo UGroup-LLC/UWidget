@@ -40,7 +40,7 @@ fun ShowJoinCode() {
                     color = MaterialTheme.colors.surface,
                 )
                 Text(
-                    curSchedule.JoinCode.toString(),
+                    curSchedule?.JoinCode.toString(),
                     modifier = Modifier.fillMaxWidth(),
                     style = MaterialTheme.typography.caption,
                     fontSize = 32.sp,

@@ -44,15 +44,17 @@ fun DashboardActivity() {
         val account = GoogleSignIn.getLastSignedInAccount(context)
 
 
-        curSchedule = roomDb.scheduleDao().getWithId(
-            prefs.getString(
-                "mainSchedule",
-                getNextUserSchedule(
-                    mySchedulesAdmin = myScheduleAdmin,
-                    mySchedulesUser = myScheduleUser
-                )?.ID
-            )!!
-        )
+        curSchedule = prefs.getString(
+            "mainSchedule",
+            getNextUserSchedule(
+                mySchedulesAdmin = myScheduleAdmin,
+                mySchedulesUser = myScheduleUser
+            )?.ID
+        )?.let {
+            roomDb.scheduleDao().getWithId(
+                it
+            )
+        }
 
         Box(
             modifier = Modifier
@@ -77,7 +79,13 @@ fun DashboardActivity() {
                         backgroundColor = MaterialTheme.colors.primary.copy(0.25f),
                         modifier = Modifier.padding(horizontal = 45.dp, vertical = 20.dp)
                     ) {
-                        TitleShedule(user = curUser, schedule = curSchedule)
+                        if(curSchedule != null) {
+                            TitleShedule(user = curUser, schedule = curSchedule!!)
+                        }
+                        else
+                        {
+                            TitleShedule("Создайте расписание")
+                        }
                     }
                 }
                 Row(
@@ -145,6 +153,16 @@ fun TitleShedule(user: User, schedule: Schedule) {
             text,
             user
         ),
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+        style = MaterialTheme.typography.caption,
+        color = MaterialTheme.colors.surface
+    )
+}
+
+@Composable
+fun TitleShedule(text: String) {
+    Text(
+        text = text,
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
         style = MaterialTheme.typography.caption,
         color = MaterialTheme.colors.surface

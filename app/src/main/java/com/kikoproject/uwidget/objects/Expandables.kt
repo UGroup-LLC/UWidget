@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kikoproject.uwidget.models.schedules.Schedule
-import com.kikoproject.uwidget.schedules.DrawAllSchedulesInCategory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -110,69 +109,4 @@ fun ExpandableTextHelper(
             }
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ExpandableScheduleCategory(
-    title: String,
-    schedule: MutableList<Schedule>,
-    textColor: Color
-) {
-    val expandedState = remember { mutableStateOf(false) }
-    val rotateState by animateFloatAsState(targetValue = if (expandedState.value) 180f else 0f)
-
-    Card(
-        modifier = Modifier
-            .padding(bottom = 10.dp, start = 20.dp, end = 20.dp)
-            .fillMaxWidth()
-            .animateContentSize(animationSpec = tween(durationMillis = 50, easing = LinearEasing)),
-        border = BorderStroke(
-            1.dp,
-            color = MaterialTheme.colors.primary
-        ),
-        shape = RoundedCornerShape(20.dp),
-        onClick = { expandedState.value = !expandedState.value },
-        containerColor = MaterialTheme.colors.primary.copy(alpha = 0.3f),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = title,
-                    modifier = Modifier
-                        .weight(6f)
-                        .padding(5.dp),
-                    color = textColor,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Medium,
-                    textAlign = TextAlign.Center
-                )
-                IconButton(
-                    onClick = { expandedState.value = !expandedState.value },
-                    modifier = Modifier
-                        .weight(1f)
-                        .rotate(rotateState)
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.ArrowDropDown,
-                        contentDescription = "Arrow dropdown",
-                        tint = textColor,
-                        modifier = Modifier.weight(2f)
-                    )
-                }
-            }
-            if (expandedState.value) {
-                DrawAllSchedulesInCategory(schedule, textColor, title)
-            }
-        }
-    }
-
 }

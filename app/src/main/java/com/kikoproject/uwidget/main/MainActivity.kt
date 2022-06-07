@@ -42,7 +42,7 @@ lateinit var curUser: User
 @SuppressLint("StaticFieldLeak")
 lateinit var materialColors: Colors
 @SuppressLint("StaticFieldLeak")
-lateinit var curSchedule: Schedule
+var curSchedule: Schedule? = null
 @SuppressLint("StaticFieldLeak")
 lateinit var prefs: SharedPreferences
 

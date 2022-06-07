@@ -4,13 +4,21 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.firestore.DocumentSnapshot
@@ -19,8 +27,9 @@ import com.kikoproject.uwidget.dialogs.ShowLoadingDialog
 import com.kikoproject.uwidget.main.*
 import com.kikoproject.uwidget.models.User
 import com.kikoproject.uwidget.models.schedules.DefaultScheduleOption
-import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.models.schedules.Schedule
+import com.kikoproject.uwidget.navigation.ScreenNav
+import kotlin.random.Random
 
 @Composable
 fun CheckUserInDB(
@@ -35,86 +44,60 @@ fun CheckUserInDB(
     if (account != null) {
         if (isOnline(context)) { // Проверка на онлайн
             ShowLoadingDialog(state)
-            val errorState = remember{mutableStateOf(false)}
-            val errorMessage = remember{mutableStateOf("")}
-            if(errorState.value){
-                ShowErrorDialog(text = errorMessage.value,false)
+            val errorState = remember { mutableStateOf(false) }
+            val errorMessage = remember { mutableStateOf("") }
+            if (errorState.value) {
+                ShowErrorDialog(text = errorMessage.value, false)
             }
-            // поиск аккаунта в firebase
-            db.collection("users").document(account.id.toString()).get()
-                .addOnCompleteListener {
-                    try {
-                        val document = it.result
-                        if (document.exists()) { // если акк есть
-                            getUserBitmap(
-                                userId = document.get("id").toString(),
-                                object : AvatarResult {
-                                    override fun onResult(bitmap: Bitmap) {
-                                        curUser = User(
-                                            document.get("name").toString(),
-                                            document.get("surname").toString(),
-                                            bitmap,
-                                            document.get("id").toString()
-                                        )
 
-                                        state.value = false
+            // **** Получение curUser ****
+            getUserFromId(account.id.toString(), object : UserResult {
+                override fun onResult(user: User?) {
+                    if (user != null) {
+                        curUser = user
+                        state.value = false
 
-                                        // Проверит есть ли аккаунт в локальной БД и занесет если нет
-                                        insertAccountInRoom(curUser)
+                        // Проверит есть ли аккаунт в локальной БД и занесет если нет
+                        insertAccountInRoom(curUser)
 
-                                        updateAllData(
-                                            user = curUser,
-                                            materialColors = materialColors,
-                                            content = { myScheduleUser, myScheduleAdmin ->
+                        updateAllData(
+                            user = curUser,
+                            materialColors = materialColors,
+                            content = { myScheduleUser, myScheduleAdmin ->
 
-                                                //********** Записываем в локальную БД **********
+                                //********** Записываем в локальную БД **********
 
-                                                myScheduleUser.forEach { schedule ->
-                                                    roomDb.scheduleDao().insertAll(schedule)
-                                                }
-                                                myScheduleAdmin.forEach { schedule ->
-                                                    roomDb.scheduleDao().insertAll(schedule)
-                                                }
-
-
-                                                // Поскольку при создании мы не можем получить ID документа, расписание создается с 0 ид и в следующем запуске
-                                                // добавляется ID расписанию, из за этого расписания раздваиваются из за разных ID
-                                                // удаляем все расписания с 0 ID
-                                                roomDb.scheduleDao().getAll().forEach { schedule ->
-                                                    if (schedule.ID == "0") {
-                                                        roomDb.scheduleDao().delete(schedule)
-                                                    }
-                                                }
-
-                                                navController.navigate(ScreenNav.Dashboard.route)
-                                            })
-                                    }
-                                })
-                        } else {
-                            state.value = false
-                            navController.navigate(ScreenNav.RegistrationNav.route) // Если пользователь уже залогинен но не создал юзера
-                        }
-                    }
-                    catch (exeption: Exception){
-                        // Если пришли пиздарики
-                        errorMessage.value = exeption.message.toString()
-                        errorState.value = true
+                                myScheduleUser.forEach { schedule ->
+                                    roomDb.scheduleDao().insertAll(schedule)
+                                }
+                                myScheduleAdmin.forEach { schedule ->
+                                    roomDb.scheduleDao().insertAll(schedule)
+                                }
+                                // ******** Переход в DashBoard ********
+                                navController.navigate(ScreenNav.Dashboard.route)
+                            })
+                    } else {
+                        state.value = false
+                        navController.navigate(ScreenNav.GoogleAuthNav.route) // Если нет аккаунта то отправляем на регистрацию/вход
                     }
                 }
-                .addOnFailureListener {
+
+                override fun onError(error: Throwable) {
                     // Если пришли пиздарики
-                    errorMessage.value = it.message.toString()
+                    errorMessage.value = error.message.toString()
                     errorState.value = true
                 }
-        } else {
-            ShowErrorDialog(textError,true) // Показываем автономный режим
-            TODO("Сделать переход в автономный режим")
+            }, contentIfError = {
+                state.value = false
+                navController.navigate(ScreenNav.RegistrationNav.route)
+            })
         }
     } else {
-        navController.navigate(ScreenNav.GoogleAuthNav.route) // Если нет аккаунта то отправляем на регистрацию/вход
+        navController.navigate(ScreenNav.GoogleAuthNav.route)
     }
 }
 
+// Сохраняет пользователя в локальной БД
 fun insertAccountInRoom(user: User?) {
     if (user != null) {
         if (roomDb.userDao().findById(user.Id) == null) {
@@ -123,6 +106,7 @@ fun insertAccountInRoom(user: User?) {
     }
 }
 
+// Создает расписание в локальной БД
 fun createScheduleInRoomDB(schedule: Schedule) {
     roomDb.scheduleDao().insertAll(schedule)
 }
@@ -142,6 +126,28 @@ fun getNextUserSchedule(
     return null
 }
 
+fun generateCode(generatedCodeResult: GeneratedCodeResult) {
+    val code = Random.nextInt(100000, 999999).toString()
+    db.collection("schedules")
+        .whereEqualTo("code", code).get().addOnSuccessListener {
+            if (it.documents.size == 0) {
+                generatedCodeResult.onResult(code)
+            } else {
+                generateCode(object : GeneratedCodeResult {
+                    override fun onResult(code: String) {
+                        generatedCodeResult.onResult(code)
+                    }
+
+                    override fun onError(error: Throwable) {
+                        generatedCodeResult.onError(error)
+                    }
+
+                })
+            }
+        }.addOnFailureListener {
+            generatedCodeResult.onError(it)
+        }
+}
 
 // Подгружает всех юзеров кто состоит в указанном расписании
 @Composable
@@ -150,20 +156,23 @@ fun MembersOnlineContent(
     schedule: Schedule,
 ) {
     val showContent = remember { mutableStateOf(false) }
-    var scheduleUsers = listOf<User>()
+    var scheduleUsers = remember {
+        mutableStateOf(listOf<User>())
+    }
 
     if (showContent.value) {
-        content(scheduleUsers)
-    }
-    else{
-        LinearProgressIndicator(
-            trackColor = MaterialTheme.colors.primaryVariant,
-            color = MaterialTheme.colors.primary
-        )
+        content(scheduleUsers.value)
+    } else {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+            CircularProgressIndicator(
+                color = MaterialTheme.colors.primary
+            )
+        }
     }
 
     getScheduleUsers(schedule = schedule, object : UsersResult {
         override fun onResult(users: List<User>) {
+            scheduleUsers.value = users
             showContent.value = true
         }
 
@@ -181,28 +190,42 @@ fun OnlineContent(
     user: User,
 ) {
     val showContent = remember { mutableStateOf(false) }
-    var mySchedulesUser = listOf<Schedule>()
-    var mySchedulesAdmin = listOf<Schedule>()
+    var mySchedulesUser = remember {
+        mutableStateOf(listOf<Schedule>())
+    }
+    var mySchedulesAdmin = remember {
+        mutableStateOf(listOf<Schedule>())
+    }
 
     if (showContent.value) {
-        content(mySchedulesUser, mySchedulesAdmin)
+        val visible = remember { mutableStateOf(true) }
+        val density = LocalDensity.current
+        AnimatedVisibility(
+            visible = visible.value,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            content(mySchedulesUser.value, mySchedulesAdmin.value)
+        }
     } else {
-        LinearProgressIndicator(
-            trackColor = MaterialTheme.colors.primaryVariant,
-            color = MaterialTheme.colors.primary
-        )
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+            CircularProgressIndicator(
+                color = MaterialTheme.colors.primary
+            )
+        }
     }
 
     getAdminSchedules(
         user = user,
         scheduleResult = object : ScheduleResult {
-            override fun onResult(mSchedulesUser: List<Schedule>) {
+            override fun onResult(mAdminSchedule: List<Schedule>) {
                 getUserSchedules(
                     user = user,
                     scheduleResult = object : ScheduleResult {
-                        override fun onResult(mSchedulesAdmin: List<Schedule>) {
-                            mySchedulesUser = mSchedulesUser
-                            mySchedulesAdmin = mSchedulesAdmin
+                        override fun onResult(mUserSchedule: List<Schedule>) {
+                            mySchedulesUser.value = mUserSchedule
+                            mySchedulesAdmin.value = mAdminSchedule
+                            showContent.value = true
                         }
 
                         override fun onError(error: Throwable) {
@@ -250,7 +273,6 @@ fun updateAllData(
         })
 }
 
-
 // Выход из БД
 fun outFromSchedule(schedule: Schedule, userId: String) {
     val newUsersId = schedule.UsersID.toMutableList()
@@ -268,6 +290,7 @@ fun deleteSchedule(schedule: Schedule) {
     db.collection("schedules").document(schedule.ID).delete()
 }
 
+// Создать расписание в бд
 fun createScheduleInDB(schedule: Schedule) {
     if (schedule.Name != "") {
         val user = hashMapOf(
@@ -283,46 +306,54 @@ fun createScheduleInDB(schedule: Schedule) {
     }
 }
 
+// Вход в расписание
 fun enterInSchedule(code: String, enterInScheduleResult: EnterInScheduleResult) {
     db.collection("schedules")
         .whereEqualTo("code", code)
-        .whereNotEqualTo("admin_id", curUser.Id)
         .get().addOnSuccessListener {
-            val doc = it.documents[0]
-            var schedule = Schedule(
-                doc.id,
-                doc.get("name").toString(),
-                doc.get("admin_id").toString(),
-                doc.get("users_ids") as List<String>,
-                doc.get("schedule") as Map<String, MutableList<String>>,
-                doc.get("code").toString() as String?,
-                doc.get("time") as List<String>,
-                doc.get("category").toString(),
-                DefaultScheduleOption()
-            )
+            if (it.documents.size != 0) {
+                val doc = it.documents[0]
+                var schedule = Schedule(
+                    doc.id,
+                    doc.get("name").toString(),
+                    doc.get("admin_id").toString(),
+                    doc.get("users_ids") as List<String>,
+                    doc.get("schedule") as Map<String, MutableList<String>>,
+                    doc.get("code").toString() as String?,
+                    doc.get("time") as List<String>,
+                    doc.get("category").toString(),
+                    DefaultScheduleOption()
+                )
 
-            val users = schedule.UsersID.toMutableList()
+                val users = schedule.UsersID.toMutableList()
 
-            // Проверяем не состоим ли мы уже в расписании, а так же не являемся ли мы админом этого расписания
-            if (!schedule.UsersID.contains(curUser.Id)
-            ) {
-                users.add(curUser.Id)
-                // Добавляем пользователя в расписание
-                db.collection("schedules").document(schedule.ID).update(
-                    mapOf(
-                        Pair(
-                            "users_ids", users
+                // Проверяем не состоим ли мы уже в расписании, а так же не являемся ли мы админом этого расписания
+                if (!schedule.UsersID.contains(curUser.Id) && schedule.AdminID != curUser.Id
+                ) {
+                    users.add(curUser.Id)
+                    // Добавляем пользователя в расписание
+                    db.collection("schedules").document(schedule.ID).update(
+                        mapOf(
+                            Pair(
+                                "users_ids", users
+                            )
                         )
                     )
-                )
-                curSchedule = schedule
-                enterInScheduleResult.onResult(true)
+                    curSchedule = schedule
+                    enterInScheduleResult.onResult(true)
+                } else {
+                    enterInScheduleResult.onResult(false)
+                }
+            }
+            else{
+                enterInScheduleResult.onResult(false)
             }
         }.addOnFailureListener {
             enterInScheduleResult.onResult(false)
         }
 }
 
+// Получение картинки из юзера
 fun getUserBitmap(userId: String, avatarResult: AvatarResult) {
     val imageBytes =
         db.collection("users").document(userId).get().addOnSuccessListener { fields ->
@@ -330,7 +361,6 @@ fun getUserBitmap(userId: String, avatarResult: AvatarResult) {
             val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
             avatarResult.onResult(decodedImage)
         }
-
 }
 
 //Получение расписаний где юзер админ
@@ -369,8 +399,10 @@ fun getScheduleUsers(schedule: Schedule, usersResult: UsersResult) {
 
         (fields.get("users_ids") as List<String>).forEach { id ->
             getUserFromId(id, object : UserResult {
-                override fun onResult(user: User) {
-                    usersModel.add(user)
+                override fun onResult(user: User?) {
+                    if (user != null) {
+                        usersModel.add(user)
+                    }
                 }
 
                 override fun onError(error: Throwable) {
@@ -385,22 +417,34 @@ fun getScheduleUsers(schedule: Schedule, usersResult: UsersResult) {
 }
 
 // Получение юзера по его ID
-fun getUserFromId(userId: String, userResult: UserResult) {
-    db.collection("schedules").whereEqualTo("id", userId).get().addOnSuccessListener {
-        val documents = it.documents
+fun getUserFromId(userId: String, userResult: UserResult, contentIfError: (() -> Unit)? = null) {
+    db.collection("users").whereEqualTo("id", userId).get().addOnSuccessListener {
+        try {
+            val documents = it.documents
 
-        documents.forEach { doc ->
-            getUserBitmap(doc.get("id").toString(), object : AvatarResult {
-                override fun onResult(bitmap: Bitmap) {
-                    val userModel = User(
-                        doc.get("name").toString(),
-                        doc.get("surname").toString(),
-                        bitmap,
-                        doc.get("id").toString()
-                    )
-                    userResult.onResult(user = userModel)
+            documents.forEach { doc ->
+                getUserBitmap(doc.get("id").toString(), object : AvatarResult {
+                    override fun onResult(bitmap: Bitmap) {
+                        val userModel = User(
+                            doc.get("name").toString(),
+                            doc.get("surname").toString(),
+                            bitmap,
+                            doc.get("id").toString()
+                        )
+                        userResult.onResult(user = userModel)
+                    }
+                })
+            }
+
+            if (documents.size == 0) {
+                if (contentIfError == null) {
+                    userResult.onError(Error("Внутренняя ошибка приложения!"))
+                } else {
+                    contentIfError()
                 }
-            })
+            }
+        } catch (exep: Exception) {
+            userResult.onError(exep)
         }
     }.addOnFailureListener {
         userResult.onError(it)
@@ -508,15 +552,19 @@ interface EnterInScheduleResult {
     fun onResult(isEntered: Boolean)
 }
 
-
 // Интерфейс когда нужно вернуть массив юзеров
 interface UsersResult {
     fun onResult(users: List<User>)
     fun onError(error: Throwable)
 }
 
+interface GeneratedCodeResult {
+    fun onResult(code: String)
+    fun onError(error: Throwable)
+}
+
 interface UserResult {
-    fun onResult(user: User)
+    fun onResult(user: User?)
     fun onError(error: Throwable)
 }
 

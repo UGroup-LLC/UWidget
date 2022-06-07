@@ -41,7 +41,9 @@ fun EditSheduleMenu(){
                     StandardButton(content = {navController.navigate(ScreenNav.EditMembersNav.route)}, text = "Управление участниками", icon = painterResource(R.drawable.ic_account_circle))
                 }
                 item{
-                    if(curSchedule.JoinCode != "null") ShowJoinCode()
+                    if(curSchedule != null) {
+                        if (curSchedule!!.JoinCode != "null") ShowJoinCode()
+                    }
                 }
             }
         }

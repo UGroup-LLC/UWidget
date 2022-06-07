@@ -15,7 +15,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -79,7 +83,7 @@ fun JoinSchedule() {
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, androidx.compose.ui.ExperimentalComposeUiApi::class)
 @Composable
 fun joinCodeInput(isError: MutableState<Boolean>): MutableState<String> {
     val returningValue = remember { mutableStateOf("") }
@@ -120,7 +124,6 @@ fun joinCodeInput(isError: MutableState<Boolean>): MutableState<String> {
             field.value = TextFieldValue("")
             focusRequester[0].requestFocus()
         }
-        isError.value = false
     }
 
     LazyRow(
@@ -141,7 +144,6 @@ fun joinCodeInput(isError: MutableState<Boolean>): MutableState<String> {
                             focusRequester[index + 1].requestFocus()
                         else if (index - 1 != -1 && it.text.length == 0) {
                             isError.value = false
-                            focusRequester[index - 1].requestFocus()
                         }
 
                     }
@@ -151,9 +153,21 @@ fun joinCodeInput(isError: MutableState<Boolean>): MutableState<String> {
                     }
                 },
                 modifier = Modifier
+                    .onKeyEvent {
+                        if (it.key.keyCode == Key.Backspace.keyCode) {
+                            if (index - 1 != -1) {
+                                textFieldValue.value = TextFieldValue("")
+                                focusRequester[index - 1].requestFocus()
+                            }
+                        }
+                        true
+                    }
                     .width(42.dp)
                     .height(50.dp)
-                    .focusRequester(focusRequester[index]),
+                    .focusRequester(focusRequester[index])
+                    .onFocusChanged {
+                        isError.value = false
+                    },
                 singleLine = true,
                 textStyle = TextStyle(
                     fontSize = 15.sp,
@@ -161,6 +175,7 @@ fun joinCodeInput(isError: MutableState<Boolean>): MutableState<String> {
                 ),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     cursorColor = Color.Transparent,
+                    errorCursorColor = Color.Transparent,
                     textColor = MaterialTheme.colors.surface
                 )
             )

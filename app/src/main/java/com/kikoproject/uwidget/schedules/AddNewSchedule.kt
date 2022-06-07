@@ -40,8 +40,10 @@ import com.kikoproject.uwidget.models.schedules.DefaultScheduleOption
 import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.PermissionNav
 import com.kikoproject.uwidget.navigation.ScreenNav
+import com.kikoproject.uwidget.networking.GeneratedCodeResult
 import com.kikoproject.uwidget.networking.createScheduleInDB
 import com.kikoproject.uwidget.networking.createScheduleInRoomDB
+import com.kikoproject.uwidget.networking.generateCode
 import com.kikoproject.uwidget.objects.*
 import com.kikoproject.uwidget.ui.theme.Typography
 import com.radusalagean.infobarcompose.InfoBar
@@ -446,26 +448,34 @@ fun AddSchedule() {
                             if (nameState.value.text.filter { !it.isWhitespace() } != "") {
                                 val adminId = GoogleSignIn.getLastSignedInAccount(context)
                                 if (adminId?.id != null) {
-                                    val schedule = Schedule(
-                                        "0",
-                                        nameState.value.text,
-                                        adminId.id!!,
-                                        listOf(""),
-                                        tempMap,
-                                        roomDb.scheduleDao()
-                                            .getJoinCode(), // Генерация ключа приглашения
-                                        tempTimeState,
-                                        categoryState.value.text,
-                                        DefaultScheduleOption()
-                                    )
-                                    createScheduleInRoomDB(schedule)
-                                    createScheduleInDB(
-                                        schedule = schedule
-                                    )
-                                    curSchedule = schedule
+                                    generateCode(object : GeneratedCodeResult{
+                                        override fun onResult(code: String) {
+                                            val schedule = Schedule(
+                                                "0",
+                                                nameState.value.text,
+                                                adminId.id!!,
+                                                listOf(""),
+                                                tempMap,
+                                                code, // Генерация ключа приглашения
+                                                tempTimeState,
+                                                categoryState.value.text,
+                                                DefaultScheduleOption()
+                                            )
+                                            createScheduleInRoomDB(schedule)
+                                            createScheduleInDB(
+                                                schedule = schedule
+                                            )
+                                            curSchedule = schedule
 
-                                    // Проверка локальная ли бд или по ссылке
-                                    navController.navigate(ScreenNav.Dashboard.route)
+                                            // Проверка локальная ли бд или по ссылке
+                                            navController.navigate(ScreenNav.Dashboard.route)
+                                        }
+
+                                        override fun onError(error: Throwable) {
+                                            TODO("Not yet implemented")
+                                        }
+
+                                    })
                                 }
                             } else {
                                 message = CustomToastBar(
