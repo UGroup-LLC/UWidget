@@ -141,6 +141,7 @@ fun UserButton(schedule: Schedule, user: User) {
                     onClick = {
                         outFromSchedule(schedule, user.Id)
                         navController.popBackStack()
+                        navController.navigate(ScreenNav.EditMembersNav.route)
                     },
                     modifier = Modifier
                         .requiredSize(45.dp)

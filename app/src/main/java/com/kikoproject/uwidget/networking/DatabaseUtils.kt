@@ -170,17 +170,20 @@ fun MembersOnlineContent(
         }
     }
 
-    getScheduleUsers(schedule = schedule, object : UsersResult {
-        override fun onResult(users: List<User>) {
-            scheduleUsers.value = users
-            showContent.value = true
-        }
+    // Если убрать то будет постоянно обновляться (в будущем доработать чтобы адекватно работало TODO(Сделать))
+    if(!showContent.value) {
+        getScheduleUsers(schedule = schedule, object : UsersResult {
+            override fun onResult(users: List<User>) {
+                scheduleUsers.value = users
+                showContent.value = true
+            }
 
-        override fun onError(error: Throwable) {
-            TODO("Not yet implemented")
-        }
+            override fun onError(error: Throwable) {
+                TODO("Not yet implemented")
+            }
 
-    })
+        })
+    }
 }
 
 // Прогружает расписания юзера пока не прогрузило, показывает loading ui
@@ -397,23 +400,26 @@ fun getScheduleUsers(schedule: Schedule, usersResult: UsersResult) {
     db.collection("schedules").document(schedule.ID).get().addOnSuccessListener { fields ->
         var usersModel = mutableListOf<User>()
 
-        (fields.get("users_ids") as List<String>).forEach { id ->
+        val field = (fields.get("users_ids") as List<String>)
+        field.forEachIndexed { index, id ->
             getUserFromId(id, object : UserResult {
                 override fun onResult(user: User?) {
                     if (user != null) {
                         usersModel.add(user)
                     }
+                    if(id == field.last()){
+                        usersResult.onResult(usersModel)
+                    }
                 }
 
                 override fun onError(error: Throwable) {
-                    TODO("Not yet implemented")
+
                 }
 
             })
         }
-
-        usersResult.onResult(usersModel)
     }
+
 }
 
 // Получение юзера по его ID

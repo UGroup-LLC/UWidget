@@ -155,8 +155,8 @@ fun joinCodeInput(isError: MutableState<Boolean>): MutableState<String> {
                 modifier = Modifier
                     .onKeyEvent {
                         if (it.key.keyCode == Key.Backspace.keyCode) {
+                            textFieldValue.value = TextFieldValue("")
                             if (index - 1 != -1) {
-                                textFieldValue.value = TextFieldValue("")
                                 focusRequester[index - 1].requestFocus()
                             }
                         }
