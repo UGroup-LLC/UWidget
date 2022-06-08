@@ -79,7 +79,7 @@ fun GoogleAuthScreen() {
     val launchSign =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
-            account.value = task.getResult(ApiException::class.java)!!
+            account.value = task.getResult(ApiException::class.java)
             val credential = GoogleAuthProvider.getCredential(account.value!!.idToken!!, null)
 
             try {

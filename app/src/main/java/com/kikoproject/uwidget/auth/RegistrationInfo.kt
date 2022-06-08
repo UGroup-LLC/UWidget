@@ -46,6 +46,7 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.kikoproject.uwidget.R
+import com.kikoproject.uwidget.main.curUser
 import com.kikoproject.uwidget.main.db
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.models.User
@@ -225,7 +226,14 @@ fun RegisterScreen() {
                                 account
                             )
                         }
-
+                        if (account != null && account.id != null) {
+                            curUser = User(
+                                nameState.value.text,
+                                surnameState.value.text,
+                                customResizedBitmap,
+                                account.id!!
+                            )
+                        }
                         navController.navigate(ScreenNav.Dashboard.route)
                     }, colors = ButtonDefaults.buttonColors(
                         MaterialTheme.colors.primaryVariant

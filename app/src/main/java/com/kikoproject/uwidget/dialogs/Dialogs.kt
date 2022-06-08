@@ -33,6 +33,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.getSystemService
 import com.kikoproject.uwidget.*
+import com.kikoproject.uwidget.main.materialColors
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.schedules.FastOutlineTextField
@@ -309,6 +310,50 @@ fun ShowErrorDialog(text: String, needButton: Boolean) {
             })
     }
 }
+
+@Composable
+fun ShowInfoDialog(text: String) {
+    val state = remember { mutableStateOf(true) }
+    val textColor = MaterialTheme.colors.surface
+    if (state.value) {
+        AlertDialog(
+            properties = DialogProperties(dismissOnClickOutside = false, dismissOnBackPress = false),
+            containerColor = materialColors.background,
+            onDismissRequest = { state.value = false },
+            title = {
+                Text(
+                    text = text,
+                    textAlign = TextAlign.Center,
+                    color = textColor
+                )
+            },
+            text = {},
+            dismissButton = {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Button(onClick = {
+                            state.value = false
+                            navController.navigate(ScreenNav.GoogleAuthNav.route)
+                        }) {
+                            Text(text = text, color = MaterialTheme.colors.secondary)
+                        }
+                    }
+            },
+            icon = {
+                Icon(
+                    imageVector = Icons.Rounded.Close,
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.primary
+                )
+            },
+            confirmButton = {
+
+            })
+    }
+}
+
 
 interface ScheduleDialogSelector {
     fun onResult(scheduleCSS: String)

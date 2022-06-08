@@ -70,7 +70,7 @@ fun JoinSchedule() {
                             override fun onResult(isEntered: Boolean) {
                                 if (isEntered) {
                                     isError.value = false
-                                    navController.navigate(ScreenNav.Dashboard.route)
+                                    navController.popBackStack()
                                 } else {
                                     isError.value = true
                                 }
