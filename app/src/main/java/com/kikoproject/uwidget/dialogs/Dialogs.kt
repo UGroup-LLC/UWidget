@@ -15,6 +15,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.*
@@ -33,7 +34,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.getSystemService
 import com.kikoproject.uwidget.*
-import com.kikoproject.uwidget.main.materialColors
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.schedules.FastOutlineTextField
@@ -272,7 +272,10 @@ fun ShowErrorDialog(text: String, needButton: Boolean) {
     val textColor = MaterialTheme.colors.surface
     if (state.value) {
         AlertDialog(
-            properties = DialogProperties(dismissOnClickOutside = false, dismissOnBackPress = false),
+            properties = DialogProperties(
+                dismissOnClickOutside = false,
+                dismissOnBackPress = false
+            ),
             containerColor = MaterialTheme.colors.background,
             onDismissRequest = { state.value = false },
             title = {
@@ -284,7 +287,7 @@ fun ShowErrorDialog(text: String, needButton: Boolean) {
             },
             text = {},
             dismissButton = {
-                if(needButton) {
+                if (needButton) {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -312,13 +315,16 @@ fun ShowErrorDialog(text: String, needButton: Boolean) {
 }
 
 @Composable
-fun ShowInfoDialog(text: String) {
+fun ShowInfoDialog(text: String, content:() -> Unit) {
     val state = remember { mutableStateOf(true) }
     val textColor = MaterialTheme.colors.surface
     if (state.value) {
         AlertDialog(
-            properties = DialogProperties(dismissOnClickOutside = false, dismissOnBackPress = false),
-            containerColor = materialColors.background,
+            properties = DialogProperties(
+                dismissOnClickOutside = false,
+                dismissOnBackPress = false
+            ),
+            containerColor = MaterialTheme.colors.background,
             onDismissRequest = { state.value = false },
             title = {
                 Text(
@@ -329,21 +335,15 @@ fun ShowInfoDialog(text: String) {
             },
             text = {},
             dismissButton = {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Button(onClick = {
-                            state.value = false
-                            navController.navigate(ScreenNav.GoogleAuthNav.route)
-                        }) {
-                            Text(text = text, color = MaterialTheme.colors.secondary)
-                        }
-                    }
+                Button(onClick = {
+                    content()
+                }) {
+                    Text(text = text, color = MaterialTheme.colors.secondary)
+                }
             },
             icon = {
                 Icon(
-                    imageVector = Icons.Rounded.Close,
+                    imageVector = Icons.Rounded.Info,
                     contentDescription = null,
                     tint = MaterialTheme.colors.primary
                 )
@@ -353,7 +353,6 @@ fun ShowInfoDialog(text: String) {
             })
     }
 }
-
 
 interface ScheduleDialogSelector {
     fun onResult(scheduleCSS: String)

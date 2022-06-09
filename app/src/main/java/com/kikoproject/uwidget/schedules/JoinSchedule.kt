@@ -26,6 +26,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kikoproject.uwidget.dialogs.ShowInfoDialog
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.EnterInScheduleResult
@@ -62,20 +63,28 @@ fun JoinSchedule() {
                         style = MaterialTheme.typography.caption,
                         color = MaterialTheme.colors.surface
                     )
+                    val isComplited = remember { mutableStateOf(false) }
                     val isError = remember { mutableStateOf(false) }
                     val code = joinCodeInput(isError)
-                    if (code.value.length == 6) {
+                    if (isComplited.value){
+                        ShowInfoDialog(text = "Ошибка", {isComplited.value = false})
+                    }
+                    if (code.value.length == 6 && !isComplited.value) {
                         // Проверка есть ли такое расписание с таким кодом, состоим ли мы уже в нем или админ ли мы в нем
                         enterInSchedule(code.value, object : EnterInScheduleResult {
                             override fun onResult(isEntered: Boolean) {
                                 if (isEntered) {
                                     isError.value = false
-                                    navController.popBackStack()
+                                    navController.navigate(ScreenNav.Dashboard.route)
                                 } else {
+                                    isComplited.value = true
                                     isError.value = true
                                 }
                             }
                         })
+                    }
+                    else{
+                        isComplited.value = false
                     }
                 }
             }
