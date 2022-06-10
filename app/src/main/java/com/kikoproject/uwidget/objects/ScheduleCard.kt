@@ -23,8 +23,27 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kikoproject.uwidget.main.materialColors
+import java.time.LocalTime
 
+
+/**
+ * Карточка для заполнения расписания
+ *
+ * @param cardColor Задний цвет карточки
+ * @param cardShapeRadius Закругление у карточки
+ * @param cardBorderSize Размер контуров карточки
+ *
+ * @param titleText Текст заголовка
+ * @param titleFontSize Шрифт заголовка
+ * @param titleFontWeight Жирность шрифта
+ * @param titleColor Цвет заголовка
+ *
+ * @param dividerColor Цвет разделителя
+ *
+ * @param textFieldColor Цвет полей ввода
+ *
+ * @author Kiko
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleCardCreator(
@@ -42,7 +61,6 @@ fun ScheduleCardCreator(
 
     //divider options
     dividerColor: Color = MaterialTheme.colors.surface,
-
     //textfield
     textFieldColor: Color = MaterialTheme.colors.surface
 ): MutableList<MutableState<TextFieldValue>> {
@@ -118,6 +136,26 @@ fun ScheduleCardCreator(
 }
 
 
+/**
+ * Карточка для заполнения расписания
+ *
+ * @param cardsInt Количество полей для ввода
+ *
+ * @param cardColor Задний цвет карточки
+ * @param cardShapeRadius Закругление у карточки
+ * @param cardBorderSize Размер контуров карточки
+ *
+ * @param titleText Текст заголовка
+ * @param titleFontSize Шрифт заголовка
+ * @param titleFontWeight Жирность шрифта
+ * @param titleColor Цвет заголовка
+ *
+ * @param dividerColor Цвет разделителя
+ *
+ * @param textFieldColor Цвет полей ввода
+ *
+ * @author Kiko
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleCardCreator(
@@ -198,6 +236,24 @@ fun ScheduleCardCreator(
     return states
 }
 
+/**
+ * Карточка для заполнения времени в расписаниях
+ *
+ * @param cardsInt Количество полей для ввода времени
+ *
+ * @param cardColor Задний цвет карточки
+ * @param cardShapeRadius Закругление у карточки
+ * @param cardBorderSize Размер контуров карточки
+ *
+ * @param titleText Текст заголовка
+ * @param titleFontSize Шрифт заголовка
+ * @param titleFontWeight Жирность шрифта
+ * @param titleColor Цвет заголовка
+ *
+ * @param dividerColor Цвет разделителя
+ *
+ * @author Kiko
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimeCardCreator(
@@ -217,9 +273,6 @@ fun TimeCardCreator(
 
     //divider options
     dividerColor: Color = MaterialTheme.colors.surface,
-
-    //textfield
-    textFieldColor: Color = MaterialTheme.colors.surface
 ): MutableList<MutableState<TextFieldValue>> {
     val states = mutableListOf<MutableState<TextFieldValue>>()
 
@@ -227,7 +280,11 @@ fun TimeCardCreator(
         states.add(remember { mutableStateOf(TextFieldValue(text = "")) })
     }
 
-    //openTimePicker(context = LocalContext.current, true)
+    OpenTimePicker(object : TimePickerResult{
+        override fun onResult(time: LocalTime) {
+            TODO("RESULT")
+        }
+    })
 
     Card(
         modifier = Modifier
@@ -265,7 +322,7 @@ fun TimeCardCreator(
                             Icon(
                                 imageVector = Icons.Rounded.DateRange,
                                 contentDescription = null,
-                                tint = materialColors.primary
+                                tint = MaterialTheme.colors.primary
                             )
                         }
                         Divider(
@@ -273,13 +330,13 @@ fun TimeCardCreator(
                                 .width(20.dp)
                                 .padding(horizontal = 5.dp, vertical = 0.dp),
                             thickness = 1.dp,
-                            color = materialColors.surface.copy(0.2f)
+                            color = MaterialTheme.colors.surface.copy(0.2f)
                         )
                         OutlinedButton(onClick = {}) {
                             Icon(
                                 imageVector = Icons.Rounded.DateRange,
                                 contentDescription = null,
-                                tint = materialColors.primary
+                                tint = MaterialTheme.colors.primary
                             )
                         }
                     }
@@ -289,7 +346,6 @@ fun TimeCardCreator(
     }
     return states
 }
-
 
 @Preview
 @Composable
