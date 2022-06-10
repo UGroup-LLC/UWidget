@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/AStudio.UWidget.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/AStudio.UWidget.app.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/UWidget.iml" filepath="$PROJECT_DIR$/.idea/modules/UWidget.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/UWidget.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/UWidget.app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/UWidget.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/UWidget.app.androidTest.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/UWidget.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/UWidget.app.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/UWidget.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/UWidget.app.unitTest.iml" />
     </modules>
   </component>
 </project>

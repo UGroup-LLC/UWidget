@@ -42,6 +42,7 @@ import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.main.curUser
 import com.kikoproject.uwidget.main.db
 import com.kikoproject.uwidget.main.navController
+import com.kikoproject.uwidget.models.User
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.ui.theme.UWidgetTheme
 import com.kikoproject.uwidget.utils.bitmapCompress
