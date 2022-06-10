@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kikoproject.uwidget.models.schedules.Schedule
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,7 +56,7 @@ fun ExpandableTextHelper(
         ),
         shape = RoundedCornerShape(20.dp),
         onClick = { expandedState.value = !expandedState.value },
-        containerColor = cardColor.copy(alpha = 0.05f),
+        colors = CardDefaults.cardColors(containerColor = cardColor.copy(alpha = 0.05f))
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

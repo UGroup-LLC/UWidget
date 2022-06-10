@@ -2,16 +2,16 @@ package com.kikoproject.uwidget.auth
 
 import android.content.ContentValues.TAG
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import android.util.Base64
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,29 +34,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.graphics.drawable.toDrawable
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
-import coil.compose.SubcomposeAsyncImageScope
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.main.curUser
 import com.kikoproject.uwidget.main.db
 import com.kikoproject.uwidget.main.navController
-import com.kikoproject.uwidget.models.User
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.ui.theme.UWidgetTheme
-import com.kikoproject.uwidget.ui.theme.themeTextColor
 import com.kikoproject.uwidget.utils.bitmapCompress
 import com.kikoproject.uwidget.utils.bitmapCrop
 import com.kikoproject.uwidget.utils.bitmapResize
-import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
 

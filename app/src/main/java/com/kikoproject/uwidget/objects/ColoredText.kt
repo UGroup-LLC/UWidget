@@ -7,7 +7,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import com.kikoproject.uwidget.models.User
-import com.kikoproject.uwidget.models.schedules.Schedule
 
 @Composable
 fun coloredTitleText(text: String, user: User) : AnnotatedString{

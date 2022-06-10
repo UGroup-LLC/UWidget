@@ -2,26 +2,19 @@ package com.kikoproject.uwidget.objects
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.kikoproject.uwidget.R
-import com.kikoproject.uwidget.auth.signOut
 import com.kikoproject.uwidget.main.curSchedule
 import com.kikoproject.uwidget.main.curUser
 import com.kikoproject.uwidget.main.navController
@@ -29,10 +22,8 @@ import com.kikoproject.uwidget.main.prefs
 import com.kikoproject.uwidget.models.User
 import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.ScreenNav
-import com.kikoproject.uwidget.networking.deleteSchedule
 import com.kikoproject.uwidget.networking.getNextUserSchedule
 import com.kikoproject.uwidget.networking.outFromSchedule
-import com.kikoproject.uwidget.networking.updateAllData
 
 @Composable
 fun ScheduleButton(schedule: Schedule, isAdmin: Boolean, mySheduleAdmin: List<Schedule>, mySheduleUser: List<Schedule>) {
@@ -222,7 +213,7 @@ fun StandardButton(content: () -> Unit, text: String, icon: ImageVector) {
 
 @Composable
 fun StandardButton(content: () -> Unit, text: String, icon: Painter) {
-    val materialColors = MaterialTheme.colors
+    val MaterialTheme.colors = MaterialTheme.colors
     Button(
         onClick = {
             content()

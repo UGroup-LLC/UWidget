@@ -1,7 +1,5 @@
 package com.kikoproject.uwidget.models.schedules
 
-import androidx.compose.material.Colors
-import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.text.font.FontWeight
 import androidx.room.Entity
 import androidx.room.PrimaryKey

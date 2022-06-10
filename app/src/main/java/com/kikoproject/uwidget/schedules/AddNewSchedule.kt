@@ -1,7 +1,6 @@
 package com.kikoproject.uwidget.schedules
 
 import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -29,16 +28,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.kikoproject.uwidget.*
 import com.kikoproject.uwidget.R
+import com.kikoproject.uwidget.ScheduleGetter
 import com.kikoproject.uwidget.dialogs.ScheduleDialogSelector
+import com.kikoproject.uwidget.dialogs.ShowLoadingDialog
 import com.kikoproject.uwidget.dialogs.ShowSearchSelector
+import com.kikoproject.uwidget.getSchedule
+import com.kikoproject.uwidget.getSelectorDivider
 import com.kikoproject.uwidget.main.curSchedule
 import com.kikoproject.uwidget.main.navController
-import com.kikoproject.uwidget.main.roomDb
 import com.kikoproject.uwidget.models.schedules.DefaultScheduleOption
 import com.kikoproject.uwidget.models.schedules.Schedule
-import com.kikoproject.uwidget.navigation.PermissionNav
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.GeneratedCodeResult
 import com.kikoproject.uwidget.networking.createScheduleInDB
@@ -47,9 +47,7 @@ import com.kikoproject.uwidget.networking.generateCode
 import com.kikoproject.uwidget.objects.*
 import com.kikoproject.uwidget.ui.theme.Typography
 import com.radusalagean.infobarcompose.InfoBar
-import com.radusalagean.infobarcompose.InfoBarMessage
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 @SuppressLint("SetJavaScriptEnabled")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -189,7 +187,7 @@ fun AddSchedule() {
                             color = textColor.copy(0.2f)
                         ),
                         shape = RoundedCornerShape(25.dp),
-                        containerColor = textColor.copy(alpha = 0.03f)
+                        colors = CardDefaults.cardColors(containerColor = textColor.copy(alpha = 0.03f))
                     ) {
 
                         Box(
@@ -241,7 +239,7 @@ fun AddSchedule() {
                             color = textColor.copy(0.2f)
                         ),
                         shape = RoundedCornerShape(25.dp),
-                        containerColor = textColor.copy(alpha = 0.03f)
+                        colors = CardDefaults.cardColors(containerColor = textColor.copy(alpha = 0.03f))
                     ) {
 
                         Box(
@@ -252,7 +250,7 @@ fun AddSchedule() {
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Card(
-                                    containerColor = textColor.copy(0.1f),
+                                    colors = CardDefaults.cardColors(containerColor = textColor.copy(alpha = 0.1f)),
                                     shape = RoundedCornerShape(10.dp),
                                     modifier = Modifier.padding(bottom = 10.dp)
                                 ) {
@@ -383,7 +381,7 @@ fun AddSchedule() {
                     fontWeight = FontWeight.Medium
                 )
                 val scheduleTimeMode = IncreaseButtons(
-                    texts = listOf("Уроки", "Пары", "Ручное"),
+                    texts = listOf("Пресет", "Ручное"),
                     inactiveColor = textColor.copy(0.1f),
                     roundStrength = 30f,
                     activeColor = primaryColor.copy(0.5f),
@@ -392,14 +390,15 @@ fun AddSchedule() {
                 if(scheduleTimeMode == 0){
 
                 }
-                else if(scheduleTimeMode == 1){
-
-                }
                 else{
-                    timeState = ScheduleCardCreator(cardsInt = timeCount.value, titleText = "Время")
+                    timeState = TimeCardCreator(cardsInt = timeCount.value, titleText = "Время")
                 }
             } // Распологается
+
             item {
+                val stateDialog = mutableStateOf(false)
+
+                ShowLoadingDialog(state = stateDialog)
                 Button(
                     modifier = Modifier
                         .padding(horizontal = 20.dp, vertical = 10.dp)
@@ -431,13 +430,27 @@ fun AddSchedule() {
 
 
                         timeState.forEach { time ->
-                            if (
-                                !time.value.text.contains(":")
-                                && time.value.text.filter { it.isDigit() }.length != 4
-                            ) {
+                            if(time.value.text != "") {
+                                if (
+                                    !time.value.text.contains(":")
+                                    && time.value.text.filter { it.isDigit() }.length != 4
+                                    && time.value.text.substringBefore(":").toInt() < 24
+                                    && time.value.text.substringBefore(":").toInt() >= 0
+                                    && time.value.text.substringAfter(":").toInt() < 60
+                                    && time.value.text.substringAfter(":").toInt() >= 0
+                                ) {
+                                    message =
+                                        CustomToastBar(
+                                            text = "Ошибка, время введенно некорректно, пример: 09:08",
+                                            materialColor = materialColor
+                                        )
+                                    return@Button
+                                }
+                            }
+                            else{
                                 message =
                                     CustomToastBar(
-                                        text = "Ошибка, время введенно некорректно, пример: 09:08",
+                                        text = "Ошибка, одно из полей времени не заполнено",
                                         materialColor = materialColor
                                     )
                                 return@Button
@@ -448,6 +461,7 @@ fun AddSchedule() {
                             if (nameState.value.text.filter { !it.isWhitespace() } != "") {
                                 val adminId = GoogleSignIn.getLastSignedInAccount(context)
                                 if (adminId?.id != null) {
+                                    stateDialog.value = true // Показывает диалог загрузки
                                     generateCode(object : GeneratedCodeResult{
                                         override fun onResult(code: String) {
                                             val schedule = Schedule(
@@ -466,6 +480,8 @@ fun AddSchedule() {
                                                 schedule = schedule
                                             )
                                             curSchedule = schedule
+
+                                            stateDialog.value = false
 
                                             // Проверка локальная ли бд или по ссылке
                                             navController.navigate(ScreenNav.Dashboard.route)

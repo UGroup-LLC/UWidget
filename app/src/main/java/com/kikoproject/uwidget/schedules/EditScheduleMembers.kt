@@ -8,19 +8,17 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+<<<<<<< HEAD
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+=======
+>>>>>>> master
 import androidx.compose.ui.unit.dp
-import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.dialogs.ShowErrorDialog
 import com.kikoproject.uwidget.main.Wait
 import com.kikoproject.uwidget.main.curSchedule
-import com.kikoproject.uwidget.main.navController
-import com.kikoproject.uwidget.models.User
-import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.MembersOnlineContent
 import com.kikoproject.uwidget.objects.BackHeader
-import com.kikoproject.uwidget.objects.StandardButton
 import com.kikoproject.uwidget.objects.UserButton
 
 @Composable
