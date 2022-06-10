@@ -1,6 +1,5 @@
 package com.kikoproject.uwidget.navigation
 
-import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -11,7 +10,6 @@ import com.kikoproject.uwidget.main.DashboardActivity
 import com.kikoproject.uwidget.main.MainActivity
 import com.kikoproject.uwidget.permissions.CreateWidgetActivity
 import com.kikoproject.uwidget.schedules.*
-import com.kikoproject.uwidget.ui.theme.Main
 
 @Composable
 fun NavigationSetup(

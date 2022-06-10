@@ -1,41 +1,28 @@
 package com.kikoproject.uwidget.main
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import coil.compose.rememberAsyncImagePainter
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.models.User
-import com.kikoproject.uwidget.models.schedules.DefaultScheduleOption
 import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.OnlineContent
-import com.kikoproject.uwidget.networking.createScheduleInDB
 import com.kikoproject.uwidget.networking.getNextUserSchedule
-import com.kikoproject.uwidget.objects.Avatar
 import com.kikoproject.uwidget.objects.MainHeader
 import com.kikoproject.uwidget.objects.coloredTitleText
 import com.kikoproject.uwidget.time.TimeZone
 import com.kikoproject.uwidget.time.getTimeZone
-import kotlin.random.Random
 
 @Composable
 fun DashboardActivity() {

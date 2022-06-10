@@ -14,9 +14,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Divider
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,18 +44,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.kikoproject.uwidget.R
-import com.kikoproject.uwidget.main.navController
-import com.kikoproject.uwidget.main.roomDb
-import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.CheckUserInDB
 import com.kikoproject.uwidget.ui.theme.UWidgetTheme
-import com.kikoproject.uwidget.ui.theme.themeTextColor
 
 @Composable
 fun GoogleAuthScreen() {

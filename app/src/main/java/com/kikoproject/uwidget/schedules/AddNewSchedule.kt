@@ -1,7 +1,6 @@
 package com.kikoproject.uwidget.schedules
 
 import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -29,17 +28,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.kikoproject.uwidget.*
 import com.kikoproject.uwidget.R
+import com.kikoproject.uwidget.ScheduleGetter
 import com.kikoproject.uwidget.dialogs.ScheduleDialogSelector
 import com.kikoproject.uwidget.dialogs.ShowLoadingDialog
 import com.kikoproject.uwidget.dialogs.ShowSearchSelector
+import com.kikoproject.uwidget.getSchedule
+import com.kikoproject.uwidget.getSelectorDivider
 import com.kikoproject.uwidget.main.curSchedule
 import com.kikoproject.uwidget.main.navController
-import com.kikoproject.uwidget.main.roomDb
 import com.kikoproject.uwidget.models.schedules.DefaultScheduleOption
 import com.kikoproject.uwidget.models.schedules.Schedule
-import com.kikoproject.uwidget.navigation.PermissionNav
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.GeneratedCodeResult
 import com.kikoproject.uwidget.networking.createScheduleInDB
@@ -48,9 +47,7 @@ import com.kikoproject.uwidget.networking.generateCode
 import com.kikoproject.uwidget.objects.*
 import com.kikoproject.uwidget.ui.theme.Typography
 import com.radusalagean.infobarcompose.InfoBar
-import com.radusalagean.infobarcompose.InfoBarMessage
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 @SuppressLint("SetJavaScriptEnabled")
 @OptIn(ExperimentalMaterial3Api::class)

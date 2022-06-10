@@ -2,7 +2,6 @@ package com.kikoproject.uwidget.time
 
 import android.annotation.SuppressLint
 import android.icu.text.SimpleDateFormat
-import androidx.compose.runtime.Composable
 import com.kikoproject.uwidget.models.schedules.Schedule
 import java.util.*
 

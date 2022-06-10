@@ -1,15 +1,16 @@
 package com.kikoproject.uwidget.schedules
 
-import androidx.compose.animation.*
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,8 +33,6 @@ import com.kikoproject.uwidget.networking.EnterInScheduleResult
 import com.kikoproject.uwidget.networking.enterInSchedule
 import com.kikoproject.uwidget.objects.BackHeader
 import com.kikoproject.uwidget.objects.CustomToastBar
-import com.kikoproject.uwidget.objects.customToastBarMessage
-import com.radusalagean.infobarcompose.InfoBar
 
 @Composable
 fun JoinSchedule() {
