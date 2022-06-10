@@ -189,7 +189,7 @@ fun EditSchedule() {
                             color = textColor.copy(0.2f)
                         ),
                         shape = RoundedCornerShape(25.dp),
-                        containerColor = textColor.copy(alpha = 0.03f)
+                        colors = CardDefaults.cardColors(containerColor = textColor.copy(alpha = 0.03f))
                     ) {
 
                         Box(
@@ -241,7 +241,7 @@ fun EditSchedule() {
                             color = textColor.copy(0.2f)
                         ),
                         shape = RoundedCornerShape(25.dp),
-                        containerColor = textColor.copy(alpha = 0.03f)
+                        colors = CardDefaults.cardColors(containerColor = textColor.copy(alpha = 0.03f))
                     ) {
 
                         Box(
@@ -252,7 +252,7 @@ fun EditSchedule() {
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Card(
-                                    containerColor = textColor.copy(0.1f),
+                                    colors = CardDefaults.cardColors(containerColor = textColor.copy(alpha = 0.1f)),
                                     shape = RoundedCornerShape(10.dp),
                                     modifier = Modifier.padding(bottom = 10.dp)
                                 ) {

@@ -57,7 +57,7 @@ fun ExpandableTextHelper(
         ),
         shape = RoundedCornerShape(20.dp),
         onClick = { expandedState.value = !expandedState.value },
-        containerColor = cardColor.copy(alpha = 0.05f),
+        colors = CardDefaults.cardColors(containerColor = cardColor.copy(alpha = 0.05f))
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
