@@ -280,11 +280,16 @@ fun TimeCardCreator(
         states.add(remember { mutableStateOf(TextFieldValue(text = "")) })
     }
 
-    OpenTimePicker(object : TimePickerResult{
-        override fun onResult(time: LocalTime) {
-            TODO("RESULT")
-        }
-    })
+    // Отображение timePicker
+    val timeStateVisible = remember{mutableStateOf(false)}
+
+    if(timeStateVisible.value) {
+        OpenTimePicker(object : TimePickerResult {
+            override fun onResult(time: LocalTime) {
+                TODO("RESULT")
+            }
+        })
+    }
 
     Card(
         modifier = Modifier
@@ -332,7 +337,9 @@ fun TimeCardCreator(
                             thickness = 1.dp,
                             color = MaterialTheme.colors.surface.copy(0.2f)
                         )
-                        OutlinedButton(onClick = {}) {
+                        OutlinedButton(onClick = {
+                            timeStateVisible.value = true
+                        }) {
                             Icon(
                                 imageVector = Icons.Rounded.DateRange,
                                 contentDescription = null,

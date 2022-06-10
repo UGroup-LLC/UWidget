@@ -213,7 +213,6 @@ fun StandardButton(content: () -> Unit, text: String, icon: ImageVector) {
 
 @Composable
 fun StandardButton(content: () -> Unit, text: String, icon: Painter) {
-    val MaterialTheme.colors = MaterialTheme.colors
     Button(
         onClick = {
             content()
