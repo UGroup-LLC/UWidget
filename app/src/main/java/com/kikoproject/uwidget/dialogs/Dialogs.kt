@@ -315,7 +315,7 @@ fun ShowErrorDialog(text: String, needButton: Boolean) {
 }
 
 @Composable
-fun ShowInfoDialog(text: String, content:() -> Unit) {
+fun ShowInfoDialog(text: String, textInfo: String, content:() -> Unit) {
     val state = remember { mutableStateOf(true) }
     val textColor = MaterialTheme.colors.surface
     if (state.value) {
@@ -335,10 +335,15 @@ fun ShowInfoDialog(text: String, content:() -> Unit) {
             },
             text = {},
             dismissButton = {
-                Button(onClick = {
-                    content()
-                }) {
-                    Text(text = text, color = MaterialTheme.colors.secondary)
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    Button(onClick = {
+                        content()
+                    }) {
+                        Text(text = textInfo, color = MaterialTheme.colors.secondary)
+                    }
                 }
             },
             icon = {

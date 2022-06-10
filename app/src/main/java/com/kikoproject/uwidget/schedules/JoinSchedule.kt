@@ -40,6 +40,7 @@ import com.radusalagean.infobarcompose.InfoBar
 fun JoinSchedule() {
     // Штука которая будет нам показывать что мы чето не правильно сделали и тд
     var message: CustomToastBar? by remember { mutableStateOf(null) }
+//    var chek = 0
 
     Box(
         modifier = Modifier
@@ -67,7 +68,10 @@ fun JoinSchedule() {
                     val isError = remember { mutableStateOf(false) }
                     val code = joinCodeInput(isError)
                     if (isComplited.value){
-                        ShowInfoDialog(text = "Ошибка", {isComplited.value = false})
+                        /*if (chek == 3){
+                            ShowInfoDialog(text = "Ошибка", {isComplited.value = false})
+                        }*/
+                        ShowInfoDialog(text = "Ошибка", textInfo = "Ок", {isComplited.value = false})
                     }
                     if (code.value.length == 6 && !isComplited.value) {
                         // Проверка есть ли такое расписание с таким кодом, состоим ли мы уже в нем или админ ли мы в нем
@@ -79,12 +83,11 @@ fun JoinSchedule() {
                                 } else {
                                     isComplited.value = true
                                     isError.value = true
+//                                    chek += 1
+                                    code.value = ""
                                 }
                             }
                         })
-                    }
-                    else{
-                        isComplited.value = false
                     }
                 }
             }
