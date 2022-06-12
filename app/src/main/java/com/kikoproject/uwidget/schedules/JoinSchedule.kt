@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kikoproject.uwidget.dialogs.ShowInfoDialog
+import com.kikoproject.uwidget.main.chet
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.EnterInScheduleResult
@@ -39,7 +40,7 @@ import com.kikoproject.uwidget.objects.CustomToastBar
 fun JoinSchedule() {
     // Штука которая будет нам показывать что мы чето не правильно сделали и тд
     var message: CustomToastBar? by remember { mutableStateOf(null) }
-//    var chek = 0
+
 
     Box(
         modifier = Modifier
@@ -67,10 +68,21 @@ fun JoinSchedule() {
                     val isError = remember { mutableStateOf(false) }
                     val code = joinCodeInput(isError)
                     if (isComplited.value){
-                        /*if (chek == 3){
-                            ShowInfoDialog(text = "Ошибка", {isComplited.value = false})
-                        }*/
-                        ShowInfoDialog(text = "Ошибка", textInfo = "Ок", {isComplited.value = false})
+                        if (chet == 3){
+                            ShowInfoDialog(text = "После еще 2 некорректных попыток" +
+                                    " возможность ввести код будет заблокированна на некоторое время", textInfo = "Ок", {isComplited.value = false})
+
+                        }
+                        if (chet == 4){
+                            ShowInfoDialog(text = "Будьте внимательны, это последняя попытка", textInfo = "Ок", {isComplited.value = false})
+
+                        }
+                        else if (chet == 5){
+
+                        }
+                        else{
+                            isComplited.value = false
+                        }
                     }
                     if (code.value.length == 6 && !isComplited.value) {
                         // Проверка есть ли такое расписание с таким кодом, состоим ли мы уже в нем или админ ли мы в нем
@@ -79,10 +91,11 @@ fun JoinSchedule() {
                                 if (isEntered) {
                                     isError.value = false
                                     navController.navigate(ScreenNav.Dashboard.route)
+                                    chet = 0
                                 } else {
                                     isComplited.value = true
                                     isError.value = true
-//                                    chek += 1
+                                    chet += 1
                                     code.value = ""
                                 }
                             }

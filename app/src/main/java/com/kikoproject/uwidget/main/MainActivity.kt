@@ -46,7 +46,9 @@ lateinit var materialColors: Colors
 var curSchedule: Schedule? = null
 @SuppressLint("StaticFieldLeak")
 lateinit var prefs: SharedPreferences
-
+@SuppressLint("StaticFieldLeak")
+var chet = 0
+var ban = false
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
