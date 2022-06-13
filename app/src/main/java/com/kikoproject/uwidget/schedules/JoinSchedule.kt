@@ -70,7 +70,7 @@ fun JoinSchedule() {
                         /*if (chek == 3){
                             ShowInfoDialog(text = "Ошибка", {isComplited.value = false})
                         }*/
-                        ShowInfoDialog(text = "Ошибка", textInfo = "Ок", {isComplited.value = false})
+                        //ShowInfoDialog(text = "Ошибка", textInfo = "Ок", {isComplited.value = false})
                     }
                     if (code.value.length == 6 && !isComplited.value) {
                         // Проверка есть ли такое расписание с таким кодом, состоим ли мы уже в нем или админ ли мы в нем

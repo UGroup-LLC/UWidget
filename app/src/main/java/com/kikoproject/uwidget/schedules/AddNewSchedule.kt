@@ -461,7 +461,7 @@ fun AddSchedule() {
                             if (nameState.value.text.filter { !it.isWhitespace() } != "") {
                                 val adminId = GoogleSignIn.getLastSignedInAccount(context)
                                 if (adminId?.id != null) {
-                                    stateDialog.value = true // Показывает диалог загрузки
+//                                    stateDialog.value = true // Показывает диалог загрузки
                                     generateCode(object : GeneratedCodeResult{
                                         override fun onResult(code: String) {
                                             val schedule = Schedule(
