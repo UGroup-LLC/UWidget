@@ -51,6 +51,10 @@ import com.kikoproject.uwidget.utils.bitmapResize
 import java.io.ByteArrayOutputStream
 
 
+/**
+ * Экран регистрации
+ * @author Kiko
+ */
 @Composable
 fun RegisterScreen() {
     UWidgetTheme {
@@ -238,6 +242,15 @@ fun RegisterScreen() {
     }
 }
 
+/**
+ * Поля для ввода имени и фамилии юзера
+ *
+ * @param nameState Введенное имя пользователя
+ * @param surnameState Введенная фамилия пользователя
+ * @param textColor цвет текста
+ *
+ * @author Kiko
+ */
 @Composable
 private fun TextsInput(
     nameState: MutableState<TextFieldValue>,
@@ -271,13 +284,16 @@ private fun TextsInput(
     )
 }
 
-@Preview(showBackground = true)
-@Composable
-fun RegisterPreview() {
-    RegisterScreen()
-}
-
-
+/**
+ * Отправка информации о новом аккаунте в БД
+ *
+ * @param name имя аккаунта
+ * @param surname фамилия аккаунта
+ * @param bitmapBase64 аватар аккаунта в формате base64
+ * @param account Google аккаунт
+ *
+ * @author Kiko
+ */
 fun sendToDBMainInfo(
     name: String,
     surname: String,
@@ -300,9 +316,23 @@ fun sendToDBMainInfo(
         }
 }
 
+/**
+ * Конвертирует картинку в base64 формат
+ *
+ * @param dstBmp исходная картинка
+ *
+ * @author Kiko
+ */
 fun bitmapToBase64(dstBmp: Bitmap): String {
     val byteArrayOutputStream = ByteArrayOutputStream()
     dstBmp.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
     val byteArray: ByteArray = byteArrayOutputStream.toByteArray()
     return Base64.encodeToString(byteArray, Base64.DEFAULT);
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun RegisterPreview() {
+    RegisterScreen()
 }

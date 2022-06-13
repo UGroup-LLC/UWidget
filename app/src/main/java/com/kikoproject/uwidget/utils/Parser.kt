@@ -6,7 +6,9 @@ import kotlinx.coroutines.launch
 import org.jsoup.Jsoup
 import kotlin.math.abs
 
-
+/**
+ * TODO("ПЕРЕПИСАТЬ ЭТО ВСЕ ПОД ЧТО ТО БОЛЕЕ МЕНЕЕ")
+ */
 fun getSelectorDivider(first: String, second: String): MutableList<Triple<Int, Int, Int>> {
 
     var beginPos = 0

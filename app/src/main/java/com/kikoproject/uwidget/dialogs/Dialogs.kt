@@ -33,6 +33,11 @@ import com.kikoproject.uwidget.getSelectors
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.navigation.ScreenNav
 
+/**
+ * Показывает диалог загрузки
+ *
+ * @param state показывает или прячет диалог
+ */
 @Composable
 fun ShowLoadingDialog(state: MutableState<Boolean>) {
     val textColor = MaterialTheme.colors.surface
@@ -87,6 +92,14 @@ fun ShowLoadingDialog(state: MutableState<Boolean>) {
     }
 }
 
+/**
+ * Показывает WEB диалог который при копировании текста выбрасывает результат что было скопировано
+ * @param state показывает или прячет диалог
+ * @param url ссылка на сайт для отображения
+ * @param result результат скопированного текста
+ *
+ * @author Kiko
+ */
 @SuppressLint("MutableCollectionMutableState")
 @Composable
 fun ShowSearchSelector(state: MutableState<Boolean>, url: String, result: ScheduleDialogSelector) {
@@ -199,7 +212,15 @@ fun ShowSearchSelector(state: MutableState<Boolean>, url: String, result: Schedu
      */
 }
 
-
+/**
+ * Показывает найденные совпадения в ShowSearchSelectors диалоге
+ *
+ * @param state показывает или прячет диалог
+ * @param foundCollection массив найденных совпадений на сайте по скопированному тексту
+ * @param result результат селектора что было выбрано в диалоге
+ *
+ * @author Kiko
+ */
 @Composable
 fun ShowFoundResult(
     state: MutableState<Boolean>,
@@ -259,6 +280,14 @@ fun ShowFoundResult(
 }
 
 
+/**
+ * Показывает диалог ошибки
+ *
+ * @param text текст диалога
+ * @param needButton отображение кнопки
+ *
+ * @author Kiko
+ */
 @Composable
 fun ShowErrorDialog(text: String, needButton: Boolean) {
     val state = remember { mutableStateOf(true) }
@@ -307,8 +336,17 @@ fun ShowErrorDialog(text: String, needButton: Boolean) {
     }
 }
 
+/**
+ * Информативный диалог
+ *
+ * @param text текст диалога
+ * @param buttonText текст кнопки
+ * @param content описывает что должна делать кнопка при нажатии
+ *
+ * @author Kiko & Levosllavny
+ */
 @Composable
-fun ShowInfoDialog(text: String, textInfo: String, content:() -> Unit) {
+fun ShowInfoDialog(text: String, buttonText: String, content:() -> Unit) {
     val state = remember { mutableStateOf(true) }
     val textColor = MaterialTheme.colors.surface
     if (state.value) {
@@ -335,7 +373,7 @@ fun ShowInfoDialog(text: String, textInfo: String, content:() -> Unit) {
                     Button(onClick = {
                         content()
                     }) {
-                        Text(text = textInfo, color = MaterialTheme.colors.secondary)
+                        Text(text = buttonText, color = MaterialTheme.colors.secondary)
                     }
                 }
             },
@@ -352,10 +390,22 @@ fun ShowInfoDialog(text: String, textInfo: String, content:() -> Unit) {
     }
 }
 
+/**
+ * Результат выбора селектора
+ *
+ * @author Kiko
+ */
 interface ScheduleDialogSelector {
     fun onResult(scheduleCSS: String)
 }
 
+/**
+ * Вьюшка для отображения веб-страницы
+ *
+ * @param urlToRender ссылка на сайт для отображения
+ *
+ * @author Kiko
+ */
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun WebPageScreen(urlToRender: String) {

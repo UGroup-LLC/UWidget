@@ -31,12 +31,22 @@ import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.ScreenNav
 import kotlin.random.Random
 
+/**
+ * Проверка пользователя в БД
+ * Если пользователь не авторизирован отправляет на GoogleAuth
+ * Если пользователь авторизирован но не существует в БД отправляет в RegistrationInfo
+ * Если все есть отправляет в Dashboard
+ *
+ * @param state тображение диалога загрузки
+ * @param account Google аккаунт
+ *
+ * @author Kiko
+ */
 @Composable
 fun CheckUserInDB(
     context: Context,
     state: MutableState<Boolean>,
     account: GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(context),
-    textError: String
 ) {
     navController.popBackStack()
     val materialColors = MaterialTheme.colors
@@ -62,7 +72,6 @@ fun CheckUserInDB(
 
                         updateAllData(
                             user = curUser,
-                            materialColors = materialColors,
                             content = { myScheduleUser, myScheduleAdmin ->
 
                                 //********** Записываем в локальную БД **********
@@ -97,7 +106,11 @@ fun CheckUserInDB(
     }
 }
 
-// Сохраняет пользователя в локальной БД
+/**
+ * Сохраняет пользователя в локальную БД
+ *
+ * @author Kiko
+ */
 fun insertAccountInRoom(user: User?) {
     if (user != null) {
         if (roomDb.userDao().findById(user.Id) == null) {
@@ -106,12 +119,23 @@ fun insertAccountInRoom(user: User?) {
     }
 }
 
-// Создает расписание в локальной БД
+/**
+ * Сохраняет расписание в локальную БД
+ *
+ * @author Kiko
+ */
 fun createScheduleInRoomDB(schedule: Schedule) {
     roomDb.scheduleDao().insertAll(schedule)
 }
 
-// Получает любое расписание пользователя
+/**
+ * Получает рандомное расписание пользователя
+ * Сначала пытается получить расписание где пользователь администратор
+ * А затем где обычный пользователь, если же не находит такие, то возвращает null
+ *
+ * @param mySchedulesAdmin лист расписаний где пользователь администратор
+ * @param mySchedulesUser лист расписаний где пользователь обычный юзер
+ */
 fun getNextUserSchedule(
     mySchedulesAdmin: List<Schedule>,
     mySchedulesUser: List<Schedule>
@@ -126,6 +150,13 @@ fun getNextUserSchedule(
     return null
 }
 
+/**
+ * Генерирует код для расписания который еще не существует в БД
+ *
+ * @param generatedCodeResult результат генирации
+ *
+ * @author Kiko
+ */
 fun generateCode(generatedCodeResult: GeneratedCodeResult) {
     val code = Random.nextInt(100000, 999999).toString()
     db.collection("schedules")
@@ -149,7 +180,15 @@ fun generateCode(generatedCodeResult: GeneratedCodeResult) {
         }
 }
 
-// Подгружает всех юзеров кто состоит в указанном расписании
+/**
+ * Метод содержащий в себе прогрузку всех юзеров расписания
+ * Отображает загрзку пока не получит лист юзеров
+ *
+ * @param content будущее использование листа юзеров
+ * @param schedule расписание
+ *
+ * @author Kiko
+ */
 @Composable
 fun MembersOnlineContent(
     content: @Composable (users: List<User>) -> Unit,
@@ -186,7 +225,15 @@ fun MembersOnlineContent(
     }
 }
 
-// Прогружает расписания юзера пока не прогрузило, показывает loading ui
+/**
+ * Метод содержащий в себе прогрузку всех расписаний пользователя где он является
+ * администратором или же обычный юзером
+ *
+ * @param content будущее использование расписаний
+ * @param user пользователь
+ *
+ * @author Kiko
+ */
 @Composable
 fun OnlineContent(
     content: @Composable (mySchedulesUser: List<Schedule>, mySchedulesAdmin: List<Schedule>) -> Unit,
@@ -245,11 +292,19 @@ fun OnlineContent(
         })
 }
 
-// Прогружает расписания без ui
+
+/**
+ * Делает то же самое что и OnlineContent
+ * но не является Composable не показывает загрузку контента графически
+ *
+ * @param content будущее использование листа юзеров
+ * @param user пользователь
+ *
+ * @author Kiko
+ */
 fun updateAllData(
     content: (mySchedulesUser: List<Schedule>, mySchedulesAdmin: List<Schedule>) -> Unit,
     user: User,
-    materialColors: Colors
 ) {
     getAdminSchedules(
         user = user,
@@ -276,7 +331,14 @@ fun updateAllData(
         })
 }
 
-// Выход из БД
+/**
+ * Удаляет пользователя по ID из указанного расписания
+ *
+ * @param schedule расписание
+ * @param userId ID пользователя для удаления
+ *
+ * @author Kiko
+ */
 fun outFromSchedule(schedule: Schedule, userId: String) {
     val newUsersId = schedule.UsersID.toMutableList()
     newUsersId.remove(userId)
@@ -287,13 +349,25 @@ fun outFromSchedule(schedule: Schedule, userId: String) {
     curSchedule = schedule.copy(UsersID = newUsersId)
 }
 
-// Удаление БД из всех БД
+/**
+ * Полное удаление расписание из всех БД
+ *
+ * @param schedule расписание
+ *
+ * @author Kiko
+ */
 fun deleteSchedule(schedule: Schedule) {
     roomDb.scheduleDao().delete(schedule = schedule)
     db.collection("schedules").document(schedule.ID).delete()
 }
 
-// Создать расписание в бд
+/**
+ * Создает расписание в онлайн БД
+ *
+ * @param schedule расписание
+ *
+ * @author Kiko
+ */
 fun createScheduleInDB(schedule: Schedule) {
     if (schedule.Name != "") {
         val user = hashMapOf(
@@ -309,7 +383,14 @@ fun createScheduleInDB(schedule: Schedule) {
     }
 }
 
-// Вход в расписание
+/**
+ * Вход в расписание по коду приглашения
+ *
+ * @param code код входа в расписание
+ * @param enterInScheduleResult результат входа в расписание
+ *
+ * @author Kiko
+ */
 fun enterInSchedule(code: String, enterInScheduleResult: EnterInScheduleResult) {
     db.collection("schedules")
         .whereEqualTo("code", code)
@@ -356,7 +437,14 @@ fun enterInSchedule(code: String, enterInScheduleResult: EnterInScheduleResult) 
         }
 }
 
-// Получение картинки из юзера
+/**
+ * Получает аватар пользователя по его ID
+ *
+ * @param userId ID пользователя
+ * @param avatarResult результат получения автара
+ *
+ * @author Kiko
+ */
 fun getUserBitmap(userId: String, avatarResult: AvatarResult) {
     val imageBytes =
         db.collection("users").document(userId).get().addOnSuccessListener { fields ->
@@ -366,7 +454,14 @@ fun getUserBitmap(userId: String, avatarResult: AvatarResult) {
         }
 }
 
-//Получение расписаний где юзер админ
+/**
+ * Получение расписаний где указанный пользователь администратор
+ *
+ * @param user пользователь
+ * @param scheduleResult результаты поиска расписаний
+ *
+ * @author Kiko
+ */
 fun getAdminSchedules(user: User, scheduleResult: ScheduleResult) {
     db.collection("schedules").whereEqualTo("admin_id", user.Id).get().addOnSuccessListener {
         val documents = it.documents
@@ -395,7 +490,14 @@ fun getAdminSchedules(user: User, scheduleResult: ScheduleResult) {
     }
 }
 
-// Получение вссех юзеров расписания
+/**
+ * Получение всех пользователей в указанном расписании
+ *
+ * @param schedule расписание
+ * @param usersResult результат получения
+ *
+ * @author Kiko
+ */
 fun getScheduleUsers(schedule: Schedule, usersResult: UsersResult) {
     db.collection("schedules").document(schedule.ID).get().addOnSuccessListener { fields ->
         var usersModel = mutableListOf<User>()
@@ -422,7 +524,15 @@ fun getScheduleUsers(schedule: Schedule, usersResult: UsersResult) {
 
 }
 
-// Получение юзера по его ID
+/**
+ * Возвращает User по ID пользователя
+ *
+ * @param userId ID пользователя
+ * @param userResult результат получения
+ * @param contentIfError если произошла ошибка и пользователя нет, то срабатывает этот параметр
+ *
+ * @author Kiko
+ */
 fun getUserFromId(userId: String, userResult: UserResult, contentIfError: (() -> Unit)? = null) {
     db.collection("users").whereEqualTo("id", userId).get().addOnSuccessListener {
         try {
@@ -457,7 +567,14 @@ fun getUserFromId(userId: String, userResult: UserResult, contentIfError: (() ->
     }
 }
 
-//Получение расписаний где юзер простой смертный
+/**
+ * Получение расписаний где указанный пользователь простой юзер
+ *
+ * @param user пользователь
+ * @param scheduleResult результаты поиска расписаний
+ *
+ * @author Kiko
+ */
 fun getUserSchedules(user: User, scheduleResult: ScheduleResult) {
     db.collection("schedules").whereArrayContains("users_ids", user.Id).get().addOnSuccessListener {
         val documents = it.documents
@@ -486,7 +603,13 @@ fun getUserSchedules(user: User, scheduleResult: ScheduleResult) {
     }
 }
 
-// Получает всех пользователей
+/**
+ * Получение всех пользователей, лучше не использовать нагружает БД!
+ *
+ * @param usersResult результат получения
+ *
+ * @author Kiko
+ */
 fun getAllUsers(usersResult: UsersResult) {
 
     var usersModel = mutableListOf<User>()
@@ -515,7 +638,13 @@ fun getAllUsers(usersResult: UsersResult) {
     }
 }
 
-//Получение всех расписаний
+/**
+ * Получение всех расписаний, лучше не использовать нагружает БД!
+ *
+ * @param scheduleResult результат получения
+ *
+ * @author Kiko
+ */
 fun getAllSchedules(scheduleResult: ScheduleResult) {
 
     var schedulesModel = mutableListOf<Schedule>()

@@ -3,6 +3,10 @@ package com.kikoproject.uwidget.localdb
 import androidx.room.*
 import com.kikoproject.uwidget.models.schedules.Schedule
 
+/**
+ * DAO слой расписаний
+ * @author Kiko
+ */
 @Dao
 interface SchedulesDao {
     @Query("SELECT * FROM schedules")

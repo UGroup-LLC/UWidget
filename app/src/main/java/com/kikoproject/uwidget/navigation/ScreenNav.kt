@@ -1,5 +1,10 @@
 package com.kikoproject.uwidget.navigation
 
+/**
+ * Класс отвечающий за основные окна в навигации
+ *
+ * @author Kiko
+ */
 sealed class ScreenNav(val route: String)
 {
     object MainNav : ScreenNav("main_nav")

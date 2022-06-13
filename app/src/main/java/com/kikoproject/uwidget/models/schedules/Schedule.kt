@@ -19,7 +19,11 @@ data class Schedule(
     val Options: ScheduleOptions?
 )
 
-
+/**
+ * Стандартные настройки расписания
+ *
+ * @author Kiko
+ */
 fun DefaultScheduleOption(): ScheduleOptions
 {
     return ScheduleOptions(

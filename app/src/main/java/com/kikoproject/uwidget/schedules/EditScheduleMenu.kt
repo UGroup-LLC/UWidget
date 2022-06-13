@@ -16,9 +16,10 @@ import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.objects.BackHeader
 import com.kikoproject.uwidget.objects.StandardButton
 
+/**
+ * Админ панель в расписании содержащяя в себе редактирование расписание, удаление пользователей
+ */
 @Composable
-// Меню админ панели расписания где будет редактирование расписание, удаление members,
-// Регенерировать код приглашения
 fun EditSheduleMenu(){
     Box(
         modifier = Modifier

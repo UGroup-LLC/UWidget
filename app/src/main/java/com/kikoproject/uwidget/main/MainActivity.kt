@@ -33,19 +33,19 @@ import com.kikoproject.uwidget.ui.theme.UWidgetTheme
 
 
 @SuppressLint("StaticFieldLeak")
-lateinit var navController: NavHostController
+lateinit var navController: NavHostController // Контроллер навигации
 @SuppressLint("StaticFieldLeak")
-val db = Firebase.firestore
+val db = Firebase.firestore // Онлайн БД
 @SuppressLint("StaticFieldLeak")
-lateinit var roomDb: MainDataBase
+lateinit var roomDb: MainDataBase // Локальная БД
 @SuppressLint("StaticFieldLeak")
-lateinit var curUser: User
+lateinit var curUser: User // Текущий пользователь в приложении
 @SuppressLint("StaticFieldLeak")
-lateinit var materialColors: Colors
+lateinit var materialColors: Colors // Material цвета приложения
 @SuppressLint("StaticFieldLeak")
-var curSchedule: Schedule? = null
+var curSchedule: Schedule? = null // Выбранное расписание
 @SuppressLint("StaticFieldLeak")
-lateinit var prefs: SharedPreferences
+lateinit var prefs: SharedPreferences // Сохранения переменных на устройстве
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

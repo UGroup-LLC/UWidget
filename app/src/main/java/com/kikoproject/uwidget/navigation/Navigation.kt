@@ -11,6 +11,11 @@ import com.kikoproject.uwidget.main.MainActivity
 import com.kikoproject.uwidget.permissions.CreateWidgetActivity
 import com.kikoproject.uwidget.schedules.*
 
+/**
+ * Установка NavHost маршрутов для контроллера навигации
+ *
+ * @author Kiko
+ */
 @Composable
 fun NavigationSetup(
     navController: NavHostController

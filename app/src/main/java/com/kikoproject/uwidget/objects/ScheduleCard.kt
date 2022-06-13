@@ -338,6 +338,12 @@ fun TimeCardCreator(
     return states
 }
 
+/**
+ * Карточки с первоначальной иконкой календаря, а в последующем заменяемые на выбранное из диалога
+ * @param range Диапазон мин времени и макс времени для выбора
+ *
+ * @author Kiko
+ */
 @Composable
 fun CalendarButtons(context: Context, range: ClosedRange<LocalTime>) {
     /*

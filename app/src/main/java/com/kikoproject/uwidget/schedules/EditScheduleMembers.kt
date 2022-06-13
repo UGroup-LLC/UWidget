@@ -15,8 +15,12 @@ import com.kikoproject.uwidget.networking.MembersOnlineContent
 import com.kikoproject.uwidget.objects.BackHeader
 import com.kikoproject.uwidget.objects.UserButton
 
+/**
+ * Меню где отображаются мемберы расписания и кнопки для их удаления
+ *
+ * @author Kiko
+ */
 @Composable
-// Меню удаления мемберов расписания
 fun EditScheduleMembers() {
     if(curSchedule != null) {
         MembersOnlineContent(schedule = curSchedule!!, content = { users ->

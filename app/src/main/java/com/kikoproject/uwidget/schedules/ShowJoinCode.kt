@@ -14,6 +14,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kikoproject.uwidget.main.curSchedule
 
+/**
+ * Отображает код расписания в карточке
+ * @author Kiko
+ */
 @Composable
 fun ShowJoinCode() {
     Box(

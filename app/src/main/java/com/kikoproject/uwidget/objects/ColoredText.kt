@@ -8,6 +8,17 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import com.kikoproject.uwidget.models.User
 
+/**
+ * Возвращает раскрашенный текст, по принципу %n и %s заменяет на имя и фамилию
+ * раскрашивает вторичным цветом а обычный текст возвращает классическим цветом текста
+ *
+ * @param text текст на замену
+ * @param user пользователь
+ *
+ * @return раскрашенная строка
+ *
+ * @author Kiko
+ */
 @Composable
 fun coloredTitleText(text: String, user: User) : AnnotatedString{
     return buildAnnotatedString {

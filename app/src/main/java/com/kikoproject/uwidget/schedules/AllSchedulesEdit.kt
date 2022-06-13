@@ -21,6 +21,10 @@ import com.kikoproject.uwidget.objects.BackHeader
 import com.kikoproject.uwidget.objects.ScheduleButton
 import com.kikoproject.uwidget.objects.StandardButton
 
+/**
+ * Содержит в себе все расписания пользователя и их настройку
+ * @author Kiko
+ */
 @Composable
 fun AllSchedulesActivity() {
     OnlineContent(user = curUser, content = { myScheduleUser, myScheduleAdmin ->
