@@ -72,7 +72,6 @@ class MainActivity : ComponentActivity() {
                 CheckUserInDB(
                     context = context,
                     state = state,
-                    textError = "Автономный режим",
                 )
             }
         }
