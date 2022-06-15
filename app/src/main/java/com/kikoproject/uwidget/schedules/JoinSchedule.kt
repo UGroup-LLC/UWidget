@@ -1,5 +1,6 @@
 package com.kikoproject.uwidget.schedules
 
+import android.os.CountDownTimer
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -28,7 +29,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kikoproject.uwidget.dialogs.ShowInfoDialog
-import com.kikoproject.uwidget.main.chet
+import com.kikoproject.uwidget.main.countOfBan
+import com.kikoproject.uwidget.main.isJoinBanned
+import com.kikoproject.uwidget.main.timer
+import com.kikoproject.uwidget.main.timeUntilBanIslifted
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.EnterInScheduleResult
@@ -36,70 +40,118 @@ import com.kikoproject.uwidget.networking.enterInSchedule
 import com.kikoproject.uwidget.objects.BackHeader
 import com.kikoproject.uwidget.objects.CustomToastBar
 
+
 @Composable
 fun JoinSchedule() {
     // Штука которая будет нам показывать что мы чето не правильно сделали и тд
     var message: CustomToastBar? by remember { mutableStateOf(null) }
 
+    if(isJoinBanned){
+        if(timer){
+            timer = false
+            object : CountDownTimer(30000, 1000) {
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.background)
-            .padding(horizontal = 15.dp, vertical = 10.dp),
-        contentAlignment = Alignment.TopCenter
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+                override fun onTick(second: Long) {
+                    timeUntilBanIslifted.value = second / 1000
+                }
+
+                override fun onFinish() {
+                    isJoinBanned = false
+                    countOfBan = 0
+                    timer = true
+
+                }
+            }.start()
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.background)
+                .padding(horizontal = 15.dp, vertical = 10.dp),
+            contentAlignment = Alignment.TopCenter
         ) {
-            BackHeader("Код приглашения")
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Text(
-                        text = "Введите код приглашения ниже",
-                        style = MaterialTheme.typography.caption,
-                        color = MaterialTheme.colors.surface
-                    )
-                    val isComplited = remember { mutableStateOf(false) }
-                    val isError = remember { mutableStateOf(false) }
-                    val code = joinCodeInput(isError)
-                    if (isComplited.value){
-                        if (chet == 3){
-                            ShowInfoDialog(text = "После еще 2 некорректных попыток" +
-                                    " возможность ввести код будет заблокированна на некоторое время", textInfo = "Ок", {isComplited.value = false})
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                BackHeader("Код приглашения")
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Text(
+                            text = "Временно ввод кода расписаний недоступен",
+                            style = MaterialTheme.typography.caption,
+                            color = MaterialTheme.colors.surface
+                        )
+                        Text(
+                            text = "Времени до снятия бана: ${timeUntilBanIslifted.value}",
+                            style = MaterialTheme.typography.caption,
+                            color = MaterialTheme.colors.surface
+                        )
 
-                        }
-                        if (chet == 4){
-                            ShowInfoDialog(text = "Будьте внимательны, это последняя попытка", textInfo = "Ок", {isComplited.value = false})
-
-                        }
-                        else if (chet == 5){
-
-                        }
-                        else{
-                            isComplited.value = false
-                        }
                     }
-                    if (code.value.length == 6 && !isComplited.value) {
-                        // Проверка есть ли такое расписание с таким кодом, состоим ли мы уже в нем или админ ли мы в нем
-                        enterInSchedule(code.value, object : EnterInScheduleResult {
-                            override fun onResult(isEntered: Boolean) {
-                                if (isEntered) {
-                                    isError.value = false
-                                    navController.navigate(ScreenNav.Dashboard.route)
-                                    chet = 0
-                                } else {
-                                    isComplited.value = true
-                                    isError.value = true
-                                    chet += 1
-                                    code.value = ""
-                                }
+                }
+            }
+        }
+    }
+    else{
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.background)
+                .padding(horizontal = 15.dp, vertical = 10.dp),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                BackHeader("Код приглашения")
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Text(
+                            text = "Введите код приглашения ниже",
+                            style = MaterialTheme.typography.caption,
+                            color = MaterialTheme.colors.surface
+                        )
+                        val isComplited = remember { mutableStateOf(false) }
+                        val isError = remember { mutableStateOf(false) }
+                        val code = joinCodeInput(isError)
+                        if (isComplited.value){
+                            if (countOfBan == 4){
+                                ShowInfoDialog(text = "Будьте внимательны, это последняя попытка", textInfo = "Ок", {isComplited.value = false})
+
                             }
-                        })
+                            else if (countOfBan == 5){
+                                isJoinBanned = true
+                            }
+                            else{
+                                isComplited.value = false
+                            }
+                        }
+                        if (code.value.length == 6 && !isComplited.value) {
+                            // Проверка есть ли такое расписание с таким кодом, состоим ли мы уже в нем или админ ли мы в нем
+                            enterInSchedule(code.value, object : EnterInScheduleResult {
+                                override fun onResult(isEntered: Boolean) {
+                                    if (isEntered) {
+                                        isError.value = false
+                                        navController.navigate(ScreenNav.Dashboard.route)
+                                        countOfBan = 0
+                                    } else {
+                                        isComplited.value = true
+                                        isError.value = true
+                                        countOfBan += 1
+                                        code.value = ""
+                                    }
+                                }
+                            })
+                        }
                     }
                 }
             }
