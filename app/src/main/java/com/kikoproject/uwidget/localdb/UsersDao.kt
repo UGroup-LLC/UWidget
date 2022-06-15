@@ -3,6 +3,10 @@ package com.kikoproject.uwidget.localdb
 import androidx.room.*
 import com.kikoproject.uwidget.models.User
 
+/**
+ * DAO слой пользователей
+ * @author Kiko
+ */
 @Dao
 interface UsersDao {
     @Query("SELECT * FROM users")

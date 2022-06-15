@@ -27,6 +27,11 @@ class CustomToastBar(
     override val containsControls: Boolean = false
 }
 
+/**
+ * Кастомный всплывающий диалог
+ *
+ * @author Kiko
+ */
 @Composable
 fun customToastBarMessage() : @Composable (CustomToastBar) -> Unit {
     val content: @Composable (CustomToastBar) -> Unit = { message ->

@@ -24,6 +24,10 @@ import com.kikoproject.uwidget.objects.coloredTitleText
 import com.kikoproject.uwidget.time.TimeZone
 import com.kikoproject.uwidget.time.getTimeZone
 
+/**
+ * Главное окно приложения где отображается превью виджета, кнопки настроек и тд
+ * @author Kiko
+ */
 @Composable
 fun DashboardActivity() {
     OnlineContent(user = curUser, content = { myScheduleUser, myScheduleAdmin ->
@@ -125,6 +129,15 @@ fun DashboardActivity() {
     })
 }
 
+/**
+ * Выбирает что за текст необходимо отображать в превью в заголовке
+ *
+ * @param user пользователь имя которого может отобразиться в заголовке
+ *
+ * @author Kiko
+ *
+ * @exception TODO("НЕОБХОДИМО ПЕРЕНЕСТИ ЭТО В ОТДЕЛЬНЫЙ МЕТОД")
+ */
 @Composable
 fun TitleShedule(user: User, schedule: Schedule) {
     var text = ""
@@ -146,6 +159,13 @@ fun TitleShedule(user: User, schedule: Schedule) {
     )
 }
 
+/**
+ * Переопределенный метод используемый для отображения заголовка в превью с кастом текстом
+ *
+ * @param text текст заголовка
+ *
+ * @author Kiko
+ */
 @Composable
 fun TitleShedule(text: String) {
     Text(
@@ -154,14 +174,4 @@ fun TitleShedule(text: String) {
         style = MaterialTheme.typography.caption,
         color = MaterialTheme.colors.surface
     )
-}
-
-@Composable
-fun ScheduleTexts() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-
-    }
 }

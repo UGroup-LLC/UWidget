@@ -23,6 +23,11 @@ import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.main.curUser
 import com.kikoproject.uwidget.main.navController
 
+/**
+ * Хэдэр Dashboard, содержит в себе текст заголовка, тему приложения и аватар пользователя
+ * @param account Google аккаунт пользователя
+ * @author Kiko
+ */
 @Composable
 fun MainHeader(account: GoogleSignInAccount?) {
     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.Top) {
@@ -53,9 +58,16 @@ fun MainHeader(account: GoogleSignInAccount?) {
                 modifier = Modifier.requiredSize(24.dp)
             )
         }
-    } // header
+    }
 }
 
+/**
+ * Хедер окна (верх окна) содержит в себе кнопку назад а так же заголовок
+ *
+ * @param text текст заголовка
+ *
+ * @author Kiko
+ */
 @Composable
 fun BackHeader(text: String) {
     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.Top) {
@@ -80,4 +92,4 @@ fun BackHeader(text: String) {
         )
         Spacer(modifier = Modifier.requiredSize(24.dp))
     }
-} // header
+}

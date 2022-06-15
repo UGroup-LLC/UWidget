@@ -5,6 +5,12 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
 
+/**
+ * Проверяет велючен ли интернет модуль на устройстве
+ * @exception TODO("Изменить в будующем на более точный способ проверки")
+ *
+ * @author Kiko
+ */
 fun isOnline(context: Context): Boolean {
     val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

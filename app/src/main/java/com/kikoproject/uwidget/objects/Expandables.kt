@@ -26,6 +26,15 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/**
+ * Подсказка по работе приложения первично отображается в скрытом виде, а затем пользователь
+ * может раскрыть подсказку
+ *
+ * @param title заголовок подсказки
+ * @param text основной текст подсказки
+ *
+ * @author Kiko
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExpandableTextHelper(

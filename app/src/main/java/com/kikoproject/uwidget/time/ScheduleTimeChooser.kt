@@ -5,10 +5,20 @@ import android.icu.text.SimpleDateFormat
 import com.kikoproject.uwidget.models.schedules.Schedule
 import java.util.*
 
+/**
+ * Временные зоны
+ * @author Kiko
+ */
 enum class TimeZone {
     MORNING, DAY_LESION, DAY_REST, EVENING
 }
 
+/**
+ * Получает текущюю временную зону
+ * @param schedule расписание
+ * @return возвращает временную зону расписания
+ * @author Kiko
+ */
 @SuppressLint("SimpleDateFormat")
 fun getTimeZone(schedule: Schedule): TimeZone {
     val date =

@@ -1,5 +1,67 @@
 *********** HELP ЗАПИСКА **********
 
+***GIT***
+ПРОЧИТАТЬ ОБЯЗАТЕЛЬНО
+
+Сначала .gitignore может работать некорректно для того чтобы работало все верно проверь свой .gitignore  папке проекта
+он должен быть таким:
+
+# Built application files
+/*/build/
+
+# Crashlytics configuations
+com_crashlytics_export_strings.xml
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Gradle generated files
+.gradle/
+
+# Signing files
+.signing/
+
+# User-specific configurations
+.idea/libraries/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/.name
+.idea/compiler.xml
+.idea/copyright/profiles_settings.xml
+.idea/encodings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/scopes/scope_settings.xml
+.idea/vcs.xml
+*.iml
+
+# OS-specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+/.gitignore
+.gradle/7.2/executionHistory/executionHistory.bin
+
+
+
+Если все верно то сделай следущее в консоли в рабочей дирректории
+
+Сначала зафиксируйте все выдающиеся изменения кода, а затем запустите эту команду:
+
+git rm -r --cached .
+Это удаляет все измененные файлы из индекса (промежуточной области), а затем просто запускает:
+
+git add .
+Зафиксируйте это:
+
+git commit -m ".gitignore is now working"
+
+
+****** НАСЧЕТ КОММЕНТАРИЕВ ******
 При каждом создании функции необходимо указывать комментарий по функции (/** и Enter над функцией)
 
 Необходимо указать:

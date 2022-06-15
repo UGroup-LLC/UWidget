@@ -18,6 +18,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 
+/**
+ * Кнопки для выбора одного варианта чего-либо
+ * @param texts тексты кнопок
+ * @param inactiveColor неактивный цвет кнопки
+ * @param activeColor активный цвет кнопки
+ *
+ * @exception TODO("ПОЗЖЕ ЗАМЕНИТЬ НА MATERIAL3 ВСТРОЕННЫЕ КНОПКИ")
+ *
+ * @author Kiko
+ */
 @Composable
 fun IncreaseButtons(
     texts: List<String>,

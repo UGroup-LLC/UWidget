@@ -25,6 +25,17 @@ import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.getNextUserSchedule
 import com.kikoproject.uwidget.networking.outFromSchedule
 
+/**
+ * Кнопка расписания, при нажатии меняет curSchedule на расписание в кнопке
+ * Имеет в себе кнопку для удаления или управления расписанием
+ *
+ * @param schedule расписание кнопки
+ * @param isAdmin является ли пользователь администратором расписания
+ * @param mySheduleAdmin расписание где пользователь администратор
+ * @param mySheduleUser расписание где пользователь простой юзер
+ *
+ * @author Kiko
+ */
 @Composable
 fun ScheduleButton(schedule: Schedule, isAdmin: Boolean, mySheduleAdmin: List<Schedule>, mySheduleUser: List<Schedule>) {
     Button(
@@ -90,6 +101,14 @@ fun ScheduleButton(schedule: Schedule, isAdmin: Boolean, mySheduleAdmin: List<Sc
     }
 }
 
+/**
+ * Кнопка пользователя, имеет в себе аватар пользователя и кнопку удаления из расписания
+ *
+ * @param schedule расписание
+ * @param user пользователь
+ *
+ * @author Kiko
+ */
 @Composable
 fun UserButton(schedule: Schedule, user: User) {
     Row(
@@ -152,30 +171,14 @@ fun UserButton(schedule: Schedule, user: User) {
     }
 }
 
-
-@Composable
-fun StandardButton(content: () -> Unit, text: String) {
-    Button(
-        onClick = { content() },
-        shape = RoundedCornerShape(17.dp),
-        border = BorderStroke(0.dp, Color.Transparent),
-        elevation = ButtonDefaults.elevation(0.dp, 0.dp, 0.dp),
-        colors = ButtonDefaults.buttonColors(
-            backgroundColor = MaterialTheme.colors.primary.copy(
-                0.15f
-            )
-        ),
-        modifier = Modifier.fillMaxWidth(0.9f)
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.button,
-            color = MaterialTheme.colors.surface,
-            modifier = Modifier.weight(4f)
-        )
-    }
-}
-
+/**
+ * Стандартная кнопка в приложении
+ *
+ * @param content указывает что необходимо сделать при нажатии на кнопку
+ * @param icon встроенная иконка кнопки
+ *
+ * @author Kiko
+ */
 @Composable
 fun StandardButton(content: () -> Unit, text: String, icon: ImageVector) {
     Button(
@@ -211,6 +214,14 @@ fun StandardButton(content: () -> Unit, text: String, icon: ImageVector) {
     }
 }
 
+/**
+ * Стандартная кнопка в приложении
+ *
+ * @param content указывает что необходимо сделать при нажатии на кнопку
+ * @param icon не встроенная иконка кнопки
+ *
+ * @author Kiko
+ */
 @Composable
 fun StandardButton(content: () -> Unit, text: String, icon: Painter) {
     Button(

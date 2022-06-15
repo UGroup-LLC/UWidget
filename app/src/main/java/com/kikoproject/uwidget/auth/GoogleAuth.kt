@@ -44,7 +44,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -52,6 +51,11 @@ import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.networking.CheckUserInDB
 import com.kikoproject.uwidget.ui.theme.UWidgetTheme
 
+/**
+ * Основное окно авторизации/регистрации через Google
+ *
+ * @author Kiko
+ */
 @Composable
 fun GoogleAuthScreen() {
     val context = LocalContext.current
@@ -107,17 +111,25 @@ fun GoogleAuthScreen() {
                 MainText(textColor)
 
                 // Кнопки Входа и тд
-                AllButtons(context, launchSign, stateLoading, account, textColor)
+                AllButtons(context, launchSign, account, textColor)
             }
         }
     }
 }
 
+/**
+ * Кнопки которые будут использоваться в регистрации/авторизации
+ *
+ * @param launchSign переменная для вызова авторизации через Google и возращающая результат
+ * @param account аккаунт гугл (может быть null)
+ * @param textColor цвет текста
+ *
+ * @author Kiko
+ */
 @Composable
 private fun AllButtons(
     context: Context,
     launchSign: ManagedActivityResultLauncher<Intent, ActivityResult>,
-    stateLoading: MutableState<Boolean>,
     account: MutableState<GoogleSignInAccount?>,
     textColor: Color
 ) {
@@ -131,7 +143,7 @@ private fun AllButtons(
         ) {
             Button(
                 modifier = Modifier.padding(top = 30.dp),
-                onClick = { googleSignIn(context, launchSign, state = stateLoading) },
+                onClick = { googleSignIn(context, launchSign) },
                 border = BorderStroke(
                     1.dp,
                     color = MaterialTheme.colors.primaryVariant.copy(alpha = 0.6f)
@@ -162,7 +174,7 @@ private fun AllButtons(
             }
 
             // Если получится так что уже зарегестрированный пользователь будет на этом экране он сможет выйти из аккаунта
-            SignOutCheck(account, context)
+            SignOutButton(account, context)
 
             OutlinedButton(
                 modifier = Modifier.padding(top = 10.dp),
@@ -181,6 +193,13 @@ private fun AllButtons(
     }
 }
 
+/**
+ * Основной текст в середине который поясняет зачем необходим аккаунт
+ *
+ * @param textColor цвет текста
+ *
+ * @author Kiko
+ */
 @Composable
 private fun MainText(textColor: Color) {
     Divider(
@@ -206,6 +225,13 @@ private fun MainText(textColor: Color) {
     )
 }
 
+/**
+ * Текст хедера где пользователю отображается кликабельный текст политики конфидициальности и тд.
+ *
+ * @param textColor цвет текста
+ *
+ * @author Kiko
+ */
 @Composable
 private fun LinkTermsText(
     textColor: Color,
@@ -309,21 +335,31 @@ private fun LinkTermsText(
     )
 }
 
+/**
+ * Вход в аккаунт гугл
+ *
+ * @param launcher запускает авторизацию/регистрацию через Google и возвращает результат
+ *
+ * @author Kiko
+ */
 fun googleSignIn(
     context: Context,
     launcher: ManagedActivityResultLauncher<Intent, ActivityResult>,
-    state: MutableState<Boolean>
 ) {
     val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
         .requestEmail()
         .requestIdToken("768135781097-2r401ogli9pc1fmsg20hh0nfie5jp99m.apps.googleusercontent.com")
         .build()
-    val googleSignInClient =
-        com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(context, gso)
-    val mAuth = FirebaseAuth.getInstance()
+    val googleSignInClient = GoogleSignIn.getClient(context, gso)
+
     signInOpen(googleSignInClient, launcher) // Запуск активити
 }
 
+/**
+ * Выход из аккаунта Google
+ *
+ * @author Kiko
+ */
 fun signOut(context: Context) {
     val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
         .requestEmail()
@@ -334,6 +370,13 @@ fun signOut(context: Context) {
     googleSignInClient.signOut()
 }
 
+/**
+ * Запускает авторизацию/авторизацию через Google
+ *
+ * @param launcher запускает авторизацию/регистрацию через Google и возвращает результат
+ *
+ * @author Kiko
+ */
 fun signInOpen(
     googleSignInClient: GoogleSignInClient,
     launcher: ManagedActivityResultLauncher<Intent, ActivityResult>,
@@ -342,19 +385,33 @@ fun signInOpen(
 }
 
 
-// Переход далее
+/**
+ * После авторизации выберает что необходимо делать далее, регистрировать пользователя или
+ * пускать он уже и так зарегистрирован и пускать его в приложение
+ *
+ * @param state переменная отображающая диалог загрузки
+ * @param account Google аккаунт
+ *
+ * @author Kiko
+ */
 @Composable
 fun LoadNextNav(context: Context, state: MutableState<Boolean>, account: GoogleSignInAccount) {
     CheckUserInDB(
         context = context,
         state,
-        account = account,
-        "Отмена"
+        account = account
     )
 }
 
+/**
+ * Кнопка для выхода из аккаунта Google
+ *
+ * @param account Google аккаунт
+ *
+ * @author Kiko
+ */
 @Composable
-fun SignOutCheck(account: MutableState<GoogleSignInAccount?>, context: Context) { // Показывает кнопку выхода из аккаунта если юзер уже залогинен и находится в этом окне
+fun SignOutButton(account: MutableState<GoogleSignInAccount?>, context: Context) { // Показывает кнопку выхода из аккаунта если юзер уже залогинен и находится в этом окне
     val textColor = MaterialTheme.colors.surface
     if (account.value != null) {
         OutlinedButton(

@@ -7,6 +7,11 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import com.kikoproject.uwidget.models.User
 
+/**
+ *  Показывает аватар пользователя
+ *
+ *  @param user пользователь
+ */
 @Composable
 fun Avatar(user: User, modifier: Modifier = Modifier) {
     Image(

@@ -41,6 +41,10 @@ import com.kikoproject.uwidget.objects.BackHeader
 import com.kikoproject.uwidget.objects.CustomToastBar
 
 
+/**
+ * Окно присоединения к расписанию содержащяя в себе 6 полей для ввода кода
+ * @author Kiko
+ */
 @Composable
 fun JoinSchedule() {
     // Штука которая будет нам показывать что мы чето не правильно сделали и тд
@@ -159,6 +163,10 @@ fun JoinSchedule() {
     }
 }
 
+/**
+ * 6 полей для ввода кода (сами поля)
+ * @author Kiko
+ */
 @OptIn(ExperimentalAnimationApi::class, androidx.compose.ui.ExperimentalComposeUiApi::class)
 @Composable
 fun joinCodeInput(isError: MutableState<Boolean>): MutableState<String> {

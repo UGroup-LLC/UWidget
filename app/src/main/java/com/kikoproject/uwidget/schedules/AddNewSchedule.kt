@@ -49,6 +49,13 @@ import com.kikoproject.uwidget.ui.theme.Typography
 import com.radusalagean.infobarcompose.InfoBar
 import kotlinx.coroutines.launch
 
+/**
+ * Окно добавления нового расписания
+ *
+ * @exception TODO("ПЕРЕПИСАТЬ ЭТО ПОТОМ, СЛИШКОМ ГРОМОЗДКАЯ КОНСТРУКЦИЯ ВНУТРИ")
+ *
+ * @author Kiko
+ */
 @SuppressLint("SetJavaScriptEnabled")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -461,7 +468,7 @@ fun AddSchedule() {
                             if (nameState.value.text.filter { !it.isWhitespace() } != "") {
                                 val adminId = GoogleSignIn.getLastSignedInAccount(context)
                                 if (adminId?.id != null) {
-                                    stateDialog.value = true // Показывает диалог загрузки
+//                                    stateDialog.value = true // Показывает диалог загрузки
                                     generateCode(object : GeneratedCodeResult{
                                         override fun onResult(code: String) {
                                             val schedule = Schedule(
@@ -526,7 +533,15 @@ fun AddSchedule() {
     }
 }
 
-
+/**
+ * Настроенный OutlinedTextField
+ *
+ * @param text текст заголовка в поле
+ * @param state хранит в себе что написал пользователь
+ * @param textColor цвет текста
+ *
+ * @author Kiko
+ */
 @Composable
 fun FastOutlineTextField(
     text: String,
@@ -554,6 +569,18 @@ fun FastOutlineTextField(
     )
 }
 
+/**
+ * Настроенный OutlinedTextField для парсинга,
+ * содержит в себе кнопку для открытия диалога WEB поиска селектора
+ *
+ * @param text текст заголовка в поле
+ * @param state хранит в себе что написал пользователь (селектор)
+ * @param textColor цвет текста
+ * @param imageVector иконка внутри поля ввода
+ * @param url ссылка на сайт
+ *
+ * @author Kiko
+ */
 @Composable
 fun FastOutlineTextField(
     text: String,
