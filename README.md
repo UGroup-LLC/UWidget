@@ -19,10 +19,10 @@ UWidget - является клиент-серверным приложение�
 
 ## ♟️ Tech-Stack ♟️
 - Язык программирования: *Kotlin*
-- Инструмент создания UI: *Jetpack Compose*
+- Инструмент создания UI: *Jetpack Compose* + *Material 3*
 - Серверная БД: *Google Firebase Firestore*
 - Локальная БД: *Room DB*
-- API для парсинга: JSoup
+- API для парсинга: *JSoup*
 - API для авторизации пользователя: *Google Firebase Auth*
 - Аналитика: *Google Firebase Analytics*, *Google Firebase Performance*, *Google Firebase Crashlytics*
 
