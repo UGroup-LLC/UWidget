@@ -27,14 +27,11 @@ UWidget - является клиент-серверным приложение�
 - Аналитика: *Google Firebase Analytics*, *Google Firebase Performance*, *Google Firebase Crashlytics*
 
 ## 🎨 Скриншоты 🖌️
-3 скриншота с классической темой и 3 с кастом цветами Android 12
-![scr1](https://github.com/BadKiko/UWidget/blob/master/IMG_20220616_174943_344.jpg?raw=true "Скриншот 1")
-![scr1l2](https://github.com/BadKiko/UWidget/blob/master/IMG_20220616_175050_350.jpg?raw=true "Скриншот 2")
-![scr3](https://github.com/BadKiko/UWidget/blob/master/IMG_20220616_175059_797.jpg?raw=true "Скриншот 3")
-![scr4](https://github.com/BadKiko/UWidget/blob/master/Screenshot_20220616-175104_UWidget.png?raw=true "Скриншот 4")
-![scr5](https://github.com/BadKiko/UWidget/blob/master/Screenshot_20220616-175112_UWidget.png?raw=true "Скриншот 5")
-![scr6](https://github.com/BadKiko/UWidget/blob/master/Screenshot_20220616-175126_UWidget.png?raw=true "Скриншот 5")
-
+| Classic тема       | Android 12 Custom         
+| ------------------ |:------------------:|
+|![scr1](https://github.com/BadKiko/UWidget/blob/master/IMG_20220616_174943_344.jpg?raw=true "Скриншот 1")|![scr4](https://github.com/BadKiko/UWidget/blob/master/Screenshot_20220616-175104_UWidget.png?raw=true "Скриншот 4")|
+|![scr2](https://github.com/BadKiko/UWidget/blob/master/IMG_20220616_175050_350.jpg?raw=true "Скриншот 2")|![scr5](https://github.com/BadKiko/UWidget/blob/master/Screenshot_20220616-175112_UWidget.png?raw=true "Скриншот 5")|
+|![scr3](https://github.com/BadKiko/UWidget/blob/master/IMG_20220616_175059_797.jpg?raw=true "Скриншот 3")|![scr6](https://github.com/BadKiko/UWidget/blob/master/Screenshot_20220616-175126_UWidget.png?raw=true "Скриншот 6")| 
 
 ## 🧑‍💻 Разработчики 🧑‍💻
 ### 📱 Android App 📱
