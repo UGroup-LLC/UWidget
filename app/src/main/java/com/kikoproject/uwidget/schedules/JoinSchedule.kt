@@ -14,6 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -48,7 +49,7 @@ import com.kikoproject.uwidget.objects.CustomToastBar
 @Composable
 fun JoinSchedule() {
     // Штука которая будет нам показывать что мы чето не правильно сделали и тд
-    var message: CustomToastBar? by remember { mutableStateOf(null) }
+    //var message: CustomToastBar? by remember { mutableStateOf(null) }
 
     if(isJoinBanned){
         if(timer){
@@ -129,7 +130,7 @@ fun JoinSchedule() {
                         val code = joinCodeInput(isError)
                         if (isComplited.value){
                             if (countOfBan == 4){
-                                ShowInfoDialog(text = "Будьте внимательны, это последняя попытка", textInfo = "Ок", {isComplited.value = false})
+                                ShowInfoDialog(text = "Будьте внимательны, это последняя попытка", buttonText = "Ок", {isComplited.value = false})
 
                             }
                             else if (countOfBan == 5){
@@ -167,7 +168,7 @@ fun JoinSchedule() {
  * 6 полей для ввода кода (сами поля)
  * @author Kiko
  */
-@OptIn(ExperimentalAnimationApi::class, androidx.compose.ui.ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun joinCodeInput(isError: MutableState<Boolean>): MutableState<String> {
     val returningValue = remember { mutableStateOf("") }

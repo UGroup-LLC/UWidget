@@ -78,7 +78,6 @@ class MainActivity : ComponentActivity() {
                 CheckUserInDB(
                     context = context,
                     state = state,
-                    textError = "Автономный режим",
                 )
 
             }
@@ -105,5 +104,5 @@ fun AuthPreview() {
 }
 
 fun analyticsEnable() {
-    val analytics = Firebase.analytics
+    Firebase.analytics
 }
