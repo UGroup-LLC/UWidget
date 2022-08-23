@@ -71,6 +71,8 @@ fun AddSchedule() {
     var timeState = mutableListOf<MutableState<TextFieldValue>>()
     val materialColor = MaterialTheme.colors
 
+    val timeCard = TimeCard()
+
     // Штука которая будет нам показывать что мы чето не правильно сделали и тд
     var message: CustomToastBar? by remember { mutableStateOf(null) }
 
@@ -394,12 +396,7 @@ fun AddSchedule() {
                     activeColor = primaryColor.copy(0.5f),
                     fontSize = 11.5.sp
                 )
-                if(scheduleTimeMode == 0){
-
-                }
-                else{
-                    timeState = TimeCardCreator(cardsInt = timeCount.value, titleText = "Время")
-                }
+                timeCard.TimeCardCreator(cardsInt = timeCount.value, titleText = "Время")
             } // Распологается
 
             item {
@@ -464,6 +461,11 @@ fun AddSchedule() {
                             }
                         }
 
+                        val timeCardString = mutableListOf<String>()
+                        timeCard.resTime.forEach{ time ->
+                            timeCardString.add(time.toString())
+                        }
+
                         if (scheduleValue.isNotEmpty()) {
                             if (nameState.value.text.filter { !it.isWhitespace() } != "") {
                                 val adminId = GoogleSignIn.getLastSignedInAccount(context)
@@ -478,7 +480,7 @@ fun AddSchedule() {
                                                 listOf(""),
                                                 tempMap,
                                                 code, // Генерация ключа приглашения
-                                                tempTimeState,
+                                                timeCardString,
                                                 categoryState.value.text,
                                                 DefaultScheduleOption()
                                             )
