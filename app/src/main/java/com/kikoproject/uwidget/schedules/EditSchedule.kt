@@ -41,6 +41,7 @@ import com.kikoproject.uwidget.networking.createScheduleInRoomDB
 import com.kikoproject.uwidget.networking.deleteSchedule
 import com.kikoproject.uwidget.objects.ExpandableTextHelper
 import com.kikoproject.uwidget.objects.IncreaseButtons
+import com.kikoproject.uwidget.objects.RoundedCard
 import com.kikoproject.uwidget.objects.ScheduleCardCreator
 import com.kikoproject.uwidget.ui.theme.Typography
 import com.radusalagean.infobarcompose.InfoBar
@@ -247,23 +248,11 @@ fun EditSchedule() {
                             contentAlignment = Alignment.Center
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Card(
-                                    colors = CardDefaults.cardColors(containerColor = textColor.copy(alpha = 0.1f)),
-                                    shape = RoundedCornerShape(10.dp),
+                                RoundedCard(
+                                    textColor,
+                                    "ALPHA",
                                     modifier = Modifier.padding(bottom = 10.dp)
-                                ) {
-                                    Text(
-                                        "ALPHA",
-                                        letterSpacing = 3.sp,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        fontSize = 12.sp,
-                                        color = textColor.copy(0.6f),
-                                        modifier = Modifier.padding(
-                                            horizontal = 15.dp,
-                                            vertical = 2.5.dp
-                                        )
-                                    )
-                                }
+                                )
                                 ExpandableTextHelper(
                                     cardColor = textColor.copy(alpha = 0.2f),
                                     titleSize = 12.sp,

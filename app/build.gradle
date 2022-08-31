@@ -8,14 +8,14 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.kikoproject.uwidget"
         minSdk 28
-        targetSdk 32
+        targetSdk 33
         versionCode 1
-        versionName "1.0.3.3a"
+        versionName "1.0.4.0a"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -54,7 +54,7 @@ android {
 dependencies {
     implementation "io.github.vanpra.compose-material-dialogs:datetime:0.8.0-beta"
 
-    implementation 'me.jfenn.ColorPickerDialog:base:0.2.2'
+    implementation "com.github.skydoves:colorpicker-compose:1.0.0"
 
     implementation 'com.github.devsideal:VectorChildFinder:1.0.0'
     implementation "androidx.room:room-runtime:$room_version"

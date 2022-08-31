@@ -258,23 +258,11 @@ fun AddSchedule() {
                             contentAlignment = Alignment.Center
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Card(
-                                    colors = CardDefaults.cardColors(containerColor = textColor.copy(alpha = 0.1f)),
-                                    shape = RoundedCornerShape(10.dp),
+                                RoundedCard(
+                                    textColor,
+                                    "ALPHA",
                                     modifier = Modifier.padding(bottom = 10.dp)
-                                ) {
-                                    Text(
-                                        "ALPHA",
-                                        letterSpacing = 3.sp,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        fontSize = 12.sp,
-                                        color = textColor.copy(0.6f),
-                                        modifier = Modifier.padding(
-                                            horizontal = 15.dp,
-                                            vertical = 2.5.dp
-                                        )
-                                    )
-                                }
+                                )
                                 ExpandableTextHelper(
                                     cardColor = textColor.copy(alpha = 0.2f),
                                     titleSize = 12.sp,
@@ -434,7 +422,7 @@ fun AddSchedule() {
 
 
                         timeState.forEach { time ->
-                            if(time.value.text != "") {
+                            if (time.value.text != "") {
                                 if (
                                     !time.value.text.contains(":")
                                     && time.value.text.filter { it.isDigit() }.length != 4
@@ -450,8 +438,7 @@ fun AddSchedule() {
                                         )
                                     return@Button
                                 }
-                            }
-                            else{
+                            } else {
                                 message =
                                     CustomToastBar(
                                         text = "Ошибка, одно из полей времени не заполнено",
@@ -462,7 +449,7 @@ fun AddSchedule() {
                         }
 
                         val timeCardString = mutableListOf<String>()
-                        timeCard.resTime.forEach{ time ->
+                        timeCard.resTime.forEach { time ->
                             timeCardString.add(time.toString())
                         }
 
@@ -471,7 +458,7 @@ fun AddSchedule() {
                                 val adminId = GoogleSignIn.getLastSignedInAccount(context)
                                 if (adminId?.id != null) {
 //                                    stateDialog.value = true // Показывает диалог загрузки
-                                    generateCode(object : GeneratedCodeResult{
+                                    generateCode(object : GeneratedCodeResult {
                                         override fun onResult(code: String) {
                                             val schedule = Schedule(
                                                 "0",

@@ -1,12 +1,17 @@
 package com.kikoproject.uwidget.models
 
 import android.graphics.Bitmap
-import androidx.room.ColumnInfo
+import androidx.compose.runtime.MutableState
+import androidx.compose.ui.graphics.Color
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "options")
 data class GeneralOptions (
-    @ColumnInfo(name = "theme") val Theme: Boolean,
-    @PrimaryKey val roomId: Int = 0
-)
+    val generaOptionModel: GeneraOptionModel,
+    val color: Color,
+    @PrimaryKey val roomId: Int = 0,
+){
+
+}

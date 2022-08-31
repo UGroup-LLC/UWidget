@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
@@ -32,6 +33,8 @@ import com.kikoproject.uwidget.models.User
 import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.NavigationSetup
 import com.kikoproject.uwidget.networking.CheckUserInDB
+import com.kikoproject.uwidget.ui.theme.Shapes
+import com.kikoproject.uwidget.ui.theme.Typography
 import com.kikoproject.uwidget.ui.theme.UWidgetTheme
 import com.kikoproject.uwidget.ui.theme.themeAppMode
 
@@ -63,16 +66,20 @@ class MainActivity : ComponentActivity() {
             applicationContext,
             MainDataBase::class.java, "main_database"
         ).allowMainThreadQueries().build()
-        if(roomDb.optionsDao().get() == null){
-            roomDb.optionsDao().insertOption(GeneralOptions(
-                Theme = themeAppMode.value
-            ))
-        }
-        else{
-            themeAppMode.value = roomDb.optionsDao().get()!!.Theme
+        if(roomDb.optionsDao().get() != null){ // Это возможно но ? убран чтобы не ебаться ибо инициализация все равно идет в начале и настройки должны быть созданы
+//            themeAppMode.value = roomDb.optionsDao().get().Theme
         }
         setContent {
             UWidgetTheme {
+                MaterialTheme(
+                    colors = MaterialTheme.colors.copy(primary = Color.Red),
+                    typography = Typography,
+                    shapes = Shapes,
+                    content = {}
+                )
+                if(roomDb.optionsDao().get() == null){ // Это возможно но ? убран чтобы не ебаться ибо инициализация все равно идет в начале и настройки должны быть созданы
+//                    roomDb.optionsDao().insertOption(GeneralOptions(false, null, mutableStateOf(MaterialTheme.colors.primary)))
+                }
                 analyticsEnable() // Включение аналитики
                 Wait()
                 val context = LocalContext.current

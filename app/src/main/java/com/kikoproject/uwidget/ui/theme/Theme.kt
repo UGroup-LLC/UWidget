@@ -17,6 +17,7 @@ import com.kikoproject.uwidget.localdb.MainDataBase
 @SuppressLint("StaticFieldLeak")
 val themeAppMode = mutableStateOf(false)
 
+
 private val DarkColorPalette = darkColors(
     background = Background,
     primary = Main,

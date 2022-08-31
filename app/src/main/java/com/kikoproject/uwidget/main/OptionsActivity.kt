@@ -55,7 +55,7 @@ fun OptionsActivity() {
                 !themeAppMode.value
             ) { switchValue ->
                 themeAppMode.value = !switchValue
-                roomDb.optionsDao().updateOption(GeneralOptions(themeAppMode.value))
+//                roomDb.optionsDao().updateOption(roomDb.optionsDao().get().copy(themeAppMode.value))
             }
             ListItemColor(title = "Основной цвет", description = "Выберите основной цвет приложения", content = {})
 

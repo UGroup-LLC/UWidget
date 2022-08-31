@@ -60,7 +60,7 @@ fun MainHeader(account: GoogleSignInAccount?) {
         IconButton(
             onClick = {
                 themeAppMode.value = !themeAppMode.value
-                roomDb.optionsDao().updateOption(GeneralOptions(themeAppMode.value))
+//                roomDb.optionsDao().updateOption(roomDb.optionsDao().get().copy(themeAppMode.value))
             }, modifier = Modifier
                 .weight(2f)
                 .requiredSize(36.dp)

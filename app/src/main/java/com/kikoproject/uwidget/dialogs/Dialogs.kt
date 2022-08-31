@@ -7,8 +7,12 @@ import android.content.Context
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
@@ -27,14 +31,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.github.skydoves.colorpicker.compose.BrightnessSlider
+import com.github.skydoves.colorpicker.compose.ColorEnvelope
+import com.github.skydoves.colorpicker.compose.HsvColorPicker
+import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.kikoproject.uwidget.ScheduleGetterSelectors
 import com.kikoproject.uwidget.getSelectors
 import com.kikoproject.uwidget.main.navController
+import com.kikoproject.uwidget.main.roomDb
 import com.kikoproject.uwidget.navigation.ScreenNav
-import me.jfenn.colorpickerdialog.dialogs.ColorPickerDialog
+import com.kikoproject.uwidget.objects.RoundedCard
 
 
 /**
@@ -350,7 +360,7 @@ fun ShowErrorDialog(text: String, needButton: Boolean) {
  * @author Kiko & Levosllavny
  */
 @Composable
-fun ShowInfoDialog(text: String, buttonText: String, content:() -> Unit) {
+fun ShowInfoDialog(text: String, buttonText: String, content: () -> Unit) {
     val state = remember { mutableStateOf(true) }
     val textColor = MaterialTheme.colors.surface
     if (state.value) {
@@ -427,5 +437,138 @@ fun WebPageScreen(urlToRender: String) {
         }, update = {
             it.loadUrl(urlToRender)
         }, modifier = Modifier.size(500.dp))
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ColorPicker(standartColor: Color, dialogVisibleState: MutableState<Boolean>) {
+    val controller = rememberColorPickerController()
+    val colorHex = remember { mutableStateOf("#FFFFFF") }
+    val colorValue = remember { mutableStateOf(Color.White) }
+    val genOptions = roomDb.optionsDao().get()
+
+    if(dialogVisibleState.value) {
+        AlertDialog(
+            modifier = Modifier.dialogPos(DialogPosition.BOTTOM),
+            properties = DialogProperties(
+                dismissOnClickOutside = true,
+                dismissOnBackPress = true
+            ),
+            containerColor = MaterialTheme.colors.background,
+            onDismissRequest = { dialogVisibleState.value = false },
+            title = {
+                RoundedCard(
+                    textColor = MaterialTheme.colors.surface,
+                    text = "Выберите цвет",
+                    16.sp,
+                    0.sp
+                )
+            },
+            tonalElevation = 0.dp,
+            text = {
+                Column() {
+                    HsvColorPicker(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(0.3f),
+                        controller = controller,
+                        onColorChanged = { colorEnvelope: ColorEnvelope ->
+                            colorValue.value = colorEnvelope.color // ARGB color value.
+                            colorHex.value =
+                                colorEnvelope.hexCode // Color hex code, which represents color value.
+                        }
+                    )
+                    BrightnessSlider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
+                            .height(35.dp),
+                        controller = controller,
+                        borderRadius = 20.dp
+                    )
+                    Row(
+                        modifier = Modifier.padding(0.dp, 20.dp, 0.dp, 0.dp),
+                        horizontalArrangement = Arrangement.spacedBy(5.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.width(66.dp)
+                        ) {
+                            Card(
+                                shape = RoundedCornerShape(15.dp),
+                                colors = CardDefaults.cardColors(containerColor = colorValue.value),
+                                modifier = Modifier.size(50.dp)
+                            ) {}
+                            Text(
+                                text = colorHex.value.substring(2),
+                                modifier = Modifier.padding(0.dp, 5.dp, 5.dp, 0.dp),
+                                color = MaterialTheme.colors.surface
+                            )
+                        }
+                        LazyRow(
+                            modifier = Modifier.padding(10.dp, 0.dp, 0.dp, 0.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(5.dp)
+                        ) {
+                            item {
+                                Card(
+                                    shape = RoundedCornerShape(15.dp),
+                                    colors = CardDefaults.cardColors(containerColor = standartColor),
+                                    modifier = Modifier.size(50.dp)
+                                ) {}
+                            }
+                            roomDb.optionsDao().get().let { genOptions ->
+                                if (genOptions.generaOptionModel.Colors != null) { // Проверка есть ли цвета
+                                    items(genOptions.generaOptionModel.Colors!!.asReversed()) { color ->
+                                        Card(
+                                            shape = RoundedCornerShape(15.dp),
+                                            colors = CardDefaults.cardColors(containerColor = color),
+                                            modifier = Modifier.size(50.dp).clickable {
+/*                                                roomDb.optionsDao().updateOption(genOptions.copy(PrimColor = color))*/
+                                            }
+                                        ) {}
+                                    }
+                                } else {
+                                    item {
+                                        RoundedCard(
+                                            textColor = MaterialTheme.colors.surface,
+                                            text = "Цветов пока нет",
+                                            spacing = 0.sp
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = {
+                        dialogVisibleState.value = false
+                    },
+                    border = BorderStroke(1.dp, MaterialTheme.colors.surface.copy(alpha = 0.1f))
+                ) {
+                    Text(text = "Отмена", color = MaterialTheme.colors.surface.copy(alpha = 0.7f))
+                }
+            },
+            icon = {},
+            confirmButton = {
+                OutlinedButton(
+                    onClick = {
+                        val newColorList = mutableListOf<Color>()
+                        if (genOptions.generaOptionModel.Colors!=null) {
+                            newColorList.addAll(genOptions.generaOptionModel.Colors!!)
+                        }
+                        newColorList.add(colorValue.value)
+//                        roomDb.optionsDao().updateOption(genOptions.copy(Colors = newColorList))
+                        dialogVisibleState.value = false
+                    },
+                    border = BorderStroke(1.dp, MaterialTheme.colors.surface.copy(alpha = 0.1f))
+                ) {
+                    Text(text = "Принять", color = MaterialTheme.colors.surface.copy(alpha = 0.7f))
+                }
+            }
+        )
     }
 }

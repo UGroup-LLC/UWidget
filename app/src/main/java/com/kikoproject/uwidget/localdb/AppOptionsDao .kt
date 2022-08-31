@@ -11,7 +11,7 @@ import com.kikoproject.uwidget.models.User
 @Dao
 interface AppOptionsDao {
     @Query("SELECT * FROM options")
-    fun get(): GeneralOptions?
+    fun get(): GeneralOptions
 
     @Insert
     fun insertOption(vararg option: GeneralOptions)

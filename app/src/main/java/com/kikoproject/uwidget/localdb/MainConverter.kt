@@ -3,9 +3,12 @@ package com.kikoproject.uwidget.localdb
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
+import androidx.compose.runtime.MutableState
+import androidx.compose.ui.graphics.Color
 import androidx.room.TypeConverter
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
+import com.kikoproject.uwidget.models.GeneraOptionModel
 import com.kikoproject.uwidget.models.schedules.options.ScheduleOptions
 import java.io.ByteArrayOutputStream
 
@@ -92,4 +95,57 @@ class MainConverter {
     }
 
 
+    /**
+     * Конвертация из gson строки в массив цветов
+     * @author Kiko
+     */
+    @TypeConverter
+    fun restoreListOfColors(listOfString: String?): List<Color>? {
+        return Gson().fromJson(listOfString, object : TypeToken<List<Color>?>() {}.type)
+    }
+
+    /**
+     * Конвертация из массива цветов в gson строку
+     * @author Kiko
+     */
+    @TypeConverter
+    fun saveListOfColors(listOfString: List<Color>?): String? {
+        return Gson().toJson(listOfString)
+    }
+
+    /**
+     * Конвертация из gson строки в цвет
+     * @author Kiko
+     */
+    @TypeConverter
+    fun restoreColor(listOfString: String?): Color {
+        return Gson().fromJson(listOfString, object : TypeToken<Color>() {}.type)
+    }
+
+    /**
+     * Конвертация из цвета в gson строку
+     * @author Kiko
+     */
+    @TypeConverter
+    fun saveColor(color: Color): String? {
+        return Gson().toJson(color)
+    }
+
+    /**
+     * Конвертация из gson to genOpt
+     * @author Kiko
+     */
+    @TypeConverter
+    fun restoreGenOpt(listOfString: String?): GeneraOptionModel {
+        return Gson().fromJson(listOfString, object : TypeToken<GeneraOptionModel>() {}.type)
+    }
+
+    /**
+     * Конвертация из genOpt в gson строку
+     * @author Kiko
+     */
+    @TypeConverter
+    fun saveGenOpt(color: GeneraOptionModel): String? {
+        return Gson().toJson(color)
+    }
 }
