@@ -27,11 +27,13 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.kikoproject.uwidget.localdb.MainDataBase
+import com.kikoproject.uwidget.models.GeneralOptions
 import com.kikoproject.uwidget.models.User
 import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.NavigationSetup
 import com.kikoproject.uwidget.networking.CheckUserInDB
 import com.kikoproject.uwidget.ui.theme.UWidgetTheme
+import com.kikoproject.uwidget.ui.theme.themeAppMode
 
 
 @SuppressLint("StaticFieldLeak")
@@ -56,6 +58,19 @@ var timer = true
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        roomDb = Room.databaseBuilder(
+            applicationContext,
+            MainDataBase::class.java, "main_database"
+        ).allowMainThreadQueries().build()
+        if(roomDb.optionsDao().get() == null){
+            roomDb.optionsDao().insertOption(GeneralOptions(
+                Theme = themeAppMode.value
+            ))
+        }
+        else{
+            themeAppMode.value = roomDb.optionsDao().get()!!.Theme
+        }
         setContent {
             UWidgetTheme {
                 analyticsEnable() // Включение аналитики
@@ -70,10 +85,6 @@ class MainActivity : ComponentActivity() {
                 prefs =  this.getSharedPreferences(
                 context.packageName, Context.MODE_PRIVATE)
 
-                roomDb = Room.databaseBuilder(
-                    applicationContext,
-                    MainDataBase::class.java, "main_database"
-                ).allowMainThreadQueries().build()
 
                 CheckUserInDB(
                     context = context,
@@ -82,6 +93,8 @@ class MainActivity : ComponentActivity() {
 
             }
         }
+
+
     }
 }
 

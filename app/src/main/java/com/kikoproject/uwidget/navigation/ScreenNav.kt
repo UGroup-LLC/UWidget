@@ -19,6 +19,7 @@ sealed class ScreenNav(val route: String)
     object EditScheduleMenuNav : ScreenNav("edit_scheduleMenu_nav")
     object JoinToScheduleNav : ScreenNav("join_to_schedule_nav")
     object EditMembersNav : ScreenNav("edit_members_nav")
+    object OptionsNav : ScreenNav("options_nav")
 
 }
 sealed class PermissionNav(val route: String)

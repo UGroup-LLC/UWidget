@@ -8,6 +8,7 @@ import com.kikoproject.uwidget.auth.GoogleAuthScreen
 import com.kikoproject.uwidget.auth.RegisterScreen
 import com.kikoproject.uwidget.main.DashboardActivity
 import com.kikoproject.uwidget.main.MainActivity
+import com.kikoproject.uwidget.main.OptionsActivity
 import com.kikoproject.uwidget.permissions.CreateWidgetActivity
 import com.kikoproject.uwidget.schedules.*
 
@@ -41,6 +42,7 @@ fun NavigationSetup(
         composable(route = ScreenNav.Dashboard.route){
             DashboardActivity()
         }
+
         composable(route = ScreenNav.AllSchedulesNav.route){
             AllSchedulesActivity()
         }
@@ -63,6 +65,11 @@ fun NavigationSetup(
         //permission
         composable(route = PermissionNav.CreateWidget.route){
             CreateWidgetActivity()
+        }
+
+        //options
+        composable(route = ScreenNav.OptionsNav.route){
+            OptionsActivity()
         }
     }
 }

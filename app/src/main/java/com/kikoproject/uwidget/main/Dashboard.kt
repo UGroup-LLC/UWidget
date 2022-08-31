@@ -111,7 +111,7 @@ fun DashboardActivity() {
                         )
                     }
                     FloatingActionButton(
-                        onClick = { /*TODO*/ },
+                        onClick = { navController.navigate(ScreenNav.OptionsNav.route) },
                         modifier = Modifier.requiredSize(65.dp),
                         backgroundColor = MaterialTheme.colors.primary,
                         shape = RoundedCornerShape(19.dp)

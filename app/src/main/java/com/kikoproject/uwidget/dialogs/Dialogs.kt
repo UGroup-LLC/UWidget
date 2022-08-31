@@ -1,5 +1,6 @@
 package com.kikoproject.uwidget.dialogs
 
+import android.R.color
 import android.annotation.SuppressLint
 import android.content.ClipboardManager
 import android.content.Context
@@ -22,6 +23,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -32,6 +34,8 @@ import com.kikoproject.uwidget.ScheduleGetterSelectors
 import com.kikoproject.uwidget.getSelectors
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.navigation.ScreenNav
+import me.jfenn.colorpickerdialog.dialogs.ColorPickerDialog
+
 
 /**
  * Показывает диалог загрузки

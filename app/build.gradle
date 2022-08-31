@@ -54,6 +54,9 @@ android {
 dependencies {
     implementation "io.github.vanpra.compose-material-dialogs:datetime:0.8.0-beta"
 
+    implementation 'me.jfenn.ColorPickerDialog:base:0.2.2'
+
+    implementation 'com.github.devsideal:VectorChildFinder:1.0.0'
     implementation "androidx.room:room-runtime:$room_version"
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation 'com.radusalagean:info-bar-compose:1.0.0'

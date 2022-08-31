@@ -21,6 +21,7 @@ val monserratFamily = FontFamily(
 )
 
 val Typography = Typography(
+
     button = TextStyle(
         fontSize = 16.sp,
         fontFamily = monserratFamily,
@@ -29,6 +30,16 @@ val Typography = Typography(
     body1 = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
+    ),
+    h1 = TextStyle(
+        fontSize = 32.sp,
+        fontFamily = monserratFamily,
+        fontWeight = FontWeight.SemiBold
+    ),
+    h2 = TextStyle(
+        fontSize = 24.sp,
+        fontFamily = monserratFamily,
+        fontWeight = FontWeight.Medium
     ),
     h6 = TextStyle(
         fontFamily = monserratFamily,

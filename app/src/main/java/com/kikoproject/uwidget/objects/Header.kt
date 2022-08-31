@@ -22,6 +22,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.main.curUser
 import com.kikoproject.uwidget.main.navController
+import com.kikoproject.uwidget.main.roomDb
+import com.kikoproject.uwidget.models.GeneralOptions
+import com.kikoproject.uwidget.ui.theme.themeAppMode
 
 /**
  * Хэдэр Dashboard, содержит в себе текст заголовка, тему приложения и аватар пользователя
@@ -46,13 +49,24 @@ fun MainHeader(account: GoogleSignInAccount?) {
             color = MaterialTheme.colors.surface,
             style = MaterialTheme.typography.h6
         )
+
+        val icon = if(!themeAppMode.value){ // Если темный режим выбираем иконку луны
+            R.drawable.ic_moon
+        }
+        else{
+            R.drawable.ic_lightmode
+        }
+
         IconButton(
-            onClick = { /*TODO*/ }, modifier = Modifier
+            onClick = {
+                themeAppMode.value = !themeAppMode.value
+                roomDb.optionsDao().updateOption(GeneralOptions(themeAppMode.value))
+            }, modifier = Modifier
                 .weight(2f)
                 .requiredSize(36.dp)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_moon),
+                painter = painterResource(id = icon),
                 contentDescription = null,
                 tint = Color(0xFFBF842C),
                 modifier = Modifier.requiredSize(24.dp)
