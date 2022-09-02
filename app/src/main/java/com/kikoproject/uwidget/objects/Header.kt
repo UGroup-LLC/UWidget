@@ -24,6 +24,8 @@ import com.kikoproject.uwidget.main.curUser
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.main.roomDb
 import com.kikoproject.uwidget.models.GeneralOptions
+import com.kikoproject.uwidget.ui.theme.MainThemes
+import com.kikoproject.uwidget.ui.theme.systemThemeIsEnabled
 import com.kikoproject.uwidget.ui.theme.themeAppMode
 
 /**
@@ -50,17 +52,25 @@ fun MainHeader(account: GoogleSignInAccount?) {
             style = MaterialTheme.typography.h6
         )
 
-        val icon = if(!themeAppMode.value){ // Если темный режим выбираем иконку луны
-            R.drawable.ic_moon
+
+        val icon = if (systemThemeIsEnabled.value) {
+            if (themeAppMode.value == MainThemes.DARK.value) { // Если темный режим выбираем иконку луны
+                R.drawable.ic_moon
+            } else {
+                R.drawable.ic_lightmode
+            }
+        } else {// Если включена кастом тема
+            R.drawable.ic_custom_theme
         }
-        else{
-            R.drawable.ic_lightmode
-        }
+
 
         IconButton(
             onClick = {
                 themeAppMode.value = !themeAppMode.value
-//                roomDb.optionsDao().updateOption(roomDb.optionsDao().get().copy(themeAppMode.value))
+                systemThemeIsEnabled.value = true
+                val newGenOpt = roomDb.optionsDao().get()
+                    .copy(Theme = themeAppMode.value, IsSystemColors = systemThemeIsEnabled.value)
+                roomDb.optionsDao().updateOption(newGenOpt)
             }, modifier = Modifier
                 .weight(2f)
                 .requiredSize(36.dp)

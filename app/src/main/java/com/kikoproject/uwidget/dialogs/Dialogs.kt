@@ -43,8 +43,10 @@ import com.kikoproject.uwidget.ScheduleGetterSelectors
 import com.kikoproject.uwidget.getSelectors
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.main.roomDb
+import com.kikoproject.uwidget.models.GeneralOptions
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.objects.RoundedCard
+import com.kikoproject.uwidget.ui.theme.themePrimaryColor
 
 
 /**
@@ -442,13 +444,17 @@ fun WebPageScreen(urlToRender: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ColorPicker(standartColor: Color, dialogVisibleState: MutableState<Boolean>) {
+fun ColorPicker(
+    dialogVisibleState: MutableState<Boolean>,
+    oldColorsClick: (genOptions: GeneralOptions, colorVal: Color) -> Unit,
+    applyColorClick: (genOptions: GeneralOptions, colorVal: Color) -> Unit
+) {
     val controller = rememberColorPickerController()
     val colorHex = remember { mutableStateOf("#FFFFFF") }
     val colorValue = remember { mutableStateOf(Color.White) }
     val genOptions = roomDb.optionsDao().get()
 
-    if(dialogVisibleState.value) {
+    if (dialogVisibleState.value) {
         AlertDialog(
             modifier = Modifier.dialogPos(DialogPosition.BOTTOM),
             properties = DialogProperties(
@@ -513,19 +519,34 @@ fun ColorPicker(standartColor: Color, dialogVisibleState: MutableState<Boolean>)
                             item {
                                 Card(
                                     shape = RoundedCornerShape(15.dp),
-                                    colors = CardDefaults.cardColors(containerColor = standartColor),
-                                    modifier = Modifier.size(50.dp)
-                                ) {}
+                                    colors = CardDefaults.cardColors(containerColor = Color.Black),
+                                    modifier = Modifier
+                                        .size(50.dp)
+                                        .clickable {
+                                            oldColorsClick(genOptions, Color.Black)
+                                        }
+                                ) {
+                                    Box(contentAlignment = Alignment.CenterStart, modifier = Modifier.fillMaxSize()) {
+                                        RoundedCard(
+                                            textColor = Color.White,
+                                            text = "OLED",
+                                            textSize = 7.sp,
+                                            spacing = 0.sp
+                                        )
+                                    }
+                                }
                             }
                             roomDb.optionsDao().get().let { genOptions ->
-                                if (genOptions.generaOptionModel.Colors != null) { // Проверка есть ли цвета
-                                    items(genOptions.generaOptionModel.Colors!!.asReversed()) { color ->
+                                if (genOptions.OldColors != null) { // Проверка есть ли цвета
+                                    items(genOptions.OldColors!!.asReversed()) { color ->
                                         Card(
                                             shape = RoundedCornerShape(15.dp),
                                             colors = CardDefaults.cardColors(containerColor = color),
-                                            modifier = Modifier.size(50.dp).clickable {
-/*                                                roomDb.optionsDao().updateOption(genOptions.copy(PrimColor = color))*/
-                                            }
+                                            modifier = Modifier
+                                                .size(50.dp)
+                                                .clickable {
+                                                    oldColorsClick(genOptions, color)
+                                                }
                                         ) {}
                                     }
                                 } else {
@@ -556,14 +577,9 @@ fun ColorPicker(standartColor: Color, dialogVisibleState: MutableState<Boolean>)
             confirmButton = {
                 OutlinedButton(
                     onClick = {
-                        val newColorList = mutableListOf<Color>()
-                        if (genOptions.generaOptionModel.Colors!=null) {
-                            newColorList.addAll(genOptions.generaOptionModel.Colors!!)
-                        }
-                        newColorList.add(colorValue.value)
-//                        roomDb.optionsDao().updateOption(genOptions.copy(Colors = newColorList))
-                        dialogVisibleState.value = false
+                        applyColorClick(genOptions, colorValue.value)
                     },
+
                     border = BorderStroke(1.dp, MaterialTheme.colors.surface.copy(alpha = 0.1f))
                 ) {
                     Text(text = "Принять", color = MaterialTheme.colors.surface.copy(alpha = 0.7f))

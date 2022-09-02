@@ -302,8 +302,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_undraw_options_fore" />
-                            <entry key="sourceFile" value="C:\Users\kiril\Downloads\undraw_settings_re_b08x.svg" />
+                            <entry key="outputName" value="ic_custom_theme" />
+                            <entry key="sourceFile" value="C:\Users\kiril\Downloads\temp_preferences_custom_FILL0_wght400_GRAD0_opsz48.svg" />
                           </map>
                         </option>
                       </PersistentState>

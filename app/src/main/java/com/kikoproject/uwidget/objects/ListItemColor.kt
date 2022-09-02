@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -17,8 +18,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.ColorUtils
 import com.kikoproject.uwidget.dialogs.ColorPicker
+import com.kikoproject.uwidget.main.roomDb
 import com.kikoproject.uwidget.models.schedules.Schedule
+import com.kikoproject.uwidget.networking.addOldThemeColor
+import com.kikoproject.uwidget.networking.changeTheme
+import com.kikoproject.uwidget.networking.changeThemeColor
+import com.kikoproject.uwidget.ui.theme.MainColors
+import com.kikoproject.uwidget.ui.theme.MainThemes
+import com.kikoproject.uwidget.ui.theme.themeAppMode
+import com.kikoproject.uwidget.ui.theme.themePrimaryColor
+import com.kikoproject.uwidget.utils.toStandardColor
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 
@@ -28,15 +39,43 @@ import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 fun ListItemColor(
     title: String,
     description: String,
+    colorType: MainColors,
+    changingColor: MutableState<Color>,
     isEnabled: Boolean = false,
-    content: (colorValue: Color) -> Unit
+    border: Boolean = false
 ) {
     val dialogVisible = remember {
         mutableStateOf(false)
     }
 
-    if(dialogVisible.value){
-        ColorPicker(MaterialTheme.colors.primary, dialogVisible)
+    if (dialogVisible.value) {
+        ColorPicker(dialogVisible,
+            oldColorsClick = { genOptions, colorValue ->
+                changingColor.value = colorValue
+
+                changeThemeColor(colorType, colorValue)
+                if (colorType.value == MainColors.BACKGROUND.value) {
+                    if (ColorUtils.calculateLuminance(colorValue.toStandardColor()) < 0.5) {
+                        themeAppMode.value = MainThemes.DARK.value
+                    } else {
+                        themeAppMode.value = MainThemes.LIGHT.value
+                    }
+                }
+                dialogVisible.value = false
+            }, applyColorClick = { genOptions, colorValue ->
+
+                addOldThemeColor(colorValue)
+                changeThemeColor(colorType, colorValue)
+                if (colorType.value == MainColors.BACKGROUND.value) {
+                    if (ColorUtils.calculateLuminance(colorValue.toStandardColor()) < 0.5) {
+                        changeTheme(MainThemes.DARK.value)
+                    } else {
+                        changeTheme(MainThemes.LIGHT.value)
+                    }
+                }
+                dialogVisible.value = false
+                changingColor.value = colorValue // меняемый цвет
+            })
     }
 
 
@@ -63,7 +102,12 @@ fun ListItemColor(
         Card(
             modifier = Modifier.size(35.dp, 35.dp),
             shape = CircleShape,
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colors.primary),
+            border = if (border) {
+                BorderStroke(1.dp, color = MaterialTheme.colors.surface)
+            } else {
+                BorderStroke(0.dp, color = Color.Transparent)
+            },
+            colors = CardDefaults.cardColors(containerColor = changingColor.value),
         ) {
 
         }

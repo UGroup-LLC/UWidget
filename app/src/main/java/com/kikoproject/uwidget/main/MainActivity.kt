@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.os.CountDownTimer
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -18,7 +17,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
@@ -33,31 +31,36 @@ import com.kikoproject.uwidget.models.User
 import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.NavigationSetup
 import com.kikoproject.uwidget.networking.CheckUserInDB
-import com.kikoproject.uwidget.ui.theme.Shapes
-import com.kikoproject.uwidget.ui.theme.Typography
-import com.kikoproject.uwidget.ui.theme.UWidgetTheme
-import com.kikoproject.uwidget.ui.theme.themeAppMode
+import com.kikoproject.uwidget.ui.theme.*
 
 
 @SuppressLint("StaticFieldLeak")
 lateinit var navController: NavHostController
+
 @SuppressLint("StaticFieldLeak")
 val db = Firebase.firestore
+
 @SuppressLint("StaticFieldLeak")
 lateinit var roomDb: MainDataBase
+
 @SuppressLint("StaticFieldLeak")
 lateinit var curUser: User
+
 @SuppressLint("StaticFieldLeak")
 lateinit var materialColors: Colors
+
 @SuppressLint("StaticFieldLeak")
 var curSchedule: Schedule? = null
+
 @SuppressLint("StaticFieldLeak")
 lateinit var prefs: SharedPreferences
+
 @SuppressLint("StaticFieldLeak")
 var countOfBan = 0
 var isJoinBanned = false
 var timeUntilBanIslifted: MutableState<Long> = mutableStateOf(0L)
 var timer = true
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,20 +69,47 @@ class MainActivity : ComponentActivity() {
             applicationContext,
             MainDataBase::class.java, "main_database"
         ).allowMainThreadQueries().build()
-        if(roomDb.optionsDao().get() != null){ // Это возможно но ? убран чтобы не ебаться ибо инициализация все равно идет в начале и настройки должны быть созданы
-//            themeAppMode.value = roomDb.optionsDao().get().Theme
-        }
+
+
         setContent {
+            if (roomDb.optionsDao()
+                    .get() != null
+            ) { // Это возможно но ? убран чтобы не ебаться ибо инициализация все равно идет в начале и настройки должны быть созданы
+                themeAppMode.value = roomDb.optionsDao().get().Theme
+                systemThemeIsEnabled.value = roomDb.optionsDao().get().IsSystemColors
+                LaunchAppApplyColors(roomDb.optionsDao().get()) // Выставка цветов при запуске
+            }
+            else{
+                SystemThemeSet()
+            }
+
+
             UWidgetTheme {
-                MaterialTheme(
-                    colors = MaterialTheme.colors.copy(primary = Color.Red),
-                    typography = Typography,
-                    shapes = Shapes,
-                    content = {}
-                )
-                if(roomDb.optionsDao().get() == null){ // Это возможно но ? убран чтобы не ебаться ибо инициализация все равно идет в начале и настройки должны быть созданы
-//                    roomDb.optionsDao().insertOption(GeneralOptions(false, null, mutableStateOf(MaterialTheme.colors.primary)))
+
+                if (roomDb.optionsDao()
+                        .get() == null
+                ) { // Это возможно но ? убран чтобы не ебаться ибо инициализация все равно идет в начале и настройки должны быть созданы
+                    val primColor = MaterialTheme.colors.primary
+                    val primVarColor = MaterialTheme.colors.primaryVariant
+                    val secondaryColor = MaterialTheme.colors.secondary
+                    val backgroundColor = MaterialTheme.colors.background
+                    val errorColor = MaterialTheme.colors.error
+                    val textColor = MaterialTheme.colors.surface
+
+                    roomDb.optionsDao().insertOption(
+                        GeneralOptions(
+                            Colors = listOf(
+                                primColor,
+                                primVarColor,
+                                secondaryColor,
+                                backgroundColor,
+                                errorColor,
+                                textColor
+                            )
+                        )
+                    )
                 }
+
                 analyticsEnable() // Включение аналитики
                 Wait()
                 val context = LocalContext.current
@@ -89,8 +119,9 @@ class MainActivity : ComponentActivity() {
 
                 materialColors = MaterialTheme.colors
 
-                prefs =  this.getSharedPreferences(
-                context.packageName, Context.MODE_PRIVATE)
+                prefs = this.getSharedPreferences(
+                    context.packageName, Context.MODE_PRIVATE
+                )
 
 
                 CheckUserInDB(

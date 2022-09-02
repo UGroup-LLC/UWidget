@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -25,10 +26,14 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.kikoproject.uwidget.dialogs.ShowErrorDialog
 import com.kikoproject.uwidget.dialogs.ShowLoadingDialog
 import com.kikoproject.uwidget.main.*
+import com.kikoproject.uwidget.models.GeneralOptions
 import com.kikoproject.uwidget.models.User
 import com.kikoproject.uwidget.models.schedules.DefaultScheduleOption
 import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.ScreenNav
+import com.kikoproject.uwidget.ui.theme.MainColors
+import com.kikoproject.uwidget.ui.theme.systemThemeIsEnabled
+import com.kikoproject.uwidget.ui.theme.themeAppMode
 import kotlin.random.Random
 
 /**
@@ -677,6 +682,40 @@ fun getAllSchedules(scheduleResult: ScheduleResult) {
     }
 }
 
+
+fun changeThemeColor(colorType: MainColors, colorValue: Color){
+    val genOptions =  roomDb.optionsDao().get()
+    val newColors = mutableListOf<Color>()
+    newColors.addAll(genOptions.Colors) // Берем все цвета
+    newColors[colorType.value] = colorValue // Изменяем нужный нам цвет
+    roomDb
+        .optionsDao()
+        .updateOption(
+            genOptions.copy(
+                Colors = newColors // Возращаем в базу
+            )
+        )
+
+}
+
+fun changeTheme(themeIs: Boolean){
+    val newGenOpt = roomDb.optionsDao().get().copy(Theme = themeIs)
+    roomDb.optionsDao().updateOption(newGenOpt)
+    themeAppMode.value = themeIs
+}
+
+fun addOldThemeColor(colorValue: Color){
+    val genOptions =  roomDb.optionsDao().get()
+
+    val newColorList = mutableListOf<Color>()
+    if (genOptions.OldColors != null) {
+        newColorList.addAll(genOptions.OldColors!!)
+    }
+    newColorList.add(colorValue)
+    val newGenOpt = genOptions.copy(OldColors = newColorList)
+    roomDb.optionsDao().updateOption(newGenOpt)
+    roomDb.optionsDao().get()
+}
 
 interface ScheduleResult {
     fun onResult(schedules: List<Schedule>)
