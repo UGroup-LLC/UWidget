@@ -32,6 +32,7 @@ import com.kikoproject.uwidget.models.schedules.DefaultScheduleOption
 import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.ui.theme.MainColors
+import com.kikoproject.uwidget.ui.theme.monetEngineIsEnabled
 import com.kikoproject.uwidget.ui.theme.systemThemeIsEnabled
 import com.kikoproject.uwidget.ui.theme.themeAppMode
 import kotlin.random.Random
@@ -702,6 +703,12 @@ fun changeTheme(themeIs: Boolean){
     val newGenOpt = roomDb.optionsDao().get().copy(Theme = themeIs)
     roomDb.optionsDao().updateOption(newGenOpt)
     themeAppMode.value = themeIs
+}
+
+fun changeMonetEngine(isEnable: Boolean){
+    val newGenOpt = roomDb.optionsDao().get().copy(IsMonetEngineEnable = isEnable)
+    roomDb.optionsDao().updateOption(newGenOpt)
+    monetEngineIsEnabled .value = isEnable
 }
 
 fun addOldThemeColor(colorValue: Color){

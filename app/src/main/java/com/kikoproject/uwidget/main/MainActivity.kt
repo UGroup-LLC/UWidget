@@ -77,6 +77,7 @@ class MainActivity : ComponentActivity() {
             ) { // Это возможно но ? убран чтобы не ебаться ибо инициализация все равно идет в начале и настройки должны быть созданы
                 themeAppMode.value = roomDb.optionsDao().get().Theme
                 systemThemeIsEnabled.value = roomDb.optionsDao().get().IsSystemColors
+                monetEngineIsEnabled.value = roomDb.optionsDao().get().IsMonetEngineEnable
                 LaunchAppApplyColors(roomDb.optionsDao().get()) // Выставка цветов при запуске
             }
             else{

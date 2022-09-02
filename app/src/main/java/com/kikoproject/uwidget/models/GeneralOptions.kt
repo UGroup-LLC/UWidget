@@ -13,6 +13,7 @@ data class GeneralOptions(
     var OldColors: List<Color>? = null,
     val Colors: List<Color>,
     var IsSystemColors: Boolean = true,
+    val IsMonetEngineEnable: Boolean = true,
     @PrimaryKey val roomId: Int = 0,
 ){
 

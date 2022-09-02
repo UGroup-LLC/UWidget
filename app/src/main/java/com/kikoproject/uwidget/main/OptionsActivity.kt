@@ -28,6 +28,7 @@ import androidx.core.graphics.ColorUtils
 import com.kikoproject.uwidget.BuildConfig
 import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.models.GeneralOptions
+import com.kikoproject.uwidget.networking.changeMonetEngine
 import com.kikoproject.uwidget.objects.*
 import com.kikoproject.uwidget.ui.theme.*
 import com.kikoproject.uwidget.utils.toStandardColor
@@ -58,13 +59,13 @@ fun OptionsActivity() {
             )
             MainOptions(scrollState)
 
-            DevicesOptions()
+            AppInfoOptions()
         }
     }
 }
 
 @Composable
-private fun DevicesOptions(){
+private fun AppInfoOptions(){
     Text(
         "О приложении",
         style = MaterialTheme.typography.h2,
@@ -97,6 +98,17 @@ private fun MainOptions(scrollState: ScrollState){
             themeAppMode.value = !switchValue
             roomDb.optionsDao()
                 .updateOption(roomDb.optionsDao().get().copy(themeAppMode.value))
+        }
+    }
+
+    if(Build.VERSION.SDK_INT >= 31 && systemThemeIsEnabled.value) {
+        ListItemSwitcher(
+            "Движок Monet",
+            "Включает цвета Android 12",
+            monetEngineIsEnabled.value
+        ) { switchValue ->
+            monetEngineIsEnabled.value = switchValue
+            changeMonetEngine(switchValue)
         }
     }
 

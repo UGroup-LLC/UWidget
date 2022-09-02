@@ -40,6 +40,8 @@ val themeErrorColor = mutableStateOf(Color.Transparent)
 @SuppressLint("StaticFieldLeak")
 val systemThemeIsEnabled = mutableStateOf(true)
 
+@SuppressLint("StaticFieldLeak")
+val monetEngineIsEnabled = mutableStateOf(true)
 
 private val DarkColorPalette = darkColors(
     background = Background,
@@ -49,6 +51,7 @@ private val DarkColorPalette = darkColors(
 )
 
 private val LightColorPalette = lightColors(
+    background = LightBackground,
     primary = Main,
     primaryVariant = MainSec,
     secondary = Second
@@ -116,7 +119,7 @@ fun LaunchAppApplyColors(generalOptions: GeneralOptions) {
 fun SystemThemeSet() {
     val darkTheme = !themeAppMode.value
 
-    if (Build.VERSION.SDK_INT >= 31) { // Включаем Monet
+    if (Build.VERSION.SDK_INT >= 31 && monetEngineIsEnabled.value) { // Включаем Monet
 
         themePrimaryColor.value = colorResource(android.R.color.system_accent1_400)
         themePrimaryVarColor.value = colorResource(android.R.color.system_accent1_500)
@@ -132,10 +135,12 @@ fun SystemThemeSet() {
             themePrimaryColor.value = DarkColorPalette.primary
             themePrimaryVarColor.value = DarkColorPalette.primaryVariant
             themeSecondaryColor.value = DarkColorPalette.secondary
+            themeBackgroundColor.value = DarkColorPalette.background
         } else {
             themePrimaryColor.value = LightColorPalette.primary
             themePrimaryVarColor.value = LightColorPalette.primaryVariant
             themeSecondaryColor.value = LightColorPalette.secondary
+            themeBackgroundColor.value = LightColorPalette.background
         }
     }
     themeErrorColor.value = Color.Red
