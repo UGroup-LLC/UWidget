@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.alpha
 import androidx.core.graphics.blue
@@ -36,13 +37,14 @@ fun CardIllustration(
     primaryKeys: Int,
     secondaryKeys: Int,
     color: Color = MaterialTheme.colors.primary,
-    secColor: Color = MaterialTheme.colors.secondary
+    secColor: Color = MaterialTheme.colors.secondary,
+    border: BorderStroke = BorderStroke(2.dp, color = MaterialTheme.colors.surface.copy(0.4f))
 ) {
     Box(contentAlignment = Alignment.TopCenter) {
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(24.dp),
-            border = BorderStroke(2.dp, color = MaterialTheme.colors.surface.copy(0.4f)),
+            border = border,
             colors = CardDefaults.cardColors(containerColor = Color.Transparent)
         ) {
             val context = LocalContext.current

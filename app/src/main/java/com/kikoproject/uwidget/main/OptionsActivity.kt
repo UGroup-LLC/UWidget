@@ -80,7 +80,7 @@ private fun AppInfoOptions(){
 @Composable
 private fun MainOptions(scrollState: ScrollState){
     Text(
-        "Основные",
+        "Интерфейс",
         style = MaterialTheme.typography.h2,
         color = MaterialTheme.colors.surface.copy(alpha = 0.8f)
     )

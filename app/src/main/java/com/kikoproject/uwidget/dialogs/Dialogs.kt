@@ -1,6 +1,5 @@
 package com.kikoproject.uwidget.dialogs
 
-import android.R.color
 import android.annotation.SuppressLint
 import android.content.ClipboardManager
 import android.content.Context
@@ -25,6 +24,7 @@ import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -44,9 +44,10 @@ import com.kikoproject.uwidget.getSelectors
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.main.roomDb
 import com.kikoproject.uwidget.models.GeneralOptions
+import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.objects.RoundedCard
-import com.kikoproject.uwidget.ui.theme.themePrimaryColor
+import com.kikoproject.uwidget.objects.ScheduleBand
 
 
 /**
@@ -442,6 +443,15 @@ fun WebPageScreen(urlToRender: String) {
     }
 }
 
+/**
+ * Диалог выбора цвета
+ *
+ * @param dialogVisibleState видимость диалога
+ * @param oldColorsClick старые цвета
+ * @param applyColorClick цвет который был применен
+ *
+ * @author Kiko
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ColorPicker(
@@ -526,7 +536,10 @@ fun ColorPicker(
                                             oldColorsClick(genOptions, Color.Black)
                                         }
                                 ) {
-                                    Box(contentAlignment = Alignment.CenterStart, modifier = Modifier.fillMaxSize()) {
+                                    Box(
+                                        contentAlignment = Alignment.CenterStart,
+                                        modifier = Modifier.fillMaxSize()
+                                    ) {
                                         RoundedCard(
                                             textColor = Color.White,
                                             text = "OLED",
@@ -586,5 +599,68 @@ fun ColorPicker(
                 }
             }
         )
+    }
+}
+
+/**
+ * Показать превью расписание
+ *
+ * @param text текст диалога
+ * @param buttonText текст кнопки
+ * @param content описывает что должна делать кнопка при нажатии
+ *
+ * @author Kiko
+ */
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun ShowSchedulePreviewDialog(
+    dialogVisibleState: MutableState<Boolean>,
+    scheduleTitle: String,
+    schedule: Schedule
+) {
+    val textColor = MaterialTheme.colors.surface
+
+    if (dialogVisibleState.value) {
+        AlertDialog(
+            properties = DialogProperties(
+                dismissOnClickOutside = true,
+                dismissOnBackPress = true,
+                usePlatformDefaultWidth = false
+            ),
+            containerColor = MaterialTheme.colors.background,
+            onDismissRequest = { dialogVisibleState.value = false },
+            title = {
+                Text(
+                    text = scheduleTitle,
+                    textAlign = TextAlign.Center,
+                    color = textColor
+                )
+            },
+            text = {
+                ScheduleBand(schedule = schedule)
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = {
+                        dialogVisibleState.value = false
+                    },
+                    border = BorderStroke(1.dp, MaterialTheme.colors.surface.copy(alpha = 0.1f))
+                ) {
+                    Text(text = "Отмена", color = MaterialTheme.colors.surface.copy(alpha = 0.7f))
+                }
+            },
+            icon = {},
+            confirmButton = {
+                OutlinedButton(
+                    onClick = {
+                        
+                    },
+
+                    border = BorderStroke(1.dp, MaterialTheme.colors.surface.copy(alpha = 0.1f))
+                ) {
+                    Text(text = "Выбрать", color = MaterialTheme.colors.surface.copy(alpha = 0.7f))
+                }
+            },
+        modifier = Modifier.fillMaxWidth(0.9f))
     }
 }

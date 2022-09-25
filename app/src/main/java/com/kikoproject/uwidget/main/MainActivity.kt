@@ -50,7 +50,10 @@ lateinit var curUser: User
 lateinit var materialColors: Colors
 
 @SuppressLint("StaticFieldLeak")
-var curSchedule: Schedule? = null
+var curSchedule: Schedule? = null // Расписание используемое для передачи в разные окна
+
+@SuppressLint("StaticFieldLeak")
+var chosenByUserSchedule: Schedule? = null // Расписание используемое пользователем
 
 @SuppressLint("StaticFieldLeak")
 lateinit var prefs: SharedPreferences
@@ -60,6 +63,17 @@ var countOfBan = 0
 var isJoinBanned = false
 var timeUntilBanIslifted: MutableState<Long> = mutableStateOf(0L)
 var timer = true
+
+//Const
+val days = listOf(
+    "Понедельник",
+    "Вторник",
+    "Среда",
+    "Четверг",
+    "Пятница",
+    "Суббота",
+    "Воскресеьне"
+)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

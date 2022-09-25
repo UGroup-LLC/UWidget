@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.main.curSchedule
@@ -19,6 +20,7 @@ import com.kikoproject.uwidget.objects.StandardButton
 /**
  * Админ панель в расписании содержащяя в себе редактирование расписание, удаление пользователей
  */
+@Preview(showBackground = true)
 @Composable
 fun EditSheduleMenu(){
     Box(

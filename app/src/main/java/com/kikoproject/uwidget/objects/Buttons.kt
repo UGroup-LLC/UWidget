@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -15,10 +17,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.kikoproject.uwidget.R
-import com.kikoproject.uwidget.main.curSchedule
-import com.kikoproject.uwidget.main.curUser
-import com.kikoproject.uwidget.main.navController
-import com.kikoproject.uwidget.main.prefs
+import com.kikoproject.uwidget.dialogs.ShowSchedulePreviewDialog
+import com.kikoproject.uwidget.main.*
 import com.kikoproject.uwidget.models.User
 import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.ScreenNav
@@ -38,11 +38,16 @@ import com.kikoproject.uwidget.networking.outFromSchedule
  */
 @Composable
 fun ScheduleButton(schedule: Schedule, isAdmin: Boolean, mySheduleAdmin: List<Schedule>, mySheduleUser: List<Schedule>) {
+    val showDialog = remember{mutableStateOf(false)}
+    if(showDialog.value){
+        ShowSchedulePreviewDialog(showDialog, schedule.Name, schedule)
+    }
+
     Button(
         onClick = {
             prefs.edit().putString(schedule.ID, "null").apply()
-            curSchedule = schedule
-            navController.popBackStack()
+            chosenByUserSchedule = schedule
+            showDialog.value = true
         },
         shape = RoundedCornerShape(17.dp),
         border = BorderStroke(0.dp, Color.Transparent),

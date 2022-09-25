@@ -36,6 +36,7 @@ import com.kikoproject.uwidget.dialogs.ShowSearchSelector
 import com.kikoproject.uwidget.getSchedule
 import com.kikoproject.uwidget.getSelectorDivider
 import com.kikoproject.uwidget.main.curSchedule
+import com.kikoproject.uwidget.main.days
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.models.schedules.DefaultScheduleOption
 import com.kikoproject.uwidget.models.schedules.Schedule
@@ -173,15 +174,7 @@ fun AddSchedule() {
                     activeColor = primaryColor.copy(0.5f),
                     fontSize = 11.5.sp
                 )
-                val days = listOf(
-                    "Понедельник",
-                    "Вторник",
-                    "Среда",
-                    "Четверг",
-                    "Пятница",
-                    "Суббота",
-                    "Воскресеьне"
-                )
+
 
                 val count = remember { mutableListOf<MutableState<Int>>() }
 
