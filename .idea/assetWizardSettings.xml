@@ -302,8 +302,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_undraw_void" />
-                            <entry key="sourceFile" value="C:\Users\kiril\Downloads\undraw_void_-3-ggu.svg" />
+                            <entry key="outputName" value="ic_undraw_empty" />
+                            <entry key="sourceFile" value="C:\Users\kiril\Downloads\undraw_void_-3-ggu-min.svg" />
                           </map>
                         </option>
                       </PersistentState>

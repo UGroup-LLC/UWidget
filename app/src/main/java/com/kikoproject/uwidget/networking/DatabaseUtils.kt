@@ -510,6 +510,9 @@ fun getScheduleUsers(schedule: Schedule, usersResult: UsersResult) {
 
         val field = (fields.get("users_ids") as List<String>)
         field.forEachIndexed { index, id ->
+            if(field.size==1 && field[0]==""){
+                usersResult.onResult(usersModel)
+            }
             getUserFromId(id, object : UserResult {
                 override fun onResult(user: User?) {
                     if (user != null) {
