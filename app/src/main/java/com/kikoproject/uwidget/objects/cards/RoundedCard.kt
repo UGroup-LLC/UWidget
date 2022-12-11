@@ -1,4 +1,4 @@
-package com.kikoproject.uwidget.objects
+package com.kikoproject.uwidget.objects.cards
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape

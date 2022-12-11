@@ -38,7 +38,7 @@ fun DefaultScheduleOption(): ScheduleOptions
         ),
         scheduleMorningSettings = ScheduleMorningSettings(
             7,
-            "Доброе утро, %n",
+            "Доброе утро, @%n@",
             true,
             true,
             true,
@@ -60,7 +60,7 @@ fun DefaultScheduleOption(): ScheduleOptions
             true
         ),
         scheduleEveningSettings = ScheduleEveningSettings(
-            "Хорошего вечера, %n",
+            "Хорошего вечера, @%n@",
             true,
             true,
             true

@@ -41,8 +41,8 @@ import com.kikoproject.uwidget.networking.createScheduleInRoomDB
 import com.kikoproject.uwidget.networking.deleteSchedule
 import com.kikoproject.uwidget.objects.ExpandableTextHelper
 import com.kikoproject.uwidget.objects.IncreaseButtons
-import com.kikoproject.uwidget.objects.RoundedCard
-import com.kikoproject.uwidget.objects.ScheduleCardCreator
+import com.kikoproject.uwidget.objects.cards.RoundedCard
+import com.kikoproject.uwidget.objects.cards.ScheduleCardCreator
 import com.kikoproject.uwidget.ui.theme.Typography
 import com.radusalagean.infobarcompose.InfoBar
 import com.radusalagean.infobarcompose.InfoBarMessage

@@ -17,8 +17,8 @@ import com.kikoproject.uwidget.dialogs.ShowErrorDialog
 import com.kikoproject.uwidget.main.curSchedule
 import com.kikoproject.uwidget.networking.MembersOnlineContent
 import com.kikoproject.uwidget.objects.BackHeader
-import com.kikoproject.uwidget.objects.CardIllustration
-import com.kikoproject.uwidget.objects.RoundedCard
+import com.kikoproject.uwidget.objects.cards.CardIllustration
+import com.kikoproject.uwidget.objects.cards.RoundedCard
 import com.kikoproject.uwidget.objects.UserButton
 
 /**

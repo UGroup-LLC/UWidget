@@ -21,6 +21,8 @@ import com.kikoproject.uwidget.networking.OnlineContent
 import com.kikoproject.uwidget.networking.getNextUserSchedule
 import com.kikoproject.uwidget.objects.MainHeader
 import com.kikoproject.uwidget.objects.colorize
+import com.kikoproject.uwidget.objects.schedules.TitleShedule
+import com.kikoproject.uwidget.objects.text.variablize
 import com.kikoproject.uwidget.time.TimeZone
 import com.kikoproject.uwidget.time.getTimeZone
 
@@ -59,23 +61,28 @@ fun DashboardActivity() {
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 MainHeader(account = account)
+                Text(
+                    text = "Текущее расписание: @${curSchedule?.Name ?: "Нету"}@".colorize(),
+                    style = MaterialTheme.typography.caption,
+                    color = MaterialTheme.colors.surface
+                )
                 Card( // content
                     shape = RoundedCornerShape(20.dp),
                     contentColor = MaterialTheme.colors.background,
                     backgroundColor = MaterialTheme.colors.background,
                     border = BorderStroke(1.dp, MaterialTheme.colors.primary)
                 ) {
-                    Card(
-                        shape = RoundedCornerShape(45.dp),
-                        backgroundColor = MaterialTheme.colors.primary.copy(0.25f),
-                        modifier = Modifier.padding(horizontal = 45.dp, vertical = 20.dp)
-                    ) {
-                        if(curSchedule != null) {
-                            TitleShedule(user = curUser, schedule = curSchedule!!)
-                        }
-                        else
-                        {
-                            TitleShedule("Создайте расписание")
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.padding(horizontal = 45.dp, vertical = 20.dp)) {
+                        Card(
+                            shape = RoundedCornerShape(45.dp),
+                            backgroundColor = MaterialTheme.colors.primary.copy(0.25f)
+                        ) {
+                            if (curSchedule != null) {
+                                TitleShedule(user = curUser, schedule = curSchedule!!)
+                            } else {
+                                TitleShedule("Создайте расписание")
+                            }
                         }
                     }
                 }
@@ -127,52 +134,4 @@ fun DashboardActivity() {
             }
         }
     })
-}
-
-/**
- * Выбирает что за текст необходимо отображать в превью в заголовке
- *
- * @param user пользователь имя которого может отобразиться в заголовке
- *
- * @author Kiko
- *
- * @exception TODO("НЕОБХОДИМО ПЕРЕНЕСТИ ЭТО В ОТДЕЛЬНЫЙ МЕТОД")
- */
-@Composable
-fun TitleShedule(user: User, schedule: Schedule) {
-    var text = ""
-    val timeZone = getTimeZone(schedule)
-    if (timeZone == TimeZone.MORNING) {
-        text = schedule.Options?.scheduleMorningSettings?.morningTitle.toString()
-    } else if (timeZone == TimeZone.EVENING) {
-//        text = schedule.Options?.scheduleEveningSettings?.eveningTitleText.toString()
-        text = "%И%з%в%и%н%и%т%е%,% произошла ошибка%"
-    }
-    else{
-        text = "%Извините,% произошла ошибка"
-    }
-
-    Text(
-        text = text.colorize(),
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-        style = MaterialTheme.typography.caption,
-        color = MaterialTheme.colors.surface
-    )
-}
-
-/**
- * Переопределенный метод используемый для отображения заголовка в превью с кастом текстом
- *
- * @param text текст заголовка
- *
- * @author Kiko
- */
-@Composable
-fun TitleShedule(text: String) {
-    Text(
-        text = text,
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-        style = MaterialTheme.typography.caption,
-        color = MaterialTheme.colors.surface
-    )
 }

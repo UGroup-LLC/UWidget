@@ -1,4 +1,4 @@
-package com.kikoproject.uwidget.objects
+package com.kikoproject.uwidget.objects.cards
 
 import android.graphics.ColorSpace
 import android.widget.ImageView

@@ -1,4 +1,4 @@
-package com.kikoproject.uwidget.objects
+package com.kikoproject.uwidget.objects.cards
 
 import android.content.Context
 import androidx.compose.foundation.BorderStroke

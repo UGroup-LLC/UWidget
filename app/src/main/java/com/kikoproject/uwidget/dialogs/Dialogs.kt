@@ -41,12 +41,14 @@ import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.kikoproject.uwidget.ScheduleGetterSelectors
 import com.kikoproject.uwidget.getSelectors
+import com.kikoproject.uwidget.main.curSchedule
 import com.kikoproject.uwidget.main.navController
+import com.kikoproject.uwidget.main.prefs
 import com.kikoproject.uwidget.main.roomDb
 import com.kikoproject.uwidget.models.GeneralOptions
 import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.ScreenNav
-import com.kikoproject.uwidget.objects.RoundedCard
+import com.kikoproject.uwidget.objects.cards.RoundedCard
 import com.kikoproject.uwidget.objects.ScheduleBand
 
 
@@ -653,7 +655,10 @@ fun ShowSchedulePreviewDialog(
             confirmButton = {
                 OutlinedButton(
                     onClick = {
-                        
+                        curSchedule = schedule
+                        prefs.edit().putString("mainSchedule", curSchedule!!.ID).commit()
+                        dialogVisibleState.value = false
+                        navController.popBackStack()
                     },
 
                     border = BorderStroke(1.dp, MaterialTheme.colors.surface.copy(alpha = 0.1f))
