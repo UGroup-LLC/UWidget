@@ -20,7 +20,7 @@ import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.OnlineContent
 import com.kikoproject.uwidget.networking.getNextUserSchedule
 import com.kikoproject.uwidget.objects.MainHeader
-import com.kikoproject.uwidget.objects.coloredTitleText
+import com.kikoproject.uwidget.objects.colorize
 import com.kikoproject.uwidget.time.TimeZone
 import com.kikoproject.uwidget.time.getTimeZone
 
@@ -145,14 +145,15 @@ fun TitleShedule(user: User, schedule: Schedule) {
     if (timeZone == TimeZone.MORNING) {
         text = schedule.Options?.scheduleMorningSettings?.morningTitle.toString()
     } else if (timeZone == TimeZone.EVENING) {
-        text = schedule.Options?.scheduleEveningSettings?.eveningTitleText.toString()
+//        text = schedule.Options?.scheduleEveningSettings?.eveningTitleText.toString()
+        text = "%И%з%в%и%н%и%т%е%,% произошла ошибка%"
+    }
+    else{
+        text = "%Извините,% произошла ошибка"
     }
 
     Text(
-        text = coloredTitleText(
-            text,
-            user
-        ),
+        text = text.colorize(),
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
         style = MaterialTheme.typography.caption,
         color = MaterialTheme.colors.surface

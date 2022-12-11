@@ -526,11 +526,9 @@ fun getScheduleUsers(schedule: Schedule, usersResult: UsersResult) {
                 override fun onError(error: Throwable) {
 
                 }
-
             })
         }
     }
-
 }
 
 /**
