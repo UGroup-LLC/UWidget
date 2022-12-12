@@ -21,25 +21,25 @@ fun bitmapCrop(
     heightCompress: Int = 1
 ): Bitmap {
     val dstBmp: Bitmap
-    if (srcBmp.getWidth() >= srcBmp.getHeight()) {
+    if (srcBmp.width >= srcBmp.height) {
 
         dstBmp = Bitmap.createBitmap(
             srcBmp,
-            srcBmp.getWidth() / 2 - srcBmp.getHeight() / 2,
+            srcBmp.width / 2 - srcBmp.height / 2,
             0,
-            srcBmp.getHeight() / heightCompress,
-            srcBmp.getHeight() / heightCompress
-        );
+            srcBmp.height / heightCompress,
+            srcBmp.height / heightCompress
+        )
 
     } else {
 
         dstBmp = Bitmap.createBitmap(
             srcBmp,
             0,
-            srcBmp.getHeight() / 2 - srcBmp.getWidth() / 2,
-            srcBmp.getWidth() / widthCompress,
-            srcBmp.getWidth() / widthCompress
-        );
+            srcBmp.height / 2 - srcBmp.width / 2,
+            srcBmp.width / widthCompress,
+            srcBmp.width / widthCompress
+        )
     }
     return dstBmp
 }
@@ -72,5 +72,5 @@ fun bitmapResize(dstBmp: Bitmap, height: Int = 200, width: Int = 200): Bitmap {
 fun bitmapCompress(dstBmp: Bitmap, quality: Int = 30): Bitmap {
     val out = ByteArrayOutputStream()
     dstBmp.compress(Bitmap.CompressFormat.JPEG, quality, out)
-    return BitmapFactory.decodeStream(ByteArrayInputStream(out.toByteArray()));
+    return BitmapFactory.decodeStream(ByteArrayInputStream(out.toByteArray()))
 }

@@ -327,7 +327,7 @@ fun bitmapToBase64(dstBmp: Bitmap): String {
     val byteArrayOutputStream = ByteArrayOutputStream()
     dstBmp.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
     val byteArray: ByteArray = byteArrayOutputStream.toByteArray()
-    return Base64.encodeToString(byteArray, Base64.DEFAULT);
+    return Base64.encodeToString(byteArray, Base64.DEFAULT)
 }
 
 

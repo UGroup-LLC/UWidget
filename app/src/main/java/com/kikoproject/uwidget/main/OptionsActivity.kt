@@ -21,7 +21,9 @@ import androidx.core.graphics.ColorUtils
 import com.kikoproject.uwidget.BuildConfig
 import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.networking.changeMonetEngine
-import com.kikoproject.uwidget.objects.*
+import com.kikoproject.uwidget.objects.BackHeader
+import com.kikoproject.uwidget.objects.ListItemColor
+import com.kikoproject.uwidget.objects.ListItemSwitcher
 import com.kikoproject.uwidget.objects.cards.CardIllustration
 import com.kikoproject.uwidget.objects.cards.RoundedCard
 import com.kikoproject.uwidget.ui.theme.*
@@ -91,7 +93,7 @@ private fun MainOptions(scrollState: ScrollState){
         ) { switchValue ->
             themeAppMode.value = !switchValue
             roomDb.optionsDao()
-                .updateOption(roomDb.optionsDao().get().copy(themeAppMode.value))
+                .updateOption(roomDb.optionsDao().get().copy(Theme = themeAppMode.value))
         }
     }
 

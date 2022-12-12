@@ -13,16 +13,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.w3c.dom.Text
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RoundedCard(
+    modifier: Modifier = Modifier,
     textColor: Color,
     text: String,
     textSize: TextUnit = 12.sp,
     spacing: TextUnit = 3.sp,
-    modifier: Modifier = Modifier
 ) {
     Card(
         colors = CardDefaults.cardColors(containerColor = textColor.copy(alpha = 0.1f)),

@@ -9,7 +9,7 @@ enum class DialogPosition {
 
 fun Modifier.dialogPos(pos: DialogPosition) = layout { measurable, constraints ->
 
-    val placeable = measurable.measure(constraints);
+    val placeable = measurable.measure(constraints)
     layout(constraints.maxWidth, constraints.maxHeight){
         when(pos) {
             DialogPosition.BOTTOM -> {

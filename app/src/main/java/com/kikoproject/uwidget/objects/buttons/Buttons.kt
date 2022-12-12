@@ -1,4 +1,4 @@
-package com.kikoproject.uwidget.objects
+package com.kikoproject.uwidget.objects.buttons
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
@@ -24,6 +24,7 @@ import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.getNextUserSchedule
 import com.kikoproject.uwidget.networking.outFromSchedule
+import com.kikoproject.uwidget.objects.Avatar
 
 /**
  * Кнопка расписания, при нажатии меняет curSchedule на расписание в кнопке
@@ -31,13 +32,13 @@ import com.kikoproject.uwidget.networking.outFromSchedule
  *
  * @param schedule расписание кнопки
  * @param isAdmin является ли пользователь администратором расписания
- * @param mySheduleAdmin расписание где пользователь администратор
- * @param mySheduleUser расписание где пользователь простой юзер
+ * @param scheduleAdmin расписание где пользователь администратор
+ * @param scheduleUser расписание где пользователь простой юзер
  *
  * @author Kiko
  */
 @Composable
-fun ScheduleButton(schedule: Schedule, isAdmin: Boolean, mySheduleAdmin: List<Schedule>, mySheduleUser: List<Schedule>) {
+fun ScheduleButton(schedule: Schedule, isAdmin: Boolean, scheduleAdmin: List<Schedule>, scheduleUser: List<Schedule>) {
     val showDialog = remember{mutableStateOf(false)}
     if(showDialog.value){
         ShowSchedulePreviewDialog(showDialog, schedule.Name, schedule)
@@ -75,7 +76,7 @@ fun ScheduleButton(schedule: Schedule, isAdmin: Boolean, mySheduleAdmin: List<Sc
                         curSchedule = schedule
                         navController.navigate(ScreenNav.EditScheduleMenuNav.route)
                     } else {
-                        val nextSchedule = getNextUserSchedule(mySchedulesUser = mySheduleUser, mySchedulesAdmin = mySheduleAdmin)
+                        val nextSchedule = getNextUserSchedule(mySchedulesUser = scheduleUser, mySchedulesAdmin = scheduleAdmin)
                         if (nextSchedule != null) {
                             prefs.edit().putString(nextSchedule.ID, "null").apply()
                             curSchedule = nextSchedule

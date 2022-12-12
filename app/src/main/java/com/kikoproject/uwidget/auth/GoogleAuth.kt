@@ -92,7 +92,7 @@ fun GoogleAuthScreen() {
             }
         }
 
-    UWidgetTheme() {
+    UWidgetTheme {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -366,7 +366,7 @@ fun signOut(context: Context) {
         .requestIdToken("768135781097-2r401ogli9pc1fmsg20hh0nfie5jp99m.apps.googleusercontent.com")
         .build()
     val googleSignInClient =
-        com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(context, gso)
+        GoogleSignIn.getClient(context, gso)
     googleSignInClient.signOut()
 }
 

@@ -15,7 +15,7 @@ import com.kikoproject.uwidget.main.curSchedule
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.objects.BackHeader
-import com.kikoproject.uwidget.objects.StandardButton
+import com.kikoproject.uwidget.objects.buttons.StandardButton
 
 /**
  * Админ панель в расписании содержащяя в себе редактирование расписание, удаление пользователей

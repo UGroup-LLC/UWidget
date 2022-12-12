@@ -1,4 +1,4 @@
-package com.kikoproject.uwidget.objects
+package com.kikoproject.uwidget.objects.text
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -6,7 +6,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
-import com.kikoproject.uwidget.models.User
 
 /**
  * Возвращает раскрашенный текст
@@ -23,17 +22,17 @@ import com.kikoproject.uwidget.models.User
 fun String.colorize(colorizeSymbol: Char = '@'): AnnotatedString {
     val textParts = this.count { it == colorizeSymbol }
     if (textParts != 0) {
-        val pr_array = mutableListOf<String>() // Цветной текст
-        val sec_array = mutableListOf<String>() // Обычный текст
+        val primaryArray = mutableListOf<String>() // Цветной текст
+        val secondArray = mutableListOf<String>() // Обычный текст
         var inColorizing =
             false // Переменная для определения в какой массив записывать текущий символ
         val isFirstColorizing = this[0] == colorizeSymbol
         var i =
             if (this[0] == colorizeSymbol) -1 else 0// Указывает на элемент в массивах для записи символа
 
-        for (textPart: Int in 0..textParts - 1) { // Добавляем элементы в которые потом будут записываться символы
-            pr_array.add(textPart, "")
-            sec_array.add(textPart, "")
+        for (textPart: Int in 0 until textParts) { // Добавляем элементы в которые потом будут записываться символы
+            primaryArray.add(textPart, "")
+            secondArray.add(textPart, "")
         }
 
         for (symbol: Char in this) { // Перебираем символы
@@ -44,15 +43,15 @@ fun String.colorize(colorizeSymbol: Char = '@'): AnnotatedString {
             }
 
             if (!inColorizing) {
-                sec_array[i] = sec_array[i] + symbol
+                secondArray[i] = secondArray[i] + symbol
             } else {
-                pr_array[i] = pr_array[i] + symbol
+                primaryArray[i] = primaryArray[i] + symbol
             }
         }
 
         var returnString = buildAnnotatedString {}
 
-        sec_array.forEachIndexed { index, _ ->
+        secondArray.forEachIndexed { index, _ ->
             if (isFirstColorizing) { // Если первым будет окрашаевымый то используем первый если нет то второй
                 // TODO("Фиксануть это и найти способ другой")
                 if (index % 2 == 0) {
@@ -62,7 +61,7 @@ fun String.colorize(colorizeSymbol: Char = '@'): AnnotatedString {
                                 color = MaterialTheme.colors.primary
                             )
                         ) {
-                            append(pr_array[index])
+                            append(primaryArray[index])
                         }
                     }
                 } else {
@@ -72,7 +71,7 @@ fun String.colorize(colorizeSymbol: Char = '@'): AnnotatedString {
                                 color = MaterialTheme.colors.surface
                             )
                         ) {
-                            append(sec_array[index])
+                            append(secondArray[index])
                         }
                     }
                 }
@@ -84,7 +83,7 @@ fun String.colorize(colorizeSymbol: Char = '@'): AnnotatedString {
                                 color = MaterialTheme.colors.primary
                             )
                         ) {
-                            append(pr_array[index])
+                            append(primaryArray[index])
                         }
                     }
                 } else {
@@ -94,7 +93,7 @@ fun String.colorize(colorizeSymbol: Char = '@'): AnnotatedString {
                                 color = MaterialTheme.colors.surface
                             )
                         ) {
-                            append(sec_array[index])
+                            append(secondArray[index])
                         }
                     }
                 }

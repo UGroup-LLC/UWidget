@@ -1,4 +1,4 @@
-package com.kikoproject.uwidget.objects
+package com.kikoproject.uwidget.objects.buttons
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.lazy.LazyRow
@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.sp
  * @author Kiko
  */
 @Composable
-fun IncreaseButtons(
+fun increaseButtons(
     texts: List<String>,
     roundStrength: Float = 20f,
     inactiveColor: Color,
@@ -38,7 +38,7 @@ fun IncreaseButtons(
 ) : Int{
     val activeButtonIndex = remember { mutableStateOf(0) }
 
-    LazyRow() {
+    LazyRow {
         itemsIndexed(texts) { index, text ->
 
             var leftStrength = roundStrength
@@ -78,7 +78,7 @@ fun IncreaseButtons(
 @Preview
 @Composable
 fun PreviewIncreaseButtons() {
-    IncreaseButtons(
+    increaseButtons(
         listOf("list", "kok", "notkok"),
         20f,
         Color.White, Color.Red,

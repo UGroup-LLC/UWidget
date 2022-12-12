@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.sp
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScheduleCardCreator(
+fun scheduleCardCreator(
 
     //card options
     cardColor: Color = MaterialTheme.colors.surface,
@@ -154,7 +154,7 @@ fun ScheduleCardCreator(
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScheduleCardCreator(
+fun scheduleCardCreator(
 
     cardsInt: Int,
 

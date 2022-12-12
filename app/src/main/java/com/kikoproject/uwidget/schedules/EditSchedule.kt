@@ -28,21 +28,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.kikoproject.uwidget.R
-import com.kikoproject.uwidget.ScheduleGetter
-import com.kikoproject.uwidget.getSchedule
-import com.kikoproject.uwidget.getSelectorDivider
+import com.kikoproject.uwidget.utils.ScheduleGetter
+import com.kikoproject.uwidget.utils.getSchedule
+import com.kikoproject.uwidget.utils.getSelectorDivider
 import com.kikoproject.uwidget.main.curSchedule
 import com.kikoproject.uwidget.main.navController
-import com.kikoproject.uwidget.models.schedules.DefaultScheduleOption
+import com.kikoproject.uwidget.models.schedules.defaultScheduleOption
 import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.createScheduleInDB
 import com.kikoproject.uwidget.networking.createScheduleInRoomDB
 import com.kikoproject.uwidget.networking.deleteSchedule
 import com.kikoproject.uwidget.objects.ExpandableTextHelper
-import com.kikoproject.uwidget.objects.IncreaseButtons
 import com.kikoproject.uwidget.objects.cards.RoundedCard
-import com.kikoproject.uwidget.objects.cards.ScheduleCardCreator
+import com.kikoproject.uwidget.objects.cards.scheduleCardCreator
+import com.kikoproject.uwidget.objects.buttons.increaseButtons
 import com.kikoproject.uwidget.ui.theme.Typography
 import com.radusalagean.infobarcompose.InfoBar
 import com.radusalagean.infobarcompose.InfoBarMessage
@@ -56,13 +56,12 @@ fun EditSchedule() {
     val textColor = MaterialTheme.colors.surface
     var nameState = remember { mutableStateOf(TextFieldValue("Error")) }
     var categoryState = remember { mutableStateOf(TextFieldValue("Error")) }
-    val schedulesState = remember { mutableStateOf(mutableListOf<MutableList<String>>()) }
+    var schedulesState = remember { mutableListOf<MutableList<String>>() }
     val context = LocalContext.current
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val timeCount = remember { mutableStateOf(0) }
     var timeState = mutableListOf<MutableState<TextFieldValue>>()
-    val materialColor = MaterialTheme.colors
 
     if (curSchedule != null) {
         nameState = remember { mutableStateOf(TextFieldValue(text = curSchedule!!.Name)) }
@@ -156,7 +155,7 @@ fun EditSchedule() {
                     fontWeight = FontWeight.Medium
                 )
 
-                val scheduleGetMode = IncreaseButtons(
+                val scheduleGetMode = increaseButtons(
                     texts = listOf("Ручное заполнение", "Получение с сайта"),
                     inactiveColor = textColor.copy(0.1f),
                     roundStrength = 30f,
@@ -205,10 +204,10 @@ fun EditSchedule() {
                             )
                         }
                         count.clear()
-                        schedulesState.value.clear()
+                        schedulesState.clear()
                         days.forEach { day -> // Тут идет получение всего что написал юзер
 
-                            val card = ScheduleCardCreator(titleText = day)
+                            val card = scheduleCardCreator(titleText = day)
                             count.add(mutableStateOf(card.size))
                             val scheduleForDay = mutableListOf<String>()
 
@@ -218,7 +217,7 @@ fun EditSchedule() {
                                 }
                             }
 
-                            schedulesState.value.add(scheduleForDay)
+                            schedulesState.add(scheduleForDay)
                         }
 
                         var tempMax = 0
@@ -249,9 +248,9 @@ fun EditSchedule() {
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 RoundedCard(
+                                    modifier = Modifier.padding(bottom = 10.dp),
                                     textColor,
                                     "ALPHA",
-                                    modifier = Modifier.padding(bottom = 10.dp)
                                 )
                                 ExpandableTextHelper(
                                     cardColor = textColor.copy(alpha = 0.2f),
@@ -340,7 +339,7 @@ fun EditSchedule() {
                                             pairsState.value.text.toInt(),
                                             object : ScheduleGetter {
                                                 override fun onResult(schedules: MutableList<MutableList<String>>) {
-                                                    schedulesState.value = schedules
+                                                    schedulesState = schedules
                                                 }
                                             }
                                         )
@@ -362,7 +361,7 @@ fun EditSchedule() {
                 }
 
                 if (timeCount.value >= 0) {
-                    timeState = ScheduleCardCreator(cardsInt = timeCount.value, titleText = "Время")
+                    timeState = scheduleCardCreator(cardsInt = timeCount.value, titleText = "Время")
                 }
             }
             item {
@@ -371,10 +370,10 @@ fun EditSchedule() {
                         .padding(horizontal = 20.dp, vertical = 10.dp)
                         .fillMaxWidth(0.9f),
                     onClick = {
-                        val scheduleValue = schedulesState.value
+                        val scheduleValue = schedulesState
                         val tempMap = mutableMapOf<String, MutableList<String>>()
                         scheduleValue.forEachIndexed { index, value ->
-                            tempMap.set(index.toString(), value)
+                            tempMap[index.toString()] = value
                         }
                         val tempTimeState = mutableListOf<String>()
                         timeState.forEach { item ->
@@ -382,7 +381,7 @@ fun EditSchedule() {
                         }
 
                         var allSchedulesNull = 0
-                        schedulesState.value.forEach { schedule ->
+                        schedulesState.forEach { schedule ->
                             if (schedule.size == 0) {
                                 allSchedulesNull++
                             }
@@ -424,7 +423,7 @@ fun EditSchedule() {
                                         0.toString(), // TODO()
                                         tempTimeState,
                                         categoryState.value.text,
-                                        DefaultScheduleOption()
+                                        defaultScheduleOption()
                                     )
                                     createScheduleInRoomDB(schedule)
                                     createScheduleInDB(

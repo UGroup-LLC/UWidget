@@ -21,9 +21,9 @@ import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.OnlineContent
 import com.kikoproject.uwidget.objects.BackHeader
+import com.kikoproject.uwidget.objects.buttons.ScheduleButton
+import com.kikoproject.uwidget.objects.buttons.StandardButton
 import com.kikoproject.uwidget.objects.cards.CardIllustration
-import com.kikoproject.uwidget.objects.ScheduleButton
-import com.kikoproject.uwidget.objects.StandardButton
 
 /**
  * Содержит в себе все расписания пользователя и их настройку

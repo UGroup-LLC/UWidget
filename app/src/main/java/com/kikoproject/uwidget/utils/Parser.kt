@@ -1,4 +1,4 @@
-package com.kikoproject.uwidget
+package com.kikoproject.uwidget.utils
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

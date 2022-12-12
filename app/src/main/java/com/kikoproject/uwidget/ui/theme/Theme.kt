@@ -2,22 +2,16 @@ package com.kikoproject.uwidget.ui.theme
 
 import android.annotation.SuppressLint
 import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.core.graphics.ColorUtils
-import androidx.room.RoomDatabase
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.kikoproject.uwidget.localdb.MainDataBase
 import com.kikoproject.uwidget.models.GeneralOptions
-import com.kikoproject.uwidget.utils.toStandardColor
 
 @SuppressLint("StaticFieldLeak")
 val themeAppMode = mutableStateOf(false)
@@ -151,7 +145,6 @@ enum class MainColors(val value: Int) {
     SECONDARY(2),
     BACKGROUND(3),
     ERROR(4),
-    TEXT_COLOR(5)
 }
 
 enum class MainThemes(val value: Boolean) {

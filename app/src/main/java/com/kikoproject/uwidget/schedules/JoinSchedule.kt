@@ -1,7 +1,6 @@
 package com.kikoproject.uwidget.schedules
 
 import android.os.CountDownTimer
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -18,7 +17,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
@@ -30,16 +28,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kikoproject.uwidget.dialogs.ShowInfoDialog
-import com.kikoproject.uwidget.main.countOfBan
-import com.kikoproject.uwidget.main.isJoinBanned
-import com.kikoproject.uwidget.main.timer
-import com.kikoproject.uwidget.main.timeUntilBanIslifted
-import com.kikoproject.uwidget.main.navController
+import com.kikoproject.uwidget.main.*
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.EnterInScheduleResult
 import com.kikoproject.uwidget.networking.enterInSchedule
 import com.kikoproject.uwidget.objects.BackHeader
-import com.kikoproject.uwidget.objects.CustomToastBar
 
 
 /**
@@ -130,16 +123,20 @@ fun JoinSchedule() {
                         val isError =remember {  mutableStateOf(false)}
                         val code = joinCodeInput(isError)
                         if (isComplited.value) {
-                            if (countOfBan == 4) {
-                                ShowInfoDialog(
-                                    text = "Будьте внимательны, это последняя попытка",
-                                    buttonText = "Ок",
-                                    { isComplited.value = false })
+                            when (countOfBan) {
+                                4 -> {
+                                    ShowInfoDialog(
+                                        text = "Будьте внимательны, это последняя попытка",
+                                        buttonText = "Ок"
+                                    ) { isComplited.value = false }
 
-                            } else if (countOfBan == 5) {
-                                isJoinBanned = true
-                            } else {
-                                isComplited.value = false
+                                }
+                                5 -> {
+                                    isJoinBanned = true
+                                }
+                                else -> {
+                                    isComplited.value = false
+                                }
                             }
                         }
                         if (code.value.length == 6 && !isComplited.value) {

@@ -24,7 +24,7 @@ data class Schedule(
  *
  * @author Kiko
  */
-fun DefaultScheduleOption(): ScheduleOptions
+fun defaultScheduleOption(): ScheduleOptions
 {
     return ScheduleOptions(
         generalSettings = ScheduleGeneralSettings(
@@ -39,11 +39,11 @@ fun DefaultScheduleOption(): ScheduleOptions
         scheduleMorningSettings = ScheduleMorningSettings(
             7,
             "Доброе утро, @%n@",
-            true,
-            true,
-            true,
-            false,
-            false
+            morningVisible = true,
+            beforeLesionVisible = true,
+            nextPairVisible = true,
+            showWentTimeVisible = false,
+            showMap = false
         ),
         scheduleDayLesionSettings = ScheduleDayLesionSettings(
             true,

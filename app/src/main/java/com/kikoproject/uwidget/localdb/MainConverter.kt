@@ -3,8 +3,6 @@ package com.kikoproject.uwidget.localdb
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.ui.graphics.Color
 import androidx.room.TypeConverter
 import com.google.common.reflect.TypeToken

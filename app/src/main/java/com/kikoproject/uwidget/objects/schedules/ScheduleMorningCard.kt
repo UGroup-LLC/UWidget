@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.kikoproject.uwidget.models.schedules.Schedule
-import com.kikoproject.uwidget.objects.colorize
+import com.kikoproject.uwidget.objects.text.colorize
 import java.util.*
 
 @Composable
@@ -20,8 +20,8 @@ fun ScheduleMorningCard(schedule: Schedule){
         var scheduleText = ""
         val day = (Calendar.getInstance() as GregorianCalendar).toZonedDateTime().dayOfWeek.ordinal
         val time = schedule.Time.first().replace("..", " - ")
-        val lession = schedule.Schedule.get(day.toString())!!.first().replace("..", " - ")
-        scheduleText += "@$time)@ $lession"
+        val lesion = schedule.Schedule[day.toString()]!!.first().replace("..", " - ")
+        scheduleText += "@$time)@ $lesion"
         Spacer(modifier = Modifier.padding(4.dp))
         Text(
             text = "Время до первой пары",
@@ -40,12 +40,12 @@ fun ScheduleMorningCard(schedule: Schedule){
     }
 
     // Отображение первой пары
-    if (schedule.Options!!.scheduleMorningSettings.nextPairVisible){
+    if (schedule.Options.scheduleMorningSettings.nextPairVisible){
         var scheduleText = ""
         val day = (Calendar.getInstance() as GregorianCalendar).toZonedDateTime().dayOfWeek.ordinal
         val time = schedule.Time.first().replace("..", " - ")
-        val lession = schedule.Schedule.get(day.toString())!!.first().replace("..", " - ")
-        scheduleText += "@$time)@ $lession"
+        val lesion = schedule.Schedule[day.toString()]!!.first().replace("..", " - ")
+        scheduleText += "@$time)@ $lesion"
         Spacer(modifier = Modifier.padding(4.dp))
         Text(
             text = "Первое занятие",

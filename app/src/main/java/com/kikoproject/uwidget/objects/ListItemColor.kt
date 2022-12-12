@@ -15,23 +15,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.ColorUtils
 import com.kikoproject.uwidget.dialogs.ColorPicker
-import com.kikoproject.uwidget.main.roomDb
-import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.networking.addOldThemeColor
 import com.kikoproject.uwidget.networking.changeTheme
 import com.kikoproject.uwidget.networking.changeThemeColor
 import com.kikoproject.uwidget.ui.theme.MainColors
 import com.kikoproject.uwidget.ui.theme.MainThemes
 import com.kikoproject.uwidget.ui.theme.themeAppMode
-import com.kikoproject.uwidget.ui.theme.themePrimaryColor
 import com.kikoproject.uwidget.utils.toStandardColor
-import com.vanpra.composematerialdialogs.MaterialDialog
-import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 
 
 @OptIn(ExperimentalMaterial3Api::class)

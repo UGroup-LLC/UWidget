@@ -39,8 +39,8 @@ import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
-import com.kikoproject.uwidget.ScheduleGetterSelectors
-import com.kikoproject.uwidget.getSelectors
+import com.kikoproject.uwidget.utils.ScheduleGetterSelectors
+import com.kikoproject.uwidget.utils.getSelectors
 import com.kikoproject.uwidget.main.curSchedule
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.main.prefs
@@ -48,8 +48,8 @@ import com.kikoproject.uwidget.main.roomDb
 import com.kikoproject.uwidget.models.GeneralOptions
 import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.ScreenNav
-import com.kikoproject.uwidget.objects.cards.RoundedCard
 import com.kikoproject.uwidget.objects.ScheduleBand
+import com.kikoproject.uwidget.objects.cards.RoundedCard
 
 
 /**
@@ -122,8 +122,7 @@ fun ShowLoadingDialog(state: MutableState<Boolean>) {
 @SuppressLint("MutableCollectionMutableState")
 @Composable
 fun ShowSearchSelector(state: MutableState<Boolean>, url: String, result: ScheduleDialogSelector) {
-    val textColor = MaterialTheme.colors.surface
-    var found = remember { mutableStateOf(Pair(mutableListOf<String>(), mutableListOf<String>())) }
+    val found = remember { mutableStateOf(Pair(mutableListOf<String>(), mutableListOf<String>())) }
     val scope = rememberCoroutineScope()
 
     if (state.value) {
@@ -167,68 +166,6 @@ fun ShowSearchSelector(state: MutableState<Boolean>, url: String, result: Schedu
         }
 
     }
-    /* AlertDialog(
-         properties = DialogProperties(dismissOnClickOutside = false),
-         containerColor = MaterialTheme.colors.background,
-         onDismissRequest = { state.value = false },
-         title = {
-             Text(
-                 text = "Поиск по сайту",
-                 textAlign = TextAlign.Center,
-                 color = textColor
-             )
-         },
-         text = {
-             LazyColumn(
-                 modifier = Modifier
-                     .fillMaxWidth()
-                     .padding(15.dp),
-                 horizontalAlignment = Alignment.CenterHorizontally
-             ) {
-                 item {
-                     FastOutlineTextField(
-                         text = "1 пара 1 день",
-                         state = textFieldState,
-                         textColor = textColor
-                     )
-                 }
-             }
-         },
-         dismissButton = {
-
-         },
-         icon = {
-             Icon(
-                 imageVector = Icons.Rounded.Search,
-                 contentDescription = null,
-                 tint = MaterialTheme.colors.primary
-             )
-         },
-         confirmButton = {
-             Column(
-                 modifier = Modifier.fillMaxWidth(),
-                 horizontalAlignment = Alignment.CenterHorizontally
-             ) {
-                 Button(onClick = {
-                     loadingState.value = true
-                     getSelectors(
-                         scope,
-                         url,
-                         textFieldState.value.text,
-                         object : ScheduleGetterSelectors {
-                             override fun onResult(schedules: Pair<MutableList<String>, MutableList<String>>) {
-                                 found.value = schedules
-                                 loadingState.value = false
-                                 foundState.value = true
-                             }
-                         })
-                 }) {
-                     Text(text = "Найти", color = MaterialTheme.colors.secondary)
-                 }
-             }
-         })
-
-     */
 }
 
 /**
@@ -247,7 +184,6 @@ fun ShowFoundResult(
     result: ScheduleDialogSelector
 ) {
     val textColor = MaterialTheme.colors.surface
-    var returned = ""
     if (state.value) {
         AlertDialog(
             properties = DialogProperties(dismissOnClickOutside = false),
@@ -479,13 +415,13 @@ fun ColorPicker(
                 RoundedCard(
                     textColor = MaterialTheme.colors.surface,
                     text = "Выберите цвет",
-                    16.sp,
-                    0.sp
+                    textSize = 16.sp,
+                    spacing = 0.sp
                 )
             },
             tonalElevation = 0.dp,
             text = {
-                Column() {
+                Column {
                     HsvColorPicker(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -605,11 +541,7 @@ fun ColorPicker(
 }
 
 /**
- * Показать превью расписание
- *
- * @param text текст диалога
- * @param buttonText текст кнопки
- * @param content описывает что должна делать кнопка при нажатии
+ * Показать превью расписание, где написаны занятия и их время
  *
  * @author Kiko
  */
@@ -656,7 +588,7 @@ fun ShowSchedulePreviewDialog(
                 OutlinedButton(
                     onClick = {
                         curSchedule = schedule
-                        prefs.edit().putString("mainSchedule", curSchedule!!.ID).commit()
+                        prefs.edit().putString("mainSchedule", curSchedule!!.ID).apply()
                         dialogVisibleState.value = false
                         navController.popBackStack()
                     },

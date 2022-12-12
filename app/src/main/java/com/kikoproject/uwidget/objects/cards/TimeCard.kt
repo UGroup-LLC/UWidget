@@ -26,7 +26,7 @@ import com.kikoproject.uwidget.dialogs.TimePickerResult
 import java.time.LocalTime
 
 class TimeCard {
-    public var resTime = mutableListOf(LocalTime.MIN..LocalTime.MAX)
+    var resTime = mutableListOf(LocalTime.MIN..LocalTime.MAX)
 
     /**
      * Карточка для заполнения времени в расписаниях
@@ -48,7 +48,7 @@ class TimeCard {
      */
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun TimeCardCreator(
+    fun timeCardCreator(
 
         cardsInt: Int,
 
@@ -113,10 +113,10 @@ class TimeCard {
                             modifier = Modifier.padding(7.dp)
                         ) {
                             if(cardIndex == 0) { // Если это первая карточка времени то мы ставим интервал от мин до макс
-                                resTime.add(CalendarButtons(context = context, LocalTime.MIN..LocalTime.MAX))
+                                resTime.add(calendarButtons(context = context, LocalTime.MIN..LocalTime.MAX))
                             }
                             else {
-                                resTime.add(CalendarButtons(context = context, resTime[cardIndex-1].endInclusive..LocalTime.MAX))
+                                resTime.add(calendarButtons(context = context, resTime[cardIndex-1].endInclusive..LocalTime.MAX))
                             }
                         }
                     }
@@ -128,13 +128,12 @@ class TimeCard {
 
     /**
      * Карточки с первоначальной иконкой календаря, а в последующем заменяемые на выбранное из диалога
-     * @param cardIndex указывает на то какая эта карточка по индексу
      * @param timeRange указывает на то какой интервал времени доступен пользователю
 
      * @author Kiko
      */
     @Composable
-    fun CalendarButtons(context: Context, timeRange: ClosedRange<LocalTime>) : ClosedRange<LocalTime>{
+    fun calendarButtons(context: Context, timeRange: ClosedRange<LocalTime>) : ClosedRange<LocalTime>{
         /*
     Выбор времени начала урока и конца урока
      */

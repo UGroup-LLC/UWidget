@@ -10,7 +10,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -22,18 +21,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.firebase.firestore.DocumentSnapshot
 import com.kikoproject.uwidget.dialogs.ShowErrorDialog
 import com.kikoproject.uwidget.dialogs.ShowLoadingDialog
 import com.kikoproject.uwidget.main.*
-import com.kikoproject.uwidget.models.GeneralOptions
 import com.kikoproject.uwidget.models.User
-import com.kikoproject.uwidget.models.schedules.DefaultScheduleOption
 import com.kikoproject.uwidget.models.schedules.Schedule
+import com.kikoproject.uwidget.models.schedules.defaultScheduleOption
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.ui.theme.MainColors
 import com.kikoproject.uwidget.ui.theme.monetEngineIsEnabled
-import com.kikoproject.uwidget.ui.theme.systemThemeIsEnabled
 import com.kikoproject.uwidget.ui.theme.themeAppMode
 import kotlin.random.Random
 
@@ -55,7 +51,6 @@ fun CheckUserInDB(
     account: GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(context),
 ) {
     navController.popBackStack()
-    val materialColors = MaterialTheme.colors
 
     if (account != null) {
         if (isOnline(context)) { // Проверка на онлайн
@@ -201,7 +196,7 @@ fun MembersOnlineContent(
     schedule: Schedule,
 ) {
     val showContent = remember { mutableStateOf(false) }
-    var scheduleUsers = remember {
+    val scheduleUsers = remember {
         mutableStateOf(listOf<User>())
     }
 
@@ -216,7 +211,7 @@ fun MembersOnlineContent(
     }
 
     // Если убрать то будет постоянно обновляться (в будущем доработать чтобы адекватно работало TODO(Сделать))
-    if(!showContent.value) {
+    if (!showContent.value) {
         getScheduleUsers(schedule = schedule, object : UsersResult {
             override fun onResult(users: List<User>) {
                 scheduleUsers.value = users
@@ -246,10 +241,10 @@ fun OnlineContent(
     user: User,
 ) {
     val showContent = remember { mutableStateOf(false) }
-    var mySchedulesUser = remember {
+    val mySchedulesUser = remember {
         mutableStateOf(listOf<Schedule>())
     }
-    var mySchedulesAdmin = remember {
+    val mySchedulesAdmin = remember {
         mutableStateOf(listOf<Schedule>())
     }
 
@@ -274,13 +269,13 @@ fun OnlineContent(
     getAdminSchedules(
         user = user,
         scheduleResult = object : ScheduleResult {
-            override fun onResult(mAdminSchedule: List<Schedule>) {
+            override fun onResult(adminSchedule: List<Schedule>) {
                 getUserSchedules(
                     user = user,
                     scheduleResult = object : ScheduleResult {
-                        override fun onResult(mUserSchedule: List<Schedule>) {
-                            mySchedulesUser.value = mUserSchedule
-                            mySchedulesAdmin.value = mAdminSchedule
+                        override fun onResult(userSchedule: List<Schedule>) {
+                            mySchedulesUser.value = userSchedule
+                            mySchedulesAdmin.value = adminSchedule
                             showContent.value = true
                         }
 
@@ -315,12 +310,12 @@ fun updateAllData(
     getAdminSchedules(
         user = user,
         scheduleResult = object : ScheduleResult {
-            override fun onResult(mSchedulesUser: List<Schedule>) {
+            override fun onResult(schedulesAdmin: List<Schedule>) {
                 getUserSchedules(
                     user = user,
                     scheduleResult = object : ScheduleResult {
-                        override fun onResult(mySchedulesAdmin: List<Schedule>) {
-                            content(mSchedulesUser, mySchedulesAdmin)
+                        override fun onResult(schedulesUser: List<Schedule>) {
+                            content(schedulesUser, schedulesAdmin)
                         }
 
                         override fun onError(error: Throwable) {
@@ -403,7 +398,7 @@ fun enterInSchedule(code: String, enterInScheduleResult: EnterInScheduleResult) 
         .get().addOnSuccessListener {
             if (it.documents.size != 0) {
                 val doc = it.documents[0]
-                var schedule = Schedule(
+                val schedule = Schedule(
                     doc.id,
                     doc.get("name").toString(),
                     doc.get("admin_id").toString(),
@@ -412,7 +407,7 @@ fun enterInSchedule(code: String, enterInScheduleResult: EnterInScheduleResult) 
                     doc.get("code").toString() as String?,
                     doc.get("time") as List<String>,
                     doc.get("category").toString(),
-                    DefaultScheduleOption()
+                    defaultScheduleOption()
                 )
 
                 val users = schedule.UsersID.toMutableList()
@@ -434,8 +429,7 @@ fun enterInSchedule(code: String, enterInScheduleResult: EnterInScheduleResult) 
                 } else {
                     enterInScheduleResult.onResult(false)
                 }
-            }
-            else{
+            } else {
                 enterInScheduleResult.onResult(false)
             }
         }.addOnFailureListener {
@@ -452,12 +446,11 @@ fun enterInSchedule(code: String, enterInScheduleResult: EnterInScheduleResult) 
  * @author Kiko
  */
 fun getUserBitmap(userId: String, avatarResult: AvatarResult) {
-    val imageBytes =
-        db.collection("users").document(userId).get().addOnSuccessListener { fields ->
-            val imageBytes = Base64.decode(fields.get("image").toString(), Base64.DEFAULT)
-            val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-            avatarResult.onResult(decodedImage)
-        }
+    db.collection("users").document(userId).get().addOnSuccessListener { fields ->
+        val imageBytes = Base64.decode(fields.get("image").toString(), Base64.DEFAULT)
+        val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+        avatarResult.onResult(decodedImage)
+    }
 }
 
 /**
@@ -471,7 +464,7 @@ fun getUserBitmap(userId: String, avatarResult: AvatarResult) {
 fun getAdminSchedules(user: User, scheduleResult: ScheduleResult) {
     db.collection("schedules").whereEqualTo("admin_id", user.Id).get().addOnSuccessListener {
         val documents = it.documents
-        var schedulesModel = mutableListOf<Schedule>()
+        val schedulesModel = mutableListOf<Schedule>()
 
         documents.forEach { doc ->
             schedulesModel.add(
@@ -484,7 +477,7 @@ fun getAdminSchedules(user: User, scheduleResult: ScheduleResult) {
                     doc.get("code").toString() as String?,
                     doc.get("time") as List<String>,
                     doc.get("category").toString(),
-                    DefaultScheduleOption()
+                    defaultScheduleOption()
                 )
             )
         }
@@ -506,11 +499,11 @@ fun getAdminSchedules(user: User, scheduleResult: ScheduleResult) {
  */
 fun getScheduleUsers(schedule: Schedule, usersResult: UsersResult) {
     db.collection("schedules").document(schedule.ID).get().addOnSuccessListener { fields ->
-        var usersModel = mutableListOf<User>()
+        val usersModel = mutableListOf<User>()
 
         val field = (fields.get("users_ids") as List<String>)
-        field.forEachIndexed { index, id ->
-            if(field.size==1 && field[0]==""){
+        field.forEachIndexed { _, id ->
+            if (field.size == 1 && field[0] == "") {
                 usersResult.onResult(usersModel)
             }
             getUserFromId(id, object : UserResult {
@@ -518,7 +511,7 @@ fun getScheduleUsers(schedule: Schedule, usersResult: UsersResult) {
                     if (user != null) {
                         usersModel.add(user)
                     }
-                    if(id == field.last()){
+                    if (id == field.last()) {
                         usersResult.onResult(usersModel)
                     }
                 }
@@ -566,8 +559,8 @@ fun getUserFromId(userId: String, userResult: UserResult, contentIfError: (() ->
                     contentIfError()
                 }
             }
-        } catch (exep: Exception) {
-            userResult.onError(exep)
+        } catch (exception: Exception) {
+            userResult.onError(exception)
         }
     }.addOnFailureListener {
         userResult.onError(it)
@@ -585,7 +578,7 @@ fun getUserFromId(userId: String, userResult: UserResult, contentIfError: (() ->
 fun getUserSchedules(user: User, scheduleResult: ScheduleResult) {
     db.collection("schedules").whereArrayContains("users_ids", user.Id).get().addOnSuccessListener {
         val documents = it.documents
-        var schedulesModel = mutableListOf<Schedule>()
+        val schedulesModel = mutableListOf<Schedule>()
 
         documents.forEach { doc ->
             schedulesModel.add(
@@ -598,7 +591,7 @@ fun getUserSchedules(user: User, scheduleResult: ScheduleResult) {
                     doc.get("code").toString() as String?,
                     doc.get("time") as List<String>,
                     doc.get("category").toString(),
-                    DefaultScheduleOption()
+                    defaultScheduleOption()
                 )
             )
         }
@@ -610,83 +603,8 @@ fun getUserSchedules(user: User, scheduleResult: ScheduleResult) {
     }
 }
 
-/**
- * Получение всех пользователей, лучше не использовать нагружает БД!
- *
- * @param usersResult результат получения
- *
- * @author Kiko
- */
-fun getAllUsers(usersResult: UsersResult) {
-
-    var usersModel = mutableListOf<User>()
-
-    lateinit var documents: List<DocumentSnapshot>
-    db.collection("users").get().addOnSuccessListener {
-        documents = it.documents
-
-        documents.forEach { doc ->
-            getUserBitmap(doc.get("id").toString(), object : AvatarResult {
-                override fun onResult(bitmap: Bitmap) {
-                    usersModel.add(
-                        User(
-                            doc.get("name").toString(),
-                            doc.get("surname").toString(),
-                            bitmap,
-                            doc.get("id").toString()
-                        )
-                    )
-                    usersResult.onResult(usersModel)
-                }
-            })
-        }
-    }.addOnFailureListener {
-        usersResult.onError(it)
-    }
-}
-
-/**
- * Получение всех расписаний, лучше не использовать нагружает БД!
- *
- * @param scheduleResult результат получения
- *
- * @author Kiko
- */
-fun getAllSchedules(scheduleResult: ScheduleResult) {
-
-    var schedulesModel = mutableListOf<Schedule>()
-
-
-    lateinit var documents: List<DocumentSnapshot>
-    db.collection("schedules").get().addOnSuccessListener {
-        documents = it.documents
-
-        documents.forEach { doc ->
-            schedulesModel.add(
-                Schedule(
-                    doc.id,
-                    doc.get("name").toString(),
-                    doc.get("admin_id").toString(),
-                    doc.get("users_ids") as List<String>,
-                    doc.get("schedule") as Map<String, MutableList<String>>,
-                    doc.get("code").toString() as String?,
-                    doc.get("time") as List<String>,
-                    doc.get("category").toString(),
-                    DefaultScheduleOption()
-                )
-            )
-        }
-
-        scheduleResult.onResult(schedulesModel)
-
-    }.addOnFailureListener {
-        scheduleResult.onError(it)
-    }
-}
-
-
-fun changeThemeColor(colorType: MainColors, colorValue: Color){
-    val genOptions =  roomDb.optionsDao().get()
+fun changeThemeColor(colorType: MainColors, colorValue: Color) {
+    val genOptions = roomDb.optionsDao().get()
     val newColors = mutableListOf<Color>()
     newColors.addAll(genOptions.Colors) // Берем все цвета
     newColors[colorType.value] = colorValue // Изменяем нужный нам цвет
@@ -700,20 +618,20 @@ fun changeThemeColor(colorType: MainColors, colorValue: Color){
 
 }
 
-fun changeTheme(themeIs: Boolean){
+fun changeTheme(themeIs: Boolean) {
     val newGenOpt = roomDb.optionsDao().get().copy(Theme = themeIs)
     roomDb.optionsDao().updateOption(newGenOpt)
     themeAppMode.value = themeIs
 }
 
-fun changeMonetEngine(isEnable: Boolean){
+fun changeMonetEngine(isEnable: Boolean) {
     val newGenOpt = roomDb.optionsDao().get().copy(IsMonetEngineEnable = isEnable)
     roomDb.optionsDao().updateOption(newGenOpt)
-    monetEngineIsEnabled .value = isEnable
+    monetEngineIsEnabled.value = isEnable
 }
 
-fun addOldThemeColor(colorValue: Color){
-    val genOptions =  roomDb.optionsDao().get()
+fun addOldThemeColor(colorValue: Color) {
+    val genOptions = roomDb.optionsDao().get()
 
     val newColorList = mutableListOf<Color>()
     if (genOptions.OldColors != null) {

@@ -23,7 +23,6 @@ import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.main.curUser
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.main.roomDb
-import com.kikoproject.uwidget.models.GeneralOptions
 import com.kikoproject.uwidget.ui.theme.MainThemes
 import com.kikoproject.uwidget.ui.theme.systemThemeIsEnabled
 import com.kikoproject.uwidget.ui.theme.themeAppMode

@@ -2,7 +2,6 @@ package com.kikoproject.uwidget.localdb
 
 import androidx.room.*
 import com.kikoproject.uwidget.models.GeneralOptions
-import com.kikoproject.uwidget.models.User
 
 /**
  * DAO слой настроек приложения

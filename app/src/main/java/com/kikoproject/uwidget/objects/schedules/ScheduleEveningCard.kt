@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.kikoproject.uwidget.models.schedules.Schedule
-import com.kikoproject.uwidget.objects.colorize
+import com.kikoproject.uwidget.objects.text.colorize
 import java.util.*
 
 @Composable
@@ -21,7 +21,7 @@ fun ScheduleEveningCard(schedule: Schedule){
         if(day == 7){
             day = 0
         }
-        val daySchedule = schedule.Schedule.get(day.toString())!!
+        val daySchedule = schedule.Schedule[day.toString()]!!
         daySchedule.forEachIndexed { index, lession ->
             scheduleText += "@${schedule.Time[index].replace("..", " - ")})@ $lession" + if(index != daySchedule.lastIndex) "\n" else ""
         }

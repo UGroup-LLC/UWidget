@@ -8,10 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.kikoproject.uwidget.models.User
 import com.kikoproject.uwidget.models.schedules.Schedule
-import com.kikoproject.uwidget.objects.colorize
+import com.kikoproject.uwidget.objects.text.colorize
 import com.kikoproject.uwidget.objects.text.variablize
 import com.kikoproject.uwidget.time.TimeZone
-import com.kikoproject.uwidget.time.getTimeZone
 
 
 /**
@@ -25,13 +24,16 @@ import com.kikoproject.uwidget.time.getTimeZone
  */
 @Composable
 fun TitleShedule(user: User, schedule: Schedule, timeZone: TimeZone) {
-    var text = ""
-    if (timeZone == TimeZone.MORNING) {
-        text = schedule.Options?.scheduleMorningSettings?.morningTitle.toString().variablize()
-    } else if (timeZone == TimeZone.EVENING) {
-        text = schedule.Options?.scheduleEveningSettings?.eveningTitleText.toString().variablize()
-    } else {
-        text = "@Извините,@ произошла ошибка"
+    val text = when (timeZone) {
+        TimeZone.MORNING -> {
+            schedule.Options?.scheduleMorningSettings?.morningTitle.toString().variablize()
+        }
+        TimeZone.EVENING -> {
+            schedule.Options?.scheduleEveningSettings?.eveningTitleText.toString().variablize()
+        }
+        else -> {
+            "@Извините,@ произошла ошибка"
+        }
     }
 
     if((timeZone == TimeZone.MORNING && schedule.Options!!.scheduleMorningSettings.morningVisible) ||

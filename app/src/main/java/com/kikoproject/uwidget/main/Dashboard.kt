@@ -14,18 +14,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.kikoproject.uwidget.R
-import com.kikoproject.uwidget.models.User
-import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.OnlineContent
 import com.kikoproject.uwidget.networking.getNextUserSchedule
 import com.kikoproject.uwidget.objects.MainHeader
-import com.kikoproject.uwidget.objects.colorize
+import com.kikoproject.uwidget.objects.text.colorize
 import com.kikoproject.uwidget.objects.schedules.ScheduleBodyCard
-import com.kikoproject.uwidget.objects.schedules.ScheduleEveningCard
 import com.kikoproject.uwidget.objects.schedules.TitleShedule
-import com.kikoproject.uwidget.objects.text.variablize
-import com.kikoproject.uwidget.time.TimeZone
 import com.kikoproject.uwidget.time.getTimeZone
 
 /**
