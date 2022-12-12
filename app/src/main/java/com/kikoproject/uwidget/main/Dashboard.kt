@@ -21,6 +21,8 @@ import com.kikoproject.uwidget.networking.OnlineContent
 import com.kikoproject.uwidget.networking.getNextUserSchedule
 import com.kikoproject.uwidget.objects.MainHeader
 import com.kikoproject.uwidget.objects.colorize
+import com.kikoproject.uwidget.objects.schedules.ScheduleBodyCard
+import com.kikoproject.uwidget.objects.schedules.ScheduleEveningCard
 import com.kikoproject.uwidget.objects.schedules.TitleShedule
 import com.kikoproject.uwidget.objects.text.variablize
 import com.kikoproject.uwidget.time.TimeZone
@@ -36,7 +38,6 @@ fun DashboardActivity() {
         val context = LocalContext.current
         val account = GoogleSignIn.getLastSignedInAccount(context)
 
-
         curSchedule = prefs.getString(
             "mainSchedule",
             getNextUserSchedule(
@@ -48,6 +49,8 @@ fun DashboardActivity() {
                 it
             )
         }
+
+        val timeZone = getTimeZone(curSchedule!!)
 
         Box(
             modifier = Modifier
@@ -72,18 +75,25 @@ fun DashboardActivity() {
                     backgroundColor = MaterialTheme.colors.background,
                     border = BorderStroke(1.dp, MaterialTheme.colors.primary)
                 ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.padding(horizontal = 45.dp, vertical = 20.dp)) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.padding(horizontal = 45.dp, vertical = 20.dp)
+                    ) {
                         Card(
                             shape = RoundedCornerShape(45.dp),
                             backgroundColor = MaterialTheme.colors.primary.copy(0.25f)
                         ) {
                             if (curSchedule != null) {
-                                TitleShedule(user = curUser, schedule = curSchedule!!)
+                                TitleShedule(
+                                    user = curUser,
+                                    schedule = curSchedule!!,
+                                    timeZone = timeZone
+                                )
                             } else {
                                 TitleShedule("Создайте расписание")
                             }
                         }
+                        ScheduleBodyCard(schedule = curSchedule!!, timeZone)
                     }
                 }
                 Row(

@@ -44,15 +44,17 @@ import com.kikoproject.uwidget.objects.CustomToastBar
 
 /**
  * Окно присоединения к расписанию содержащяя в себе 6 полей для ввода кода
- * @author Kiko
+ * @author Kiko, Levosllavny
  */
+
+
 @Composable
 fun JoinSchedule() {
     // Штука которая будет нам показывать что мы чето не правильно сделали и тд
     //var message: CustomToastBar? by remember { mutableStateOf(null) }
 
-    if(isJoinBanned){
-        if(timer){
+    if (isJoinBanned) {
+        if (timer) {
             timer = false
             object : CountDownTimer(30000, 1000) {
 
@@ -101,8 +103,7 @@ fun JoinSchedule() {
                 }
             }
         }
-    }
-    else{
+    } else {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -126,17 +127,18 @@ fun JoinSchedule() {
                             color = MaterialTheme.colors.surface
                         )
                         val isComplited = remember { mutableStateOf(false) }
-                        val isError = remember { mutableStateOf(false) }
+                        val isError =remember {  mutableStateOf(false)}
                         val code = joinCodeInput(isError)
-                        if (isComplited.value){
-                            if (countOfBan == 4){
-                                ShowInfoDialog(text = "Будьте внимательны, это последняя попытка", buttonText = "Ок", {isComplited.value = false})
+                        if (isComplited.value) {
+                            if (countOfBan == 4) {
+                                ShowInfoDialog(
+                                    text = "Будьте внимательны, это последняя попытка",
+                                    buttonText = "Ок",
+                                    { isComplited.value = false })
 
-                            }
-                            else if (countOfBan == 5){
+                            } else if (countOfBan == 5) {
                                 isJoinBanned = true
-                            }
-                            else{
+                            } else {
                                 isComplited.value = false
                             }
                         }
@@ -204,12 +206,6 @@ fun joinCodeInput(isError: MutableState<Boolean>): MutableState<String> {
             )
         )
     }
-    if (isError.value) {
-        textFieldValues.forEach { field ->
-            field.value = TextFieldValue("")
-            focusRequester[0].requestFocus()
-        }
-    }
 
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(7.dp),
@@ -223,14 +219,12 @@ fun joinCodeInput(isError: MutableState<Boolean>): MutableState<String> {
                 shape = RoundedCornerShape(10.dp),
                 isError = isError.value,
                 onValueChange = {
+                    isError.value = false
                     if (it.text.length <= 1) {
                         textFieldValue.value = it
-                        if (index + 1 < focusRequester.size && it.text.length == 1)
+                        if (index + 1 < focusRequester.size && it.text.length == 1) {
                             focusRequester[index + 1].requestFocus()
-                        else if (index - 1 != -1 && it.text.length == 0) {
-                            isError.value = false
                         }
-
                     }
                     returningValue.value = ""
                     textFieldValues.forEach { field ->
@@ -249,10 +243,7 @@ fun joinCodeInput(isError: MutableState<Boolean>): MutableState<String> {
                     }
                     .width(42.dp)
                     .height(50.dp)
-                    .focusRequester(focusRequester[index])
-                    .onFocusChanged {
-                        isError.value = false
-                    },
+                    .focusRequester(focusRequester[index]),
                 singleLine = true,
                 textStyle = TextStyle(
                     fontSize = 15.sp,
@@ -264,6 +255,13 @@ fun joinCodeInput(isError: MutableState<Boolean>): MutableState<String> {
                     textColor = MaterialTheme.colors.surface
                 )
             )
+        }
+    }
+
+    if (isError.value) {
+        textFieldValues.forEach { field ->
+            field.value = TextFieldValue("")
+            focusRequester[0].requestFocus()
         }
     }
     return returningValue

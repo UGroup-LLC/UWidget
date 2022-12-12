@@ -24,23 +24,27 @@ import com.kikoproject.uwidget.time.getTimeZone
  * @exception TODO("НЕОБХОДИМО ПЕРЕНЕСТИ ЭТО В ОТДЕЛЬНЫЙ МЕТОД")
  */
 @Composable
-fun TitleShedule(user: User, schedule: Schedule) {
+fun TitleShedule(user: User, schedule: Schedule, timeZone: TimeZone) {
     var text = ""
-    val timeZone = getTimeZone(schedule)
     if (timeZone == TimeZone.MORNING) {
-        text = schedule.Options?.scheduleMorningSettings?.morningTitle.toString()
+        text = schedule.Options?.scheduleMorningSettings?.morningTitle.toString().variablize()
     } else if (timeZone == TimeZone.EVENING) {
         text = schedule.Options?.scheduleEveningSettings?.eveningTitleText.toString().variablize()
     } else {
         text = "@Извините,@ произошла ошибка"
     }
 
-    Text(
-        text = text.colorize(),
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-        style = MaterialTheme.typography.caption,
-        color = MaterialTheme.colors.surface
-    )
+    if((timeZone == TimeZone.MORNING && schedule.Options!!.scheduleMorningSettings.morningVisible) ||
+        (timeZone == TimeZone.DAY_LESION) || (timeZone == TimeZone.DAY_REST) ||
+        (timeZone == TimeZone.EVENING && schedule.Options!!.scheduleEveningSettings.eveningTitleVisible)
+    ) {
+        Text(
+            text = text.colorize(),
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            style = MaterialTheme.typography.caption,
+            color = MaterialTheme.colors.surface
+        )
+    }
 }
 
 /**
