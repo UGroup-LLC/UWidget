@@ -5,12 +5,14 @@ plugins {
     id 'com.google.firebase.crashlytics'
     id 'com.google.firebase.firebase-perf'
     id "kotlin-kapt"
-    id "org.sonarqube" version "3.4.0.2513"
+    id "org.sonarqube"
 }
 
 sonarqube {
     properties {
         property "sonar.projectKey", "UGroup-LLC_UWidget_AYUK1B1-vl74rDW6Kjeu"
+        property "sonar.login", "admin"
+        property "sonar.password", "kiko123"
     }
 }
 
