@@ -1,3 +1,5 @@
+name: Change wrapper permissions run: chmod +x gradlew
+
 name: Build
 on:
   push:
