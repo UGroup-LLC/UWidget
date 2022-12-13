@@ -24,7 +24,7 @@ import com.kikoproject.uwidget.objects.schedules.TitleShedule
 import com.kikoproject.uwidget.time.getTimeZone
 
 /**
- * Главное окно приложения где отображается превью виджета, кнопки настроек и тд
+ * Главное окно приложения где отображается превью виджета, кнопки настроек и тд.
  * @author Kiko
  */
 @Composable
