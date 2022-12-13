@@ -6,7 +6,7 @@ import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.time.LocalTime
 
 // Открывает диалог с взятием времени
-// isStartLesion - Это что будет отображаться в заголовке пикера
+// isStartLesion - Это что будет отображаться в заголовке пикера.
 /**
  * Открывает диалог получения времени
  * @param timePickerResult возвращает результат диалога в onResult
