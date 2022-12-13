@@ -45,7 +45,7 @@ fun DashboardActivity() {
             )
         }
 
-        val timeZone = getTimeZone(curSchedule!!)
+        val timeZone = curSchedule!!.getTimeZone()
 
         Box(
             modifier = Modifier
@@ -60,7 +60,7 @@ fun DashboardActivity() {
             ) {
                 MainHeader(account = account)
                 Text(
-                    text = "Текущее расписание: @${curSchedule?.Name ?: "Нету"}@".colorize(),
+                    text = "Текущее расписание: ${curSchedule?.Name ?: "Нету"}".colorize(),
                     style = MaterialTheme.typography.caption,
                     color = MaterialTheme.colors.surface
                 )

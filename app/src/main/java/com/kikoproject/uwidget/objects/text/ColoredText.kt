@@ -35,11 +35,11 @@ fun String.colorize(colorizeSymbol: Char = '@'): AnnotatedString {
             secondArray.add(textPart, "")
         }
 
-        for (symbol: Char in this) { // Перебираем символы
+        this.forEach { symbol -> // Перебираем символы
             if (symbol == colorizeSymbol) { // Если видим символ окраски то инвертируем переменную окраски
                 inColorizing = !inColorizing
                 i++
-                continue
+                return@forEach
             }
 
             if (!inColorizing) {
@@ -53,48 +53,23 @@ fun String.colorize(colorizeSymbol: Char = '@'): AnnotatedString {
 
         secondArray.forEachIndexed { index, _ ->
             if (isFirstColorizing) { // Если первым будет окрашаевымый то используем первый если нет то второй
-                // TODO("Фиксануть это и найти способ другой")
-                if (index % 2 == 0) {
-                    returnString += buildAnnotatedString {
-                        withStyle(
-                            style = SpanStyle(
-                                color = MaterialTheme.colors.primary
-                            )
-                        ) {
-                            append(primaryArray[index])
-                        }
-                    }
-                } else {
-                    returnString += buildAnnotatedString {
-                        withStyle(
-                            style = SpanStyle(
-                                color = MaterialTheme.colors.surface
-                            )
-                        ) {
-                            append(secondArray[index])
-                        }
+                returnString += buildAnnotatedString {
+                    withStyle(
+                        style = SpanStyle(
+                            color = if (index % 2 == 0) MaterialTheme.colors.primary else MaterialTheme.colors.surface
+                        )
+                    ) {
+                        append(if (index % 2 == 0) primaryArray[index] else secondArray[index])
                     }
                 }
             } else {
-                if (index % 2 != 0) {
-                    returnString += buildAnnotatedString {
-                        withStyle(
-                            style = SpanStyle(
-                                color = MaterialTheme.colors.primary
-                            )
-                        ) {
-                            append(primaryArray[index])
-                        }
-                    }
-                } else {
-                    returnString += buildAnnotatedString {
-                        withStyle(
-                            style = SpanStyle(
-                                color = MaterialTheme.colors.surface
-                            )
-                        ) {
-                            append(secondArray[index])
-                        }
+                returnString += buildAnnotatedString {
+                    withStyle(
+                        style = SpanStyle(
+                            color = if (index % 2 != 0) MaterialTheme.colors.primary else MaterialTheme.colors.surface
+                        )
+                    ) {
+                        append(if (index % 2 != 0) primaryArray[index] else secondArray[index])
                     }
                 }
             }

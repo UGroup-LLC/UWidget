@@ -11,17 +11,32 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.objects.text.colorize
+import com.kikoproject.uwidget.utils.deleteWhitespaces
+import com.kikoproject.uwidget.utils.toLocalTime
+import com.kikoproject.uwidget.utils.toTimeRange
+import java.time.Duration
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 @Composable
 fun ScheduleMorningCard(schedule: Schedule){
+    val day = (Calendar.getInstance() as GregorianCalendar).toZonedDateTime().dayOfWeek.ordinal
+    val lesion: String
+    var scheduleText = ""
+
     // Отображение времени до первой пары
-    if (schedule.Options!!.scheduleMorningSettings.beforeLesionVisible){
-        var scheduleText = ""
-        val day = (Calendar.getInstance() as GregorianCalendar).toZonedDateTime().dayOfWeek.ordinal
-        val time = schedule.Time.first().replace("..", " - ")
-        val lesion = schedule.Schedule[day.toString()]!!.first().replace("..", " - ")
-        scheduleText += "@$time)@ $lesion"
+    if (schedule.Options!!.scheduleMorningSettings.beforeLesionVisible &&
+        schedule.Schedule[day.toString()]?.deleteWhitespaces()?.isNotEmpty() == true){
+
+        val nowTime = LocalTime.now()
+        val lesionTime = schedule.Time.first().toTimeRange().start.toLocalTime()
+
+        val duration = Duration.between(nowTime, lesionTime)
+
+        val time = LocalTime.of(duration.toHours().toInt(), (duration.toMinutes() % 60).toInt())
+        val formattedTime = time.format(DateTimeFormatter.ofPattern("HH:mm"))
+
         Spacer(modifier = Modifier.padding(4.dp))
         Text(
             text = "Время до первой пары",
@@ -31,7 +46,7 @@ fun ScheduleMorningCard(schedule: Schedule){
             color = MaterialTheme.colors.surface
         )
         Text(
-            text = scheduleText.colorize(),
+            text = "@${formattedTime}@".colorize(),
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.caption,
@@ -41,25 +56,36 @@ fun ScheduleMorningCard(schedule: Schedule){
 
     // Отображение первой пары
     if (schedule.Options.scheduleMorningSettings.nextPairVisible){
-        var scheduleText = ""
-        val day = (Calendar.getInstance() as GregorianCalendar).toZonedDateTime().dayOfWeek.ordinal
-        val time = schedule.Time.first().replace("..", " - ")
-        val lesion = schedule.Schedule[day.toString()]!!.first().replace("..", " - ")
-        scheduleText += "@$time)@ $lesion"
+        var title = "@@Первое занятие".colorize()
+        try {
+            lesion = schedule.Schedule[day.toString()]!!
+                .deleteWhitespaces()
+                .first()
+                .replace("..", " - ")
+
+            val time = schedule.Time.first().replace("..", " - ")
+            scheduleText = "@$time@ $lesion"
+        }
+        catch (exception: Exception){
+            title = "Сегодня занятий нет\n@Хорошего дня!@".colorize()
+        }
+
         Spacer(modifier = Modifier.padding(4.dp))
         Text(
-            text = "Первое занятие",
+            text = title,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.caption,
             color = MaterialTheme.colors.surface
         )
-        Text(
-            text = scheduleText.colorize(),
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.caption,
-            color = MaterialTheme.colors.surface
-        )
+        if(scheduleText != "") {
+            Text(
+                text = scheduleText.colorize(),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.caption,
+                color = MaterialTheme.colors.surface
+            )
+        }
     }
 }
