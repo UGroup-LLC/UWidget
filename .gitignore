@@ -25,3 +25,5 @@
 /.gradle/7.3.3/checksums/sha1-checksums.bin
 /.gradle/checksums/sha1-checksums.bin
 /key_store/zakup-i.key.jks
+/.idea/*
+/.idea/

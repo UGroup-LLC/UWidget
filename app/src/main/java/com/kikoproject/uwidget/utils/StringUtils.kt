@@ -31,7 +31,6 @@ fun List<String>.toTimeRange(): List<ClosedRange<LocalTime>>? {
     {
         returnMap
     }
-
 }
 
 /**

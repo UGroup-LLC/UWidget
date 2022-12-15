@@ -23,11 +23,12 @@ enum class TimeZone {
 fun Schedule.getTimeZone(): TimeZone {
     val date = LocalTime.now()
 
-    val sTimeM = LocalTime.parse(this.Time[0].toTimeRange()?.start ?: return TimeZone.ERROR)
-    val sTimeE = LocalTime.parse(this.Time.last().toTimeRange()?.start ?: return TimeZone.ERROR)
+    val sTimeM = LocalTime.parse(this.Time[0].toTimeRange().start)
+    val sTimeE = LocalTime.parse(this.Time.last().toTimeRange().start)
 
+    // Если текущее время находится в одном из расписаний
     this.Time.forEachIndexed { _, time ->
-        if (date in (time.toTimeRange()?.toLocalTimeRange() ?: return TimeZone.ERROR)) {
+        if (date in (time.toTimeRange().toLocalTimeRange())) {
             return TimeZone.DAY_LESION
         }
     }
