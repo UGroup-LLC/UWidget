@@ -18,7 +18,7 @@ fun ScheduleBodyCard(schedule: Schedule, timeZone: TimeZone){
             ScheduleLesionCard(schedule = schedule)
         }
         TimeZone.DAY_REST -> {
-
+            ScheduleRestCard(schedule = schedule)
         }
         else -> {
 

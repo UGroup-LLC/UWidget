@@ -39,16 +39,16 @@ fun TitleSchedule(schedule: Schedule, timeZone: TimeZone) {
         TimeZone.DAY_LESION -> {
             schedule.getClosestLesion()
         }
-        TimeZone.ERROR -> {
-            null
+        TimeZone.DAY_REST -> {
+            "Хорошего отдыха, @%n!@".variablize()
         }
-        else -> {
+        TimeZone.ERROR -> {
             null
         }
     }
 
-    if ((timeZone == TimeZone.MORNING && schedule.Options!!.scheduleMorningSettings.morningVisible) ||
-        timeZone == TimeZone.DAY_LESION ||
+    if ((timeZone == TimeZone.MORNING && schedule.Options!!.scheduleMorningSettings.morningVisible)
+        || timeZone == TimeZone.DAY_LESION || timeZone == TimeZone.DAY_REST ||
         (timeZone == TimeZone.EVENING && schedule.Options!!.scheduleEveningSettings.eveningTitleVisible)
     ) {
         Text(

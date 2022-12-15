@@ -24,18 +24,35 @@ fun LocalTime.getCloseTimeRange(timeRangeArray: List<ClosedRange<LocalTime>>): C
  * @author Kiko
  */
 fun LocalTime.getCloseTimeBetweenRange(timeRangeArray: List<ClosedRange<LocalTime>>): ClosedRange<LocalTime>?{
-    val rebuildedTimeList = mutableListOf<ClosedRange<LocalTime>>()
+    val rebuildTimeList = mutableListOf<ClosedRange<LocalTime>>()
 
     timeRangeArray.forEachIndexed { index, timeRange ->
         if(index+1 <= timeRangeArray.lastIndex) {
-            rebuildedTimeList.add(timeRange.endInclusive..timeRangeArray[index + 1].start)
+            rebuildTimeList.add(timeRange.endInclusive..timeRangeArray[index + 1].start)
         }
     }
 
-    rebuildedTimeList.forEach { timeRange ->
+    rebuildTimeList.forEach { timeRange ->
         if(this in timeRange){
             return timeRange // Если мы нашли все четко возвращаем
         }
     }
+    return null // Если нет такого то возвращаем null
+}
+
+/**
+ * Эта функция проходится по массиву range времени и выдает в каком range between времени находится время
+ *
+ * @return Из between получает ближайшее время расписания
+ * @author Kiko
+ */
+fun ClosedRange<LocalTime>.fromBetweenToLesionTime(timeRangeArray: List<ClosedRange<LocalTime>>): ClosedRange<LocalTime>?{
+
+    timeRangeArray.forEach {
+        if(it.start == this.endInclusive){
+            return  it
+        }
+    }
+
     return null // Если нет такого то возвращаем null
 }
