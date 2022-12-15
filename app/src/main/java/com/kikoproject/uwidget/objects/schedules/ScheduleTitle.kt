@@ -11,6 +11,11 @@ import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.objects.text.colorize
 import com.kikoproject.uwidget.objects.text.variablize
 import com.kikoproject.uwidget.time.TimeZone
+import com.kikoproject.uwidget.utils.getCloseTimeRange
+import com.kikoproject.uwidget.utils.getClosestLesion
+import com.kikoproject.uwidget.utils.toTimeRange
+import java.time.LocalTime
+import java.util.*
 
 
 /**
@@ -23,7 +28,7 @@ import com.kikoproject.uwidget.time.TimeZone
  * @exception TODO("НЕОБХОДИМО ПЕРЕНЕСТИ ЭТО В ОТДЕЛЬНЫЙ МЕТОД")
  */
 @Composable
-fun TitleShedule(user: User, schedule: Schedule, timeZone: TimeZone) {
+fun TitleSchedule(schedule: Schedule, timeZone: TimeZone) {
     val text = when (timeZone) {
         TimeZone.MORNING -> {
             schedule.Options?.scheduleMorningSettings?.morningTitle.toString().variablize()
@@ -31,17 +36,23 @@ fun TitleShedule(user: User, schedule: Schedule, timeZone: TimeZone) {
         TimeZone.EVENING -> {
             schedule.Options?.scheduleEveningSettings?.eveningTitleText.toString().variablize()
         }
+        TimeZone.DAY_LESION -> {
+            schedule.getClosestLesion()
+        }
+        TimeZone.ERROR -> {
+            null
+        }
         else -> {
-            "@Извините,@ произошла ошибка"
+            null
         }
     }
 
-    if((timeZone == TimeZone.MORNING && schedule.Options!!.scheduleMorningSettings.morningVisible) ||
-        (timeZone == TimeZone.DAY_LESION) || (timeZone == TimeZone.DAY_REST) ||
+    if ((timeZone == TimeZone.MORNING && schedule.Options!!.scheduleMorningSettings.morningVisible) ||
+        timeZone == TimeZone.DAY_LESION ||
         (timeZone == TimeZone.EVENING && schedule.Options!!.scheduleEveningSettings.eveningTitleVisible)
     ) {
         Text(
-            text = text.colorize(),
+            text = text?.colorize() ?: "@Извините,@ произошла ошибка".colorize(),
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             style = MaterialTheme.typography.caption,
             color = MaterialTheme.colors.surface
@@ -57,7 +68,7 @@ fun TitleShedule(user: User, schedule: Schedule, timeZone: TimeZone) {
  * @author Kiko
  */
 @Composable
-fun TitleShedule(text: String) {
+fun TitleSchedule(text: String) {
     Text(
         text = text,
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),

@@ -8,11 +8,30 @@ import java.time.LocalTime
  * @author Kiko
  */
 fun String.toTimeRange(): ClosedRange<String> {
-    try {
-        return this.split("..")[0]..this.split("..")[1]
-    } catch (exception: Exception) {
-        return ""..""
+    return this.split("..")[0]..this.split("..")[1]
+}
+
+/**
+ * Конвертирует лист стринга в лист range local time
+ *
+ * @author Kiko
+ */
+fun List<String>.toTimeRange(): List<ClosedRange<LocalTime>>? {
+    val returnMap = this.map {
+        it.toTimeRange().toLocalTimeRange()
     }
+
+    val nullTime = LocalTime.of(0, 0)
+
+    return if (returnMap.contains(nullTime..nullTime))
+    {
+        null
+    }
+    else
+    {
+        returnMap
+    }
+
 }
 
 /**
@@ -28,9 +47,9 @@ fun ClosedRange<String>.toLocalTimeRange(): ClosedRange<LocalTime> {
  * Возращает LocalTime из строки
  */
 fun String.toLocalTime(): LocalTime {
-    try {
-        return LocalTime.of(this.split(":")[0].toInt(), this.split(":")[1].toInt())
+    return try {
+        LocalTime.of(this.split(":")[0].toInt(), this.split(":")[1].toInt())
     } catch (exception: Exception) {
-        return LocalTime.MIN
+        LocalTime.MIN
     }
 }

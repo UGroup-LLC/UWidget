@@ -39,8 +39,6 @@ import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
-import com.kikoproject.uwidget.utils.ScheduleGetterSelectors
-import com.kikoproject.uwidget.utils.getSelectors
 import com.kikoproject.uwidget.main.curSchedule
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.main.prefs
@@ -50,6 +48,8 @@ import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.objects.ScheduleBand
 import com.kikoproject.uwidget.objects.cards.RoundedCard
+import com.kikoproject.uwidget.utils.ScheduleGetterSelectors
+import com.kikoproject.uwidget.utils.getSelectors
 
 
 /**

@@ -6,10 +6,22 @@ import com.kikoproject.uwidget.time.TimeZone
 
 @Composable
 fun ScheduleBodyCard(schedule: Schedule, timeZone: TimeZone){
-    if(timeZone == TimeZone.MORNING){
-        ScheduleMorningCard(schedule = schedule)
-    }
-    else if(timeZone == TimeZone.EVENING){
-        ScheduleEveningCard(schedule = schedule)
+    when(timeZone)
+    {
+        TimeZone.MORNING -> {
+            ScheduleMorningCard(schedule = schedule)
+        }
+        TimeZone.EVENING -> {
+            ScheduleEveningCard(schedule = schedule)
+        }
+        TimeZone.DAY_LESION -> {
+            ScheduleLesionCard(schedule = schedule)
+        }
+        TimeZone.DAY_REST -> {
+
+        }
+        else -> {
+
+        }
     }
 }

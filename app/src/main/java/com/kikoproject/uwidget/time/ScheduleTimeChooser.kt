@@ -1,19 +1,17 @@
 package com.kikoproject.uwidget.time
 
 import android.annotation.SuppressLint
-import android.icu.text.SimpleDateFormat
 import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.utils.toLocalTimeRange
 import com.kikoproject.uwidget.utils.toTimeRange
 import java.time.LocalTime
-import java.util.*
 
 /**
  * Временные зоны
  * @author Kiko
  */
 enum class TimeZone {
-    MORNING, DAY_LESION, DAY_REST, EVENING
+    MORNING, DAY_LESION, DAY_REST, EVENING, ERROR
 }
 
 /**
@@ -25,20 +23,18 @@ enum class TimeZone {
 fun Schedule.getTimeZone(): TimeZone {
     val date = LocalTime.now()
 
-    val sTimeM = LocalTime.parse(this.Time[0].toTimeRange().start)
-    val sTimeE = LocalTime.parse(this.Time.last().toTimeRange().start)
+    val sTimeM = LocalTime.parse(this.Time[0].toTimeRange()?.start ?: return TimeZone.ERROR)
+    val sTimeE = LocalTime.parse(this.Time.last().toTimeRange()?.start ?: return TimeZone.ERROR)
 
-    this.Time.forEachIndexed { index, time ->
-        if(date in time.toTimeRange().toLocalTimeRange()){
+    this.Time.forEachIndexed { _, time ->
+        if (date in (time.toTimeRange()?.toLocalTimeRange() ?: return TimeZone.ERROR)) {
             return TimeZone.DAY_LESION
         }
     }
 
-    if (sTimeM > date) {
-        return TimeZone.MORNING
-    } else if(sTimeE < date) {
-        return TimeZone.EVENING
+    return when (true) {
+        (sTimeM > date) -> TimeZone.MORNING
+        (sTimeE < date) -> TimeZone.EVENING
+        else -> TimeZone.DAY_REST
     }
-
-    return TimeZone.DAY_REST
 }

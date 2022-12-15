@@ -18,9 +18,9 @@ import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.OnlineContent
 import com.kikoproject.uwidget.networking.getNextUserSchedule
 import com.kikoproject.uwidget.objects.MainHeader
-import com.kikoproject.uwidget.objects.text.colorize
 import com.kikoproject.uwidget.objects.schedules.ScheduleBodyCard
-import com.kikoproject.uwidget.objects.schedules.TitleShedule
+import com.kikoproject.uwidget.objects.schedules.TitleSchedule
+import com.kikoproject.uwidget.objects.text.colorize
 import com.kikoproject.uwidget.time.getTimeZone
 
 /**
@@ -60,7 +60,7 @@ fun DashboardActivity() {
             ) {
                 MainHeader(account = account)
                 Text(
-                    text = "Текущее расписание: ${curSchedule?.Name ?: "Нету"}".colorize(),
+                    text = "Текущее расписание: @${curSchedule?.Name ?: "Нету"}@".colorize(),
                     style = MaterialTheme.typography.caption,
                     color = MaterialTheme.colors.surface
                 )
@@ -72,6 +72,7 @@ fun DashboardActivity() {
                 ) {
                     Column(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.padding(horizontal = 45.dp, vertical = 20.dp)
                     ) {
                         Card(
@@ -79,13 +80,12 @@ fun DashboardActivity() {
                             backgroundColor = MaterialTheme.colors.primary.copy(0.25f)
                         ) {
                             if (curSchedule != null) {
-                                TitleShedule(
-                                    user = curUser,
+                                TitleSchedule(
                                     schedule = curSchedule!!,
                                     timeZone = timeZone
                                 )
                             } else {
-                                TitleShedule("Создайте расписание")
+                                TitleSchedule("Создайте расписание")
                             }
                         }
                         ScheduleBodyCard(schedule = curSchedule!!, timeZone)
