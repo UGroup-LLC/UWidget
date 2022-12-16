@@ -23,12 +23,9 @@ fun List<String>.toTimeRange(): List<ClosedRange<LocalTime>>? {
 
     val nullTime = LocalTime.of(0, 0)
 
-    return if (returnMap.contains(nullTime..nullTime))
-    {
+    return if (returnMap.contains(nullTime..nullTime)) {
         null
-    }
-    else
-    {
+    } else {
         returnMap
     }
 }
@@ -40,6 +37,43 @@ fun List<String>.toTimeRange(): List<ClosedRange<LocalTime>>? {
  */
 fun ClosedRange<String>.toLocalTimeRange(): ClosedRange<LocalTime> {
     return this.start.toLocalTime()..this.endInclusive.toLocalTime()
+}
+
+fun List<String>.distinctTime(schedules: List<String>): List<ClosedRange<LocalTime>> {
+    val timeRanges = this.toTimeRange()
+    val returnTimeRange = mutableListOf<ClosedRange<LocalTime>>()
+
+    var pastIndex = 0
+
+    if (timeRanges != null) {
+        schedules.forEachIndexed { index, _ ->
+            if (schedules[pastIndex] != schedules[index] && index != 0) {
+                returnTimeRange.add(timeRanges[pastIndex].start..timeRanges[index - 1].endInclusive)
+                pastIndex = index
+            }
+        }
+        if (schedules[pastIndex] == schedules[lastIndex]) { // Проверка если последние 2 пары будут одинаковые
+            returnTimeRange.add(timeRanges[pastIndex].start..timeRanges[lastIndex].endInclusive)
+        } else {
+            returnTimeRange.add(timeRanges[schedules.lastIndex])
+        }
+    }
+    return returnTimeRange
+}
+
+fun List<String>.distinctLesions(): List<String> {
+    val returnList = mutableListOf<String>()
+
+    var pastIndex = 0
+
+    this.forEachIndexed { index, _ ->
+        if (this[pastIndex] != this[index] && index != 0) {
+            returnList.add(this[pastIndex])
+            pastIndex = index
+        }
+    } // Проверка если последние 2 пары будут одинаковые
+    returnList.add(this[lastIndex])
+    return returnList
 }
 
 /**

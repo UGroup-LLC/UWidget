@@ -48,7 +48,7 @@ fun TitleSchedule(schedule: Schedule, timeZone: TimeZone) {
     }
 
     if ((timeZone == TimeZone.MORNING && schedule.Options!!.scheduleMorningSettings.morningVisible)
-        || timeZone == TimeZone.DAY_LESION || timeZone == TimeZone.DAY_REST ||
+        || timeZone == TimeZone.DAY_LESION || timeZone == TimeZone.DAY_REST || timeZone == TimeZone.ERROR ||
         (timeZone == TimeZone.EVENING && schedule.Options!!.scheduleEveningSettings.eveningTitleVisible)
     ) {
         Text(

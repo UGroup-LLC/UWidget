@@ -45,7 +45,7 @@ fun DashboardActivity() {
             )
         }
 
-        val timeZone = curSchedule!!.getTimeZone()
+        val timeZone = curSchedule?.getTimeZone()
 
         Box(
             modifier = Modifier
@@ -79,7 +79,7 @@ fun DashboardActivity() {
                             shape = RoundedCornerShape(45.dp),
                             backgroundColor = MaterialTheme.colors.primary.copy(0.25f)
                         ) {
-                            if (curSchedule != null) {
+                            if (curSchedule != null && timeZone != null) {
                                 TitleSchedule(
                                     schedule = curSchedule!!,
                                     timeZone = timeZone
@@ -88,7 +88,9 @@ fun DashboardActivity() {
                                 TitleSchedule("Создайте расписание")
                             }
                         }
-                        ScheduleBodyCard(schedule = curSchedule!!, timeZone)
+                        if(timeZone != null) {
+                            ScheduleBodyCard(schedule = curSchedule!!, timeZone)
+                        }
                     }
                 }
                 Row(
