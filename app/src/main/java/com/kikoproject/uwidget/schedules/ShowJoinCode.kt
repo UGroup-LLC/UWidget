@@ -36,7 +36,6 @@ fun ShowJoinCode() {
             Column(horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.padding(10.dp)) {
-
                 Text(
                     "Ваш код расписания",
                     style = MaterialTheme.typography.caption,

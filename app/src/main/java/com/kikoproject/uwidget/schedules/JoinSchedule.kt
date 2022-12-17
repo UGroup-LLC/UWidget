@@ -2,6 +2,7 @@ package com.kikoproject.uwidget.schedules
 
 import android.os.CountDownTimer
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -18,8 +19,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
@@ -36,6 +39,7 @@ import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.EnterInScheduleResult
 import com.kikoproject.uwidget.networking.enterInSchedule
 import com.kikoproject.uwidget.objects.BackHeader
+import com.kikoproject.uwidget.objects.camera.JoinQRCodeScanner
 
 
 /**
@@ -48,6 +52,10 @@ import com.kikoproject.uwidget.objects.BackHeader
 fun JoinSchedule() {
     // Штука которая будет нам показывать что мы чето не правильно сделали и тд
     //var message: CustomToastBar? by remember { mutableStateOf(null) }
+    var code = remember { mutableStateOf("") }
+    val isQrUsing = remember { mutableStateOf(false) }
+    val isQrError = remember { mutableStateOf(false) }
+    val isError = remember { mutableStateOf(false) }
 
     if (isJoinBanned) {
         if (timer) {
@@ -66,6 +74,7 @@ fun JoinSchedule() {
                 }
             }.start()
         }
+
 
         Box(
             modifier = Modifier
@@ -112,19 +121,21 @@ fun JoinSchedule() {
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 BackHeader("Код приглашения")
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                Box(contentAlignment = Alignment.TopCenter) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
+
                         Text(
                             text = "Введите код приглашения ниже",
                             style = MaterialTheme.typography.caption,
                             color = MaterialTheme.colors.surface
                         )
                         val isComplited = remember { mutableStateOf(false) }
-                        val isError =remember {  mutableStateOf(false)}
-                        val code = joinCodeInput(isError)
+
+                        code = joinCodeInput(isError, isQrUsing)
+
                         if (isComplited.value) {
                             when (countOfBan) {
                                 4 -> {
@@ -146,21 +157,58 @@ fun JoinSchedule() {
                             // Проверка есть ли такое расписание с таким кодом, состоим ли мы уже в нем или админ ли мы в нем
                             enterInSchedule(code.value, object : EnterInScheduleResult {
                                 override fun onResult(isEntered: Boolean) {
-                                    if (isEntered) {
-                                        isError.value = false
-                                        navController.navigate(ScreenNav.Dashboard.route)
-                                        countOfBan = 0
-                                    } else {
-                                        isComplited.value = true
-                                        isError.value = true
-                                        countOfBan += 1
-                                        code.value = ""
+                                    if(!isQrUsing.value) {
+                                        if (isEntered) {
+                                            isError.value = false
+                                            navController.navigate(ScreenNav.Dashboard.route)
+                                            countOfBan = 0
+                                        } else {
+                                            isComplited.value = true
+                                            isError.value = true
+                                            countOfBan += 1
+                                            code.value = ""
+                                        }
+                                    }
+                                    else{
+                                        if (isEntered) {
+                                            isQrError.value = false
+                                            navController.navigate(ScreenNav.Dashboard.route)
+                                            countOfBan = 0
+                                        } else {
+                                            isComplited.value = true
+                                            isQrError.value = true
+                                            countOfBan += 1
+                                            code.value = ""
+                                        }
                                     }
                                 }
                             })
                         }
+                        else if(code.value.length != 6){
+                            isQrError.value = true
+                        }
                     }
                 }
+                JoinQRCodeScanner(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .size(256.dp)
+                        .border(
+                            2.dp,
+                            color = if(isQrUsing.value && isQrError.value) {
+                                MaterialTheme.colors.error
+                            }
+                            else{
+                                MaterialTheme.colors.primary
+                            },
+                            RoundedCornerShape(16.dp)
+                        )
+                        .clip(
+                            RoundedCornerShape(16.dp)
+                        ),
+                    isQrCode = isQrUsing,
+                    qrCodeValue = code
+                )
             }
         }
     }
@@ -172,7 +220,10 @@ fun JoinSchedule() {
  */
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun joinCodeInput(isError: MutableState<Boolean>): MutableState<String> {
+fun joinCodeInput(
+    isError: MutableState<Boolean>,
+    isQrError: MutableState<Boolean>
+): MutableState<String> {
     val returningValue = remember { mutableStateOf("") }
     val focusRequester = remember {
         mutableListOf(
@@ -219,6 +270,7 @@ fun joinCodeInput(isError: MutableState<Boolean>): MutableState<String> {
                 shape = RoundedCornerShape(10.dp),
                 isError = isError.value,
                 onValueChange = {
+                    isQrError.value = false
                     isError.value = false
                     if (it.text.length <= 1) {
                         textFieldValue.value = it

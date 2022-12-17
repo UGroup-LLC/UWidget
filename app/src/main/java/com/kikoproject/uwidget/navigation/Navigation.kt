@@ -53,7 +53,7 @@ fun NavigationSetup(
             ShowJoinCode()
         }
         composable(route = ScreenNav.EditScheduleMenuNav.route){
-            EditSheduleMenu()
+            EditScheduleMenu()
         }
         composable(route = ScreenNav.JoinToScheduleNav.route){
             JoinSchedule()

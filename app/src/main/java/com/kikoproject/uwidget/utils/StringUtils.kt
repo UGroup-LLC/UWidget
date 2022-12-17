@@ -52,8 +52,8 @@ fun List<String>.distinctTime(schedules: List<String>): List<ClosedRange<LocalTi
                 pastIndex = index
             }
         }
-        if (schedules[pastIndex] == schedules[lastIndex]) { // Проверка если последние 2 пары будут одинаковые
-            returnTimeRange.add(timeRanges[pastIndex].start..timeRanges[lastIndex].endInclusive)
+        if (schedules[pastIndex] == schedules[schedules.lastIndex]) { // Проверка если последние 2 пары будут одинаковые
+            returnTimeRange.add(timeRanges[pastIndex].start..timeRanges[schedules.lastIndex].endInclusive)
         } else {
             returnTimeRange.add(timeRanges[schedules.lastIndex])
         }
