@@ -1,30 +1,30 @@
-package com.kikoproject.uwidget.objects.schedules
+package com.kikoproject.uwidget.widget.objects.schedule
 
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
+import android.content.Context
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.glance.GlanceModifier
+import androidx.glance.layout.Column
+import androidx.glance.layout.Spacer
+import androidx.glance.layout.padding
 import com.kikoproject.uwidget.main.curSchedule
 import com.kikoproject.uwidget.main.options
 import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.models.schedules.options.ScheduleOptions
-import com.kikoproject.uwidget.objects.text.colorize
 import com.kikoproject.uwidget.utils.deleteWhitespaces
 import com.kikoproject.uwidget.utils.distinctLesions
 import com.kikoproject.uwidget.utils.distinctTime
+import com.kikoproject.uwidget.widget.objects.WidgetText
 import java.util.*
 
 @Composable
-fun ScheduleEveningCard(schedule: Schedule = curSchedule!!) {
+fun WidgetScheduleEveningCard(schedule: Schedule = curSchedule!!, context: Context) {
     if (options?.scheduleEveningSettings?.allScheduleVisible != false) {
         var scheduleText = ""
-        var title = "Занятия на завтра".colorize()
-        var day =            (Calendar.getInstance() as GregorianCalendar).toZonedDateTime().dayOfWeek.ordinal + 1
+        var title = "Занятия на завтра"
+        var day = (Calendar.getInstance() as GregorianCalendar).toZonedDateTime().dayOfWeek.ordinal + 1
         if (day == 7) {
             day = 0
         }
@@ -47,24 +47,23 @@ fun ScheduleEveningCard(schedule: Schedule = curSchedule!!) {
         }
         val isArrayNotEmpty = daySchedule.deleteWhitespaces().isNotEmpty()
         if (!isArrayNotEmpty) {
-            title = "На завтра занятий нет\n@Хорошего вечера!@".colorize()
+            title = "На завтра занятий нет\n@Хорошего вечера!@"
         }
-        Spacer(modifier = Modifier.padding(4.dp))
-        Text(
-            text = title,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.caption,
-            color = MaterialTheme.colors.surface
-        )
-        if (isArrayNotEmpty) {
-            Text(
-                text = scheduleText.colorize(),
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.caption,
-                color = MaterialTheme.colors.surface
+        Column() {
+            WidgetText(
+                text = title,
+                schedule = schedule,
+                context = context,
+                options = options
             )
+            if (isArrayNotEmpty) {
+                WidgetText(
+                    text = scheduleText,
+                    schedule = schedule,
+                    context = context,
+                    options = options
+                )
+            }
         }
     }
 }

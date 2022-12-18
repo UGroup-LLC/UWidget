@@ -1,34 +1,30 @@
-package com.kikoproject.uwidget.objects.schedules
+package com.kikoproject.uwidget.widget.objects
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import android.content.Context
+import android.text.Html
+import android.widget.RemoteViews
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.glance.appwidget.AndroidRemoteViews
+import com.kikoproject.uwidget.R
+import com.kikoproject.uwidget.main.curSchedule
 import com.kikoproject.uwidget.main.options
-import com.kikoproject.uwidget.models.User
 import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.models.schedules.options.ScheduleOptions
-import com.kikoproject.uwidget.objects.text.colorize
+import com.kikoproject.uwidget.objects.text.colorizeWidgetText
 import com.kikoproject.uwidget.objects.text.variablize
 import com.kikoproject.uwidget.time.TimeZone
-import com.kikoproject.uwidget.utils.getCloseTimeRange
 import com.kikoproject.uwidget.utils.getClosestLesion
-import com.kikoproject.uwidget.utils.toTimeRange
-import java.time.LocalTime
-import java.util.*
-
+import com.kikoproject.uwidget.utils.toStandardColor
 
 /**
- * Выбирает что за текст необходимо отображать в превью в заголовке
- *
- * @param user пользователь имя которого может отобразиться в заголовке
+ * Выбирает что за текст необходимо отображать в превью в заголовке виджета
  *
  * @author Kiko
  */
 @Composable
-fun TitleSchedule(schedule: Schedule, timeZone: TimeZone) {
+fun WidgetTitleSchedule(schedule: Schedule, timeZone: TimeZone, context: Context) {
     val text = when (timeZone) {
         TimeZone.MORNING -> {
             options?.scheduleMorningSettings?.morningTitle.toString().variablize()
@@ -43,7 +39,7 @@ fun TitleSchedule(schedule: Schedule, timeZone: TimeZone) {
             "Хорошего отдыха, @%n!@".variablize()
         }
         TimeZone.ERROR -> {
-            "@Извините,@ произошла ошибка"
+            null
         }
     }
 
@@ -51,12 +47,7 @@ fun TitleSchedule(schedule: Schedule, timeZone: TimeZone) {
         || timeZone == TimeZone.DAY_LESION || timeZone == TimeZone.DAY_REST || timeZone == TimeZone.ERROR ||
         (timeZone == TimeZone.EVENING && options?.scheduleEveningSettings?.eveningTitleVisible != false)
     ) {
-        Text(
-            text = text?.colorize() ?: "Хорошего отдыха, @%n!@".variablize().colorize(),
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            style = MaterialTheme.typography.caption,
-            color = MaterialTheme.colors.surface
-        )
+        WidgetTitleText(text = text, schedule = schedule, context = context, options = options)
     }
 }
 
@@ -68,11 +59,13 @@ fun TitleSchedule(schedule: Schedule, timeZone: TimeZone) {
  * @author Kiko
  */
 @Composable
-fun TitleSchedule(text: String) {
-    Text(
-        text = text,
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-        style = MaterialTheme.typography.caption,
-        color = MaterialTheme.colors.surface
+fun WidgetTitleSchedule(text: String, context: Context) {
+    val titleView = RemoteViews(context.packageName, R.layout.widget_title_layout)
+    titleView.setInt(
+        R.id.titleView,
+        "setColorFilter",
+        options?.generalSettings?.borderColor?.toArgb() ?: context.resources.getColor(R.color.iconBack)
     )
+    titleView.setTextViewText(R.id.titleText, text)
+    AndroidRemoteViews(remoteViews = titleView)
 }

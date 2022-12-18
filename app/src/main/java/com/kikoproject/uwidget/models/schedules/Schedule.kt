@@ -15,9 +15,7 @@ data class Schedule(
     val Schedule: Map<String, MutableList<String>>,
     val JoinCode: String?,
     val Time: List<String>,
-    val Category: String,
-    val Options: ScheduleOptions?
-)
+    val Category: String)
 
 /**
  * Стандартные настройки расписания
@@ -28,13 +26,13 @@ fun defaultScheduleOption(): ScheduleOptions
 {
     return ScheduleOptions(
         generalSettings = ScheduleGeneralSettings(
-            materialColors.background,
-            false,
-            materialColors.primary,
-            2,
-            materialColors.primary,
-            FontWeight.Normal,
-            materialColors.primary.copy(0.3f)
+            backgroundColor = materialColors.background,
+            glassEffect= false,
+            borderColor = materialColors.primary,
+            borderThickness = 2,
+            textColor = materialColors.surface,
+            textWeight = FontWeight.Normal,
+            textSecondaryColor = materialColors.primary.copy(0.3f)
         ),
         scheduleMorningSettings = ScheduleMorningSettings(
             7,
@@ -46,24 +44,24 @@ fun defaultScheduleOption(): ScheduleOptions
             showMap = false
         ),
         scheduleDayLesionSettings = ScheduleDayLesionSettings(
-            true,
-            true,
-            true,
-            true,
-            true
+            lesionEndTitleVisible = true,
+            nextLesionVisible = true,
+            lesionCountVisible = true,
+            homeTimeVisible = true,
+            additionalInfoVisible = true
         ),
         scheduleDayRestSettings = ScheduleDayRestSettings(
-            true,
-            true,
-            true,
-            true,
-            true
+            lesionStartTitleVisible = true,
+            nextLesionVisible = true,
+            restCountVisible = true,
+            homeTimeVisible = true,
+            additionalInfoVisible = true
         ),
         scheduleEveningSettings = ScheduleEveningSettings(
-            "Хорошего вечера, @%n@",
-            true,
-            true,
-            true
+            eveningTitleText ="Хорошего вечера, @%n@",
+            eveningTitleVisible = true,
+            allScheduleVisible = true,
+            additionalInfoVisible = true
         )
     )
 }

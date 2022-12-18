@@ -8,9 +8,10 @@ import com.kikoproject.uwidget.models.User
  * @return лист всех возможных переменных в виде текстовых сокращений
  * @author Kiko
  */
-private fun textVariables(user: User): List<Pair<String,String>> {
+private fun textVariables(user: User?): List<Pair<String,String>> {
     return listOf(
-        Pair("%n", user.Name),
+        Pair("%n", user?.Name ?: "null"),
+        Pair("\n","<br>"),
     )
 }
 /**
@@ -18,7 +19,7 @@ private fun textVariables(user: User): List<Pair<String,String>> {
  * @return текст преобразованный без сокращений, с переменными
  * @author Kiko
  */
-fun String.variablize(user: User = curUser): String{
+fun String.variablize(user: User? = curUser): String{
     var returnText = this
     textVariables(user).forEach { textVar ->
         returnText = returnText.replace(textVar.first,textVar.second)

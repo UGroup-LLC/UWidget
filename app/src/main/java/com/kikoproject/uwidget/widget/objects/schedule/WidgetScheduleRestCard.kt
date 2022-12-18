@@ -1,5 +1,6 @@
-package com.kikoproject.uwidget.objects.schedules
+package com.kikoproject.uwidget.widget.objects.schedule
 
+import android.content.Context
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -26,11 +27,8 @@ import java.time.LocalTime
 import java.util.*
 
 @Composable
-fun ScheduleRestCard(schedule: Schedule = curSchedule!!) {
+fun WidgetScheduleRestCard(schedule: Schedule = curSchedule!!, context: Context) {
     if (options?.scheduleDayLesionSettings?.lesionEndTitleVisible != false) {
-        val day =
-            (Calendar.getInstance() as GregorianCalendar).toZonedDateTime().dayOfWeek.ordinal
-
         val nowTime = LocalTime.now()
 
         val nextSchedule = schedule.getClosestLesion()
@@ -43,29 +41,20 @@ fun ScheduleRestCard(schedule: Schedule = curSchedule!!) {
             )
             val time = LocalTime.of(duration.toHours().toInt(), (duration.toMinutes() % 60).toInt())
 
-            DrawText("@@До начала: @$time@".colorize(), nextSchedule)
+            DrawText(
+                "@@До начала: @$time@", nextSchedule,
+                context = context,
+                schedule = schedule,
+                options = options
+            )
             return
         }
 
-        DrawText("@Произошла ошибка@".colorize(), nextSchedule)
+        DrawText(
+            "@Произошла ошибка@", nextSchedule,
+            context = context,
+            schedule = schedule,
+            options = options
+        )
     }
-}
-
-@Composable
-private fun DrawText(titleText: AnnotatedString, nextSchedule: String?) {
-    Spacer(modifier = Modifier.padding(4.dp))
-    Text(
-        text = titleText,
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center,
-        style = MaterialTheme.typography.caption,
-        color = MaterialTheme.colors.surface
-    )
-    Text(
-        text = "Следующее занятие: @${nextSchedule ?: "Нет"}@".colorize(),
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center,
-        style = MaterialTheme.typography.caption,
-        color = MaterialTheme.colors.surface
-    )
 }

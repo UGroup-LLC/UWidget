@@ -78,10 +78,10 @@ fun CheckUserInDB(
                                 //********** Записываем в локальную БД **********
 
                                 myScheduleUser.forEach { schedule ->
-                                    roomDb.scheduleDao().insertAll(schedule)
+                                    roomDb!!.scheduleDao().insertAll(schedule)
                                 }
                                 myScheduleAdmin.forEach { schedule ->
-                                    roomDb.scheduleDao().insertAll(schedule)
+                                    roomDb!!.scheduleDao().insertAll(schedule)
                                 }
                                 // ******** Переход в DashBoard ********
                                 navController.navigate(ScreenNav.Dashboard.route)
@@ -114,8 +114,8 @@ fun CheckUserInDB(
  */
 fun insertAccountInRoom(user: User?) {
     if (user != null) {
-        if (roomDb.userDao().findById(user.Id) == null) {
-            roomDb.userDao().insertUser()
+        if (roomDb!!.userDao().findById(user.Id) == null) {
+            roomDb!!.userDao().insertUser()
         }
     }
 }
@@ -126,7 +126,7 @@ fun insertAccountInRoom(user: User?) {
  * @author Kiko
  */
 fun createScheduleInRoomDB(schedule: Schedule) {
-    roomDb.scheduleDao().insertAll(schedule)
+    roomDb!!.scheduleDao().insertAll(schedule)
 }
 
 /**
@@ -343,7 +343,7 @@ fun updateAllData(
 fun outFromSchedule(schedule: Schedule, userId: String) {
     val newUsersId = schedule.UsersID.toMutableList()
     newUsersId.remove(userId)
-    roomDb.scheduleDao().update(schedule.copy(UsersID = newUsersId))
+    roomDb!!.scheduleDao().update(schedule.copy(UsersID = newUsersId))
 
     db.collection("schedules").document(schedule.ID).update(mapOf(Pair("users_ids", newUsersId)))
 
@@ -358,7 +358,7 @@ fun outFromSchedule(schedule: Schedule, userId: String) {
  * @author Kiko
  */
 fun deleteSchedule(schedule: Schedule) {
-    roomDb.scheduleDao().delete(schedule = schedule)
+    roomDb!!.scheduleDao().delete(schedule = schedule)
     db.collection("schedules").document(schedule.ID).delete()
 }
 
@@ -406,8 +406,7 @@ fun enterInSchedule(code: String, enterInScheduleResult: EnterInScheduleResult) 
                     doc.get("schedule") as Map<String, MutableList<String>>,
                     doc.get("code").toString() as String?,
                     doc.get("time") as List<String>,
-                    doc.get("category").toString(),
-                    defaultScheduleOption()
+                    doc.get("category").toString()
                 )
 
                 val users = schedule.UsersID.toMutableList()
@@ -477,7 +476,6 @@ fun getAdminSchedules(user: User, scheduleResult: ScheduleResult) {
                     doc.get("code").toString() as String?,
                     doc.get("time") as List<String>,
                     doc.get("category").toString(),
-                    defaultScheduleOption()
                 )
             )
         }
@@ -591,7 +589,6 @@ fun getUserSchedules(user: User, scheduleResult: ScheduleResult) {
                     doc.get("code").toString() as String?,
                     doc.get("time") as List<String>,
                     doc.get("category").toString(),
-                    defaultScheduleOption()
                 )
             )
         }
@@ -604,11 +601,11 @@ fun getUserSchedules(user: User, scheduleResult: ScheduleResult) {
 }
 
 fun changeThemeColor(colorType: MainColors, colorValue: Color) {
-    val genOptions = roomDb.optionsDao().get()
+    val genOptions = roomDb!!.optionsDao().get()
     val newColors = mutableListOf<Color>()
     newColors.addAll(genOptions.Colors) // Берем все цвета
     newColors[colorType.value] = colorValue // Изменяем нужный нам цвет
-    roomDb
+    roomDb!!
         .optionsDao()
         .updateOption(
             genOptions.copy(
@@ -619,19 +616,19 @@ fun changeThemeColor(colorType: MainColors, colorValue: Color) {
 }
 
 fun changeTheme(themeIs: Boolean) {
-    val newGenOpt = roomDb.optionsDao().get().copy(Theme = themeIs)
-    roomDb.optionsDao().updateOption(newGenOpt)
+    val newGenOpt = roomDb!!.optionsDao().get().copy(Theme = themeIs)
+    roomDb!!.optionsDao().updateOption(newGenOpt)
     themeAppMode.value = themeIs
 }
 
 fun changeMonetEngine(isEnable: Boolean) {
-    val newGenOpt = roomDb.optionsDao().get().copy(IsMonetEngineEnable = isEnable)
-    roomDb.optionsDao().updateOption(newGenOpt)
+    val newGenOpt = roomDb!!.optionsDao().get().copy(IsMonetEngineEnable = isEnable)
+    roomDb!!.optionsDao().updateOption(newGenOpt)
     monetEngineIsEnabled.value = isEnable
 }
 
 fun addOldThemeColor(colorValue: Color) {
-    val genOptions = roomDb.optionsDao().get()
+    val genOptions = roomDb!!.optionsDao().get()
 
     val newColorList = mutableListOf<Color>()
     if (genOptions.OldColors != null) {
@@ -639,8 +636,8 @@ fun addOldThemeColor(colorValue: Color) {
     }
     newColorList.add(colorValue)
     val newGenOpt = genOptions.copy(OldColors = newColorList)
-    roomDb.optionsDao().updateOption(newGenOpt)
-    roomDb.optionsDao().get()
+    roomDb!!.optionsDao().updateOption(newGenOpt)
+    roomDb!!.optionsDao().get()
 }
 
 interface ScheduleResult {

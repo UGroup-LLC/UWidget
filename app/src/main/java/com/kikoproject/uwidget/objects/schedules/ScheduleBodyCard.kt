@@ -9,16 +9,16 @@ fun ScheduleBodyCard(schedule: Schedule, timeZone: TimeZone){
     when(timeZone)
     {
         TimeZone.MORNING -> {
-            ScheduleMorningCard(schedule = schedule)
+            ScheduleMorningCard()
         }
         TimeZone.EVENING -> {
-            ScheduleEveningCard(schedule = schedule)
+            ScheduleEveningCard()
         }
         TimeZone.DAY_LESION -> {
-            ScheduleLesionCard(schedule = schedule)
+            ScheduleLesionCard()
         }
         TimeZone.DAY_REST -> {
-            ScheduleRestCard(schedule = schedule)
+            ScheduleRestCard()
         }
         else -> {
 

@@ -46,7 +46,7 @@ fun ScheduleButton(schedule: Schedule, isAdmin: Boolean, scheduleAdmin: List<Sch
 
     Button(
         onClick = {
-            prefs.edit().putString(schedule.ID, "null").apply()
+            prefs?.edit()?.putString(schedule.ID, "null")?.apply()
             chosenByUserSchedule = schedule
             showDialog.value = true
         },
@@ -78,11 +78,11 @@ fun ScheduleButton(schedule: Schedule, isAdmin: Boolean, scheduleAdmin: List<Sch
                     } else {
                         val nextSchedule = getNextUserSchedule(mySchedulesUser = scheduleUser, mySchedulesAdmin = scheduleAdmin)
                         if (nextSchedule != null) {
-                            prefs.edit().putString(nextSchedule.ID, "null").apply()
+                            prefs?.edit()?.putString(nextSchedule.ID, "null")?.apply()
                             curSchedule = nextSchedule
                             navController.popBackStack()
                         } else {
-                            navController.navigate(ScreenNav.ScheduleChooseNav.route)
+                            navController.navigate(ScreenNav.Dashboard.route)
                         }
                         outFromSchedule(schedule = schedule, userId = curUser.Id)
 

@@ -92,8 +92,8 @@ private fun MainOptions(scrollState: ScrollState){
             !themeAppMode.value
         ) { switchValue ->
             themeAppMode.value = !switchValue
-            roomDb.optionsDao()
-                .updateOption(roomDb.optionsDao().get().copy(Theme = themeAppMode.value))
+            roomDb!!.optionsDao()
+                .updateOption(roomDb!!.optionsDao().get().copy(Theme = themeAppMode.value))
         }
     }
 
@@ -114,8 +114,8 @@ private fun MainOptions(scrollState: ScrollState){
         systemThemeIsEnabled.value
     ) { switchValue ->
         systemThemeIsEnabled.value = switchValue
-        roomDb.optionsDao()
-            .updateOption(roomDb.optionsDao().get().copy(IsSystemColors = switchValue))
+        roomDb!!.optionsDao()
+            .updateOption(roomDb!!.optionsDao().get().copy(IsSystemColors = switchValue))
 
     }
 
@@ -127,7 +127,7 @@ private fun MainOptions(scrollState: ScrollState){
             themeAppMode.value = MainThemes.LIGHT.value
         }
 
-        LaunchAppApplyColors(roomDb.optionsDao().get())
+        LaunchAppApplyColors(roomDb!!.optionsDao().get())
         LaunchedEffect(Unit) { scrollState.animateScrollTo(100) }
 
         ListItemColor(

@@ -29,6 +29,8 @@ import com.kikoproject.uwidget.localdb.MainDataBase
 import com.kikoproject.uwidget.models.GeneralOptions
 import com.kikoproject.uwidget.models.User
 import com.kikoproject.uwidget.models.schedules.Schedule
+import com.kikoproject.uwidget.models.schedules.defaultScheduleOption
+import com.kikoproject.uwidget.models.schedules.options.ScheduleOptions
 import com.kikoproject.uwidget.navigation.NavigationSetup
 import com.kikoproject.uwidget.networking.CheckUserInDB
 import com.kikoproject.uwidget.ui.theme.*
@@ -41,7 +43,7 @@ lateinit var navController: NavHostController
 val db = Firebase.firestore
 
 @SuppressLint("StaticFieldLeak")
-lateinit var roomDb: MainDataBase
+var roomDb: MainDataBase? = null
 
 @SuppressLint("StaticFieldLeak")
 lateinit var curUser: User
@@ -56,7 +58,10 @@ var curSchedule: Schedule? = null // Расписание используемо
 var chosenByUserSchedule: Schedule? = null // Расписание используемое пользователем
 
 @SuppressLint("StaticFieldLeak")
-lateinit var prefs: SharedPreferences
+var prefs: SharedPreferences? = null
+
+@SuppressLint("StaticFieldLeak")
+var options: ScheduleOptions? = null
 
 @SuppressLint("StaticFieldLeak")
 var countOfBan = 0
@@ -86,22 +91,22 @@ class MainActivity : ComponentActivity() {
 
 
         setContent {
-            if (roomDb.optionsDao()
+
+            if (roomDb!!.optionsDao()
                     .get() != null
             ) { // Это возможно но ? убран чтобы не ебаться ибо инициализация все равно идет в начале и настройки должны быть созданы
-                themeAppMode.value = roomDb.optionsDao().get().Theme
-                systemThemeIsEnabled.value = roomDb.optionsDao().get().IsSystemColors
-                monetEngineIsEnabled.value = roomDb.optionsDao().get().IsMonetEngineEnable
-                LaunchAppApplyColors(roomDb.optionsDao().get()) // Выставка цветов при запуске
-            }
-            else{
+                themeAppMode.value = roomDb!!.optionsDao().get().Theme
+                systemThemeIsEnabled.value = roomDb!!.optionsDao().get().IsSystemColors
+                monetEngineIsEnabled.value = roomDb!!.optionsDao().get().IsMonetEngineEnable
+                LaunchAppApplyColors(roomDb!!.optionsDao().get()) // Выставка цветов при запуске
+            } else {
                 SystemThemeSet()
             }
 
 
             UWidgetTheme {
 
-                if (roomDb.optionsDao()
+                if (roomDb!!.optionsDao()
                         .get() == null
                 ) { // Это возможно но ? убран чтобы не ебаться ибо инициализация все равно идет в начале и настройки должны быть созданы
                     val primColor = MaterialTheme.colors.primary
@@ -111,7 +116,9 @@ class MainActivity : ComponentActivity() {
                     val errorColor = MaterialTheme.colors.error
                     val textColor = MaterialTheme.colors.surface
 
-                    roomDb.optionsDao().insertOption(
+                    materialColors = MaterialTheme.colors
+
+                    roomDb!!.optionsDao().insertOption(
                         GeneralOptions(
                             Colors = listOf(
                                 primColor,
@@ -120,10 +127,12 @@ class MainActivity : ComponentActivity() {
                                 backgroundColor,
                                 errorColor,
                                 textColor
-                            )
+                            ), SchedulesOptions = defaultScheduleOption()
                         )
                     )
+
                 }
+                options = roomDb!!.optionsDao().get().SchedulesOptions
 
                 analyticsEnable() // Включение аналитики
                 Wait()
@@ -132,7 +141,6 @@ class MainActivity : ComponentActivity() {
                 NavigationSetup(navController = navController)
                 val state = remember { mutableStateOf(true) }
 
-                materialColors = MaterialTheme.colors
 
                 prefs = this.getSharedPreferences(
                     context.packageName, Context.MODE_PRIVATE

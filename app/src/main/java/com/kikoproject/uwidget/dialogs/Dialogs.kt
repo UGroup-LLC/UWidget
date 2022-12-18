@@ -400,7 +400,7 @@ fun ColorPicker(
     val controller = rememberColorPickerController()
     val colorHex = remember { mutableStateOf("#FFFFFF") }
     val colorValue = remember { mutableStateOf(Color.White) }
-    val genOptions = roomDb.optionsDao().get()
+    val genOptions = roomDb!!.optionsDao().get()
 
     if (dialogVisibleState.value) {
         AlertDialog(
@@ -487,7 +487,7 @@ fun ColorPicker(
                                     }
                                 }
                             }
-                            roomDb.optionsDao().get().let { genOptions ->
+                            roomDb!!.optionsDao().get().let { genOptions ->
                                 if (genOptions.OldColors != null) { // Проверка есть ли цвета
                                     items(genOptions.OldColors!!.asReversed()) { color ->
                                         Card(
@@ -588,7 +588,7 @@ fun ShowSchedulePreviewDialog(
                 OutlinedButton(
                     onClick = {
                         curSchedule = schedule
-                        prefs.edit().putString("mainSchedule", curSchedule!!.ID).apply()
+                        prefs?.edit()?.putString("mainSchedule", curSchedule!!.ID)?.apply()
                         dialogVisibleState.value = false
                         navController.popBackStack()
                     },

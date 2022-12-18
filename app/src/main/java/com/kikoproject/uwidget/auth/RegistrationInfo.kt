@@ -309,7 +309,7 @@ fun sendToDBMainInfo(
     db.collection("users").document(account.id.toString()).set(user)
         .addOnSuccessListener { documentReference ->
             Log.d(TAG, "DocumentSnapshot setted")
-            navController.navigate(ScreenNav.ScheduleChooseNav.route)
+            navController.navigate(ScreenNav.Dashboard.route)
         }
         .addOnFailureListener { e ->
             Log.w(TAG, "Error adding document", e)

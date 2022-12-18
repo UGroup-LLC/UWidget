@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.glance.appwidget.updateAll
 import com.github.alexzhirkevich.customqrgenerator.QrCodeGenerator
 import com.github.alexzhirkevich.customqrgenerator.QrData
 import com.github.alexzhirkevich.customqrgenerator.QrOptions
@@ -32,6 +33,9 @@ import com.kikoproject.uwidget.objects.schedules.ScheduleBodyCard
 import com.kikoproject.uwidget.objects.schedules.TitleSchedule
 import com.kikoproject.uwidget.objects.text.colorize
 import com.kikoproject.uwidget.time.getTimeZone
+import com.kikoproject.uwidget.ui.theme.Main
+import com.kikoproject.uwidget.widget.MainWidget
+import kotlinx.coroutines.runBlocking
 
 /**
  * Главное окно приложения где отображается превью виджета, кнопки настроек и тд
@@ -43,16 +47,26 @@ fun DashboardActivity() {
         val context = LocalContext.current
         val account = GoogleSignIn.getLastSignedInAccount(context)
 
-        curSchedule = prefs.getString(
+        runBlocking {
+            MainWidget().updateAll(context)
+        }
+
+        curSchedule = prefs?.getString(
             "mainSchedule",
             getNextUserSchedule(
                 mySchedulesAdmin = myScheduleAdmin,
                 mySchedulesUser = myScheduleUser
             )?.ID
         )?.let {
-            roomDb.scheduleDao().getWithId(
+            roomDb!!.scheduleDao().getWithId(
                 it
             )
+        }
+
+        if (curSchedule != null) {
+            if (prefs?.contains("mainSchedule") == false) {
+                prefs?.edit()?.putString("mainSchedule", curSchedule!!.ID)?.apply()
+            }
         }
 
         val timeZone = curSchedule?.getTimeZone()
@@ -98,7 +112,7 @@ fun DashboardActivity() {
                                 TitleSchedule("Создайте расписание")
                             }
                         }
-                        if(timeZone != null) {
+                        if (timeZone != null) {
                             ScheduleBodyCard(schedule = curSchedule!!, timeZone)
                         }
                     }

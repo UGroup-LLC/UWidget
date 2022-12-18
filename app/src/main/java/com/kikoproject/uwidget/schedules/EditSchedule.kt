@@ -420,10 +420,9 @@ fun EditSchedule() {
                                         adminId.id!!,
                                         listOf(""),
                                         tempMap,
-                                        0.toString(), // TODO()
+                                        0.toString(),
                                         tempTimeState,
-                                        categoryState.value.text,
-                                        defaultScheduleOption()
+                                        categoryState.value.text
                                     )
                                     createScheduleInRoomDB(schedule)
                                     createScheduleInDB(

@@ -12,7 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.kikoproject.uwidget.main.curSchedule
+import com.kikoproject.uwidget.main.options
 import com.kikoproject.uwidget.models.schedules.Schedule
+import com.kikoproject.uwidget.models.schedules.options.ScheduleOptions
 import com.kikoproject.uwidget.objects.text.colorize
 import com.kikoproject.uwidget.utils.getCloseTimeRange
 import com.kikoproject.uwidget.utils.getClosestLesion
@@ -22,11 +25,8 @@ import java.time.LocalTime
 import java.util.*
 
 @Composable
-fun ScheduleLesionCard(schedule: Schedule) {
-    if (schedule.Options!!.scheduleDayLesionSettings.lesionEndTitleVisible) {
-        val day =
-            (Calendar.getInstance() as GregorianCalendar).toZonedDateTime().dayOfWeek.ordinal
-
+fun ScheduleLesionCard(schedule: Schedule = curSchedule!!) {
+    if (options?.scheduleDayLesionSettings?.lesionEndTitleVisible != false) {
         val nowTime = LocalTime.now()
 
         val nextSchedule = schedule.getClosestLesion(1)
@@ -39,24 +39,28 @@ fun ScheduleLesionCard(schedule: Schedule) {
             )
             val time = LocalTime.of(duration.toHours().toInt(), (duration.toMinutes() % 60).toInt())
 
-            DrawText("@@До конца пары: @$time@".colorize(), nextSchedule)
+                DrawText("@@До конца пары: @$time@".colorize(), nextSchedule, schedule)
             return
         }
 
-        DrawText("@Произошла ошибка@".colorize(), nextSchedule)
+        DrawText("@Произошла ошибка@".colorize(), nextSchedule,schedule)
     }
 }
 
 @Composable
-private fun DrawText(titleText: AnnotatedString, nextSchedule: String?) {
+private fun DrawText(titleText: AnnotatedString, nextSchedule: String?, schedule: Schedule) {
     Spacer(modifier = Modifier.padding(4.dp))
-    Text(
+    if (schedule.getClosestLesion() != null) {
+
+        Text(
         text = titleText,
         modifier = Modifier.fillMaxWidth(),
         textAlign = TextAlign.Center,
         style = MaterialTheme.typography.caption,
         color = MaterialTheme.colors.surface
     )
+    }
+
     Text(
         text = "Следующее занятие: @${nextSchedule ?: "Нет"}@".colorize(),
         modifier = Modifier.fillMaxWidth(),

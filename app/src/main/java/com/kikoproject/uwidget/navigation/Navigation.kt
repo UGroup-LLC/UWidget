@@ -42,7 +42,6 @@ fun NavigationSetup(
         composable(route = ScreenNav.Dashboard.route){
             DashboardActivity()
         }
-
         composable(route = ScreenNav.AllSchedulesNav.route){
             AllSchedulesActivity()
         }

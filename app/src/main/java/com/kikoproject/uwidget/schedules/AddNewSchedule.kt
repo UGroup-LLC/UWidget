@@ -35,6 +35,7 @@ import com.kikoproject.uwidget.dialogs.ShowSearchSelector
 import com.kikoproject.uwidget.main.curSchedule
 import com.kikoproject.uwidget.main.days
 import com.kikoproject.uwidget.main.navController
+import com.kikoproject.uwidget.main.prefs
 import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.models.schedules.defaultScheduleOption
 import com.kikoproject.uwidget.navigation.ScreenNav
@@ -380,7 +381,7 @@ fun AddSchedule() {
             } // Распологается
 
             item {
-                val stateDialog = mutableStateOf(false)
+                val stateDialog = remember{mutableStateOf(false)}
 
                 ShowLoadingDialog(state = stateDialog)
                 Button(
@@ -460,15 +461,14 @@ fun AddSchedule() {
                                                 tempMap,
                                                 code, // Генерация ключа приглашения
                                                 timeCardString,
-                                                categoryState.value.text,
-                                                defaultScheduleOption()
+                                                categoryState.value.text
                                             )
                                             createScheduleInRoomDB(schedule)
                                             createScheduleInDB(
                                                 schedule = schedule
                                             )
                                             curSchedule = schedule
-
+                                            prefs?.edit()?.putString("mainSchedule", curSchedule!!.ID)?.apply()
                                             stateDialog.value = false
 
                                             // Проверка локальная ли бд или по ссылке

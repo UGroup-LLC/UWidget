@@ -30,8 +30,8 @@ class BarcodeAnalyzer(
                 .setBarcodeFormats(
                     Barcode.FORMAT_QR_CODE,
                 ).build()
-            val scanner = BarcodeScanning.getClient()
-            val result = scanner.process(image)
+            val scanner = BarcodeScanning.getClient(options)
+            scanner.process(image)
                 // Успешно выполнено сканирование и найдено штрихкодов
                 .addOnSuccessListener { barcodes ->
                     barcodes.forEach { barcode ->

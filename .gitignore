@@ -27,3 +27,7 @@
 /key_store/zakup-i.key.jks
 /.idea/*
 /.idea/
+/build/sonar/.sonar_lock
+/app/release/app-release.apk
+/app/release/output-metadata.json
+/build/sonar/report-task.txt

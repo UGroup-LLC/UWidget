@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.main.curUser
 import com.kikoproject.uwidget.main.navController
@@ -24,6 +25,7 @@ import com.kikoproject.uwidget.objects.BackHeader
 import com.kikoproject.uwidget.objects.buttons.ScheduleButton
 import com.kikoproject.uwidget.objects.buttons.StandardButton
 import com.kikoproject.uwidget.objects.cards.CardIllustration
+import com.kikoproject.uwidget.objects.cards.RoundedCard
 
 /**
  * Содержит в себе все расписания пользователя и их настройку
@@ -83,12 +85,17 @@ fun AllSchedulesActivity() {
                     }
                     else{
                         item {
-                            CardIllustration(
-                                drawable = R.drawable.ic_undraw_void,
-                                primaryKeys = 4,
-                                secondaryKeys = 0,
-                                border = BorderStroke(0.dp, Color.Transparent)
-                            )
+                            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    CardIllustration(
+                                        R.drawable.ic_undraw_empty,
+                                        6,
+                                        3,
+                                        border = BorderStroke(0.dp, color = Color.Transparent)
+                                    )
+                                    RoundedCard(textColor = MaterialTheme.colors.surface, text = "В галактике нет расписаний", spacing = 2.sp)
+                                }
+                            }
                         }
                     }
                 }

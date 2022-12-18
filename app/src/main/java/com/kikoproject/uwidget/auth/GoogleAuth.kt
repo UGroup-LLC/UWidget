@@ -48,6 +48,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.kikoproject.uwidget.R
+import com.kikoproject.uwidget.main.roomDb
 import com.kikoproject.uwidget.networking.CheckUserInDB
 import com.kikoproject.uwidget.ui.theme.UWidgetTheme
 
@@ -176,7 +177,7 @@ private fun AllButtons(
             // Если получится так что уже зарегестрированный пользователь будет на этом экране он сможет выйти из аккаунта
             SignOutButton(account, context)
 
-            OutlinedButton(
+            /*OutlinedButton(
                 modifier = Modifier.padding(top = 10.dp),
                 onClick = {TODO("Сделать вход без аккаунта")},
                 border = BorderStroke(
@@ -188,7 +189,7 @@ private fun AllButtons(
                     text = "Продолжить без аккаунта",
                     color = textColor
                 )
-            }
+            }*/
         }
     }
 }
@@ -419,6 +420,7 @@ fun SignOutButton(account: MutableState<GoogleSignInAccount?>, context: Context)
             onClick = {
                 signOut(context = context) // Выходим из аккаунта
                 account.value = null // Чтобы скрыть кнопку
+                roomDb?.clearAllTables()
             },
             border = BorderStroke(
                 1.dp,

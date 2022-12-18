@@ -1,5 +1,6 @@
 package com.kikoproject.uwidget.objects
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +24,7 @@ import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.main.curUser
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.main.roomDb
+import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.ui.theme.MainThemes
 import com.kikoproject.uwidget.ui.theme.systemThemeIsEnabled
 import com.kikoproject.uwidget.ui.theme.themeAppMode
@@ -41,6 +43,9 @@ fun MainHeader(account: GoogleSignInAccount?) {
                     .requiredSize(36.dp)
                     .clip(CircleShape)
                     .weight(2f)
+                    .clickable {
+                        navController.navigate(ScreenNav.GoogleAuthNav.route)
+                    }
             )
         }
         Text(
@@ -67,9 +72,9 @@ fun MainHeader(account: GoogleSignInAccount?) {
             onClick = {
                 themeAppMode.value = !themeAppMode.value
                 systemThemeIsEnabled.value = true
-                val newGenOpt = roomDb.optionsDao().get()
+                val newGenOpt = roomDb!!.optionsDao().get()
                     .copy(Theme = themeAppMode.value, IsSystemColors = systemThemeIsEnabled.value)
-                roomDb.optionsDao().updateOption(newGenOpt)
+                roomDb!!.optionsDao().updateOption(newGenOpt)
             }, modifier = Modifier
                 .weight(2f)
                 .requiredSize(36.dp)
