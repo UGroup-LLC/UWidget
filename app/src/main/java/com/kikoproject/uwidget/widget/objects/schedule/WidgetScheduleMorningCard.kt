@@ -23,55 +23,54 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 @Composable
-fun WidgetScheduleMorningCard(schedule: Schedule = curSchedule!!, context: Context){
+fun WidgetScheduleMorningCard(schedule: Schedule = curSchedule!!, context: Context) {
     val day = (Calendar.getInstance() as GregorianCalendar).toZonedDateTime().dayOfWeek.ordinal
-    val lesion: String
+    var lesion: String
     var scheduleText = ""
+    Column {
 
-    // Отображение времени до первой пары
-    if (options?.scheduleMorningSettings?.beforeLesionVisible != false &&
-        schedule.Schedule[day.toString()]?.deleteWhitespaces()?.isNotEmpty() == true){
+        // Отображение времени до первой пары
+        if (options?.scheduleMorningSettings?.beforeLesionVisible != false &&
+            schedule.Schedule[day.toString()]?.deleteWhitespaces()?.isNotEmpty() == true
+        ) {
 
-        val nowTime = LocalTime.now()
-        val lesionTime = schedule.Time.first().toTimeRange().start.toLocalTime()
+            val nowTime = LocalTime.now()
+            val lesionTime = schedule.Time.first().toTimeRange().start.toLocalTime()
 
-        val duration = Duration.between(nowTime, lesionTime)
+            val duration = Duration.between(nowTime, lesionTime)
 
-        val time = LocalTime.of(duration.toHours().toInt(), (duration.toMinutes() % 60).toInt())
-        val formattedTime = time.format(DateTimeFormatter.ofPattern("HH:mm"))
+            val time = LocalTime.of(duration.toHours().toInt(), (duration.toMinutes() % 60).toInt())
+            val formattedTime = time.format(DateTimeFormatter.ofPattern("HH:mm"))
 
-        Spacer(modifier = GlanceModifier.padding(4.dp))
-        WidgetText(
-            text = "Время до первой пары",
-            schedule = schedule,
-            context = context,
-            options = options
-        )
-        WidgetText(
-            text = "@${formattedTime}@",
-            schedule = schedule,
-            context = context,
-            options = options
-        )
-    }
-
-    // Отображение первой пары
-    if (options?.scheduleMorningSettings?.nextPairVisible != false){
-        var title = "@@Первое занятие"
-        try {
-            lesion = schedule.Schedule[day.toString()]!!
-                .deleteWhitespaces()
-                .first()
-                .replace("..", " - ")
-
-            val time = schedule.Time.first().replace("..", " - ")
-            scheduleText = "@$time@ $lesion"
-        }
-        catch (exception: Exception){
-            title = "Сегодня занятий нет\n@Хорошего дня!@"
+            WidgetText(
+                text = "Время до первой пары",
+                schedule = schedule,
+                context = context,
+                options = options
+            )
+            WidgetText(
+                text = "@${formattedTime}@",
+                schedule = schedule,
+                context = context,
+                options = options
+            )
         }
 
-        Column() {
+        // Отображение первой пары
+        if (options?.scheduleMorningSettings?.nextPairVisible != false) {
+            var title = "@@Первое занятие"
+            try {
+                lesion = schedule.Schedule[day.toString()]!!
+                    .deleteWhitespaces()
+                    .first()
+                    .replace("..", " - ")
+
+                val time = schedule.Time.first().replace("..", " - ")
+                scheduleText = "@$time@ $lesion"
+            } catch (exception: Exception) {
+                title = "Сегодня занятий нет\n@Хорошего дня!@"
+            }
+            Spacer(modifier = GlanceModifier.padding(4.dp))
             WidgetText(
                 text = title,
                 schedule = schedule,

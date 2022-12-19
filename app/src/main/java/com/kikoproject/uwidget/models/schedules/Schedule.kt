@@ -27,12 +27,10 @@ fun defaultScheduleOption(): ScheduleOptions
     return ScheduleOptions(
         generalSettings = ScheduleGeneralSettings(
             backgroundColor = materialColors.background,
-            glassEffect= false,
             borderColor = materialColors.primary,
             borderThickness = 2,
             textColor = materialColors.surface,
-            textWeight = FontWeight.Normal,
-            textSecondaryColor = materialColors.primary.copy(0.3f)
+            textWeight = FontWeight.Normal
         ),
         scheduleMorningSettings = ScheduleMorningSettings(
             7,

@@ -9,6 +9,7 @@ import com.kikoproject.uwidget.auth.RegisterScreen
 import com.kikoproject.uwidget.main.DashboardActivity
 import com.kikoproject.uwidget.main.MainActivity
 import com.kikoproject.uwidget.main.OptionsActivity
+import com.kikoproject.uwidget.main.WidgetOptionsActivity
 import com.kikoproject.uwidget.permissions.CreateWidgetActivity
 import com.kikoproject.uwidget.schedules.*
 
@@ -59,6 +60,9 @@ fun NavigationSetup(
         }
         composable(route = ScreenNav.EditMembersNav.route){
             EditScheduleMembers()
+        }
+        composable(route = ScreenNav.WidgetOptionsNav.route){
+            WidgetOptionsActivity()
         }
 
         //permission

@@ -105,6 +105,7 @@ class MainActivity : ComponentActivity() {
 
 
             UWidgetTheme {
+                materialColors = MaterialTheme.colors
 
                 if (roomDb!!.optionsDao()
                         .get() == null
@@ -115,8 +116,6 @@ class MainActivity : ComponentActivity() {
                     val backgroundColor = MaterialTheme.colors.background
                     val errorColor = MaterialTheme.colors.error
                     val textColor = MaterialTheme.colors.surface
-
-                    materialColors = MaterialTheme.colors
 
                     roomDb!!.optionsDao().insertOption(
                         GeneralOptions(

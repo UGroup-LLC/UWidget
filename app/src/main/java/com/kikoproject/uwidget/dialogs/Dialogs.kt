@@ -39,10 +39,7 @@ import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
-import com.kikoproject.uwidget.main.curSchedule
-import com.kikoproject.uwidget.main.navController
-import com.kikoproject.uwidget.main.prefs
-import com.kikoproject.uwidget.main.roomDb
+import com.kikoproject.uwidget.main.*
 import com.kikoproject.uwidget.models.GeneralOptions
 import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.ScreenNav
@@ -485,6 +482,31 @@ fun ColorPicker(
                                             spacing = 0.sp
                                         )
                                     }
+                                }
+                            }
+                            item {
+                                Card(
+                                    shape = RoundedCornerShape(15.dp),
+                                    colors = CardDefaults.cardColors(containerColor = materialColors.primary),
+                                    modifier = Modifier
+                                        .size(50.dp)
+                                        .clickable {
+                                            oldColorsClick(genOptions, materialColors.primary)
+                                        }
+                                ) {
+                                }
+                            }
+                            item {
+                                Card(
+                                    shape = RoundedCornerShape(15.dp),
+                                    colors = CardDefaults.cardColors(containerColor = materialColors.background),
+                                    border = BorderStroke(1.dp, color = MaterialTheme.colors.surface),
+                                    modifier = Modifier
+                                        .size(50.dp)
+                                        .clickable {
+                                            oldColorsClick(genOptions, materialColors.background)
+                                        }
+                                ) {
                                 }
                             }
                             roomDb!!.optionsDao().get().let { genOptions ->

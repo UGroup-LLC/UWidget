@@ -15,8 +15,8 @@ android {
         applicationId "com.kikoproject.uwidget"
         minSdk 28
         targetSdk 33
-        versionCode 3
-        versionName "1.0.6 alpha privateTest"
+        versionCode 4
+        versionName "1.0.7 alpha privateTest"
 
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

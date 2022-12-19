@@ -27,6 +27,20 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget" />
         </receiver>
+        <service
+            android:name=".widget.WidgetUpdateService"
+            android:enabled="true"
+            android:exported="true">
+            <!-- Add an intent filter to allow the service to be started when the widget is added to the home screen -->
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".widget.CalibrateUpdateService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
         <activity
             android:name=".main.MainActivity"
             android:exported="true"

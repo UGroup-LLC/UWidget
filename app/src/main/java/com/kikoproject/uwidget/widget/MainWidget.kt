@@ -1,17 +1,21 @@
 package com.kikoproject.uwidget.widget
 
+import android.app.ActivityManager
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.RemoteViews
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.glance.GlanceModifier
-import androidx.glance.LocalContext
-import androidx.glance.appwidget.AndroidRemoteViews
-import androidx.glance.appwidget.GlanceAppWidget
-import androidx.glance.appwidget.GlanceAppWidgetReceiver
+import androidx.glance.*
+import androidx.glance.appwidget.*
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.layout.*
 import androidx.glance.text.FontWeight
@@ -33,8 +37,9 @@ import com.kikoproject.uwidget.time.getTimeZone
 import com.kikoproject.uwidget.utils.toStandardColor
 import com.kikoproject.uwidget.widget.objects.WidgetTitleSchedule
 import com.kikoproject.uwidget.widget.objects.schedule.WidgetScheduleBodyCard
-
-lateinit var textStyleCaption: TextStyle
+import kotlinx.coroutines.runBlocking
+import java.time.LocalDateTime
+import java.util.*
 
 class MainWidget : GlanceAppWidget() {
 
@@ -42,6 +47,9 @@ class MainWidget : GlanceAppWidget() {
     override fun Content() {
         val context = LocalContext.current
         Firebase.analytics
+        val service = Intent(context, CalibrateUpdateService::class.java)
+
+        context.startService(service)
 
         prefs = context.getSharedPreferences(
             context.packageName, Context.MODE_PRIVATE
@@ -57,17 +65,10 @@ class MainWidget : GlanceAppWidget() {
         }
 
         options = roomDb?.optionsDao()?.get()?.SchedulesOptions
-
+        androidx.glance.appwidget.R.layout.glance_list
         val timeZone = curSchedule?.getTimeZone()
-
-        BackgroundView(context)
-
-        LazyColumn(
-            modifier = GlanceModifier.fillMaxSize()
-                .padding(horizontal = 45.dp, vertical = 30.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            item {
+        BackgroundView(context) {
+            Column(modifier = GlanceModifier.padding(horizontal = 30.dp, vertical = 30.dp),) {
                 if (curSchedule != null && timeZone != null) {
                     WidgetTitleSchedule(
                         schedule = curSchedule!!,
@@ -80,9 +81,7 @@ class MainWidget : GlanceAppWidget() {
                         context = context
                     )
                 }
-            }
-            item { Spacer(modifier = GlanceModifier.padding(4.dp)) }
-            item {
+                Spacer(modifier = GlanceModifier.padding(4.dp))
                 if (timeZone != null) {
                     WidgetScheduleBodyCard(
                         schedule = curSchedule!!,
@@ -93,28 +92,37 @@ class MainWidget : GlanceAppWidget() {
             }
         }
     }
-}
 
-@Composable
-private fun BackgroundView(context: Context) {
-    val backgroundView =
-        RemoteViews(context.packageName, R.layout.widget_background_layout)
-    backgroundView.setInt(
-        R.id.backOfMainW,
-        "setColorFilter",
-        options?.generalSettings?.backgroundColor?.toArgb() ?: context.resources.getColor(R.color.statusBar)
-    )
-    backgroundView.setInt(
-        R.id.strokeMainW,
-        "setColorFilter",
-        options?.generalSettings?.borderColor?.toArgb() ?: context.resources.getColor(R.color.iconBack)
-    )
-    backgroundView.setViewPadding(R.id.backOfMainW, 5, 5, 5, 5)
 
-    AndroidRemoteViews(remoteViews = backgroundView)
+    @GlanceComposable
+    @Composable
+    private fun BackgroundView(context: Context, content: @Composable () -> Unit) {
+
+        val backgroundView =
+            RemoteViews(context.packageName, R.layout.widget_background_layout)
+
+        backgroundView.setInt(
+            R.id.backOfMainW,
+            "setColorFilter",
+            options?.generalSettings?.backgroundColor?.toArgb()
+                ?: context.resources.getColor(R.color.statusBar)
+        )
+        backgroundView.setInt(
+            R.id.strokeMainW,
+            "setColorFilter",
+            options?.generalSettings?.borderColor?.toArgb()
+                ?: context.resources.getColor(R.color.iconBack)
+        )
+        backgroundView.setViewPadding(R.id.backOfMainW, 5, 5, 5, 5)
+        AndroidRemoteViews(
+            remoteViews = backgroundView,
+            containerViewId = R.id.mainBack
+        ) {
+            content()
+        }
+    }
 }
 
 class MainWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget = MainWidget()
 }
-

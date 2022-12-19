@@ -113,3 +113,65 @@ fun ListItemColor(
         }
     }
 }
+
+@Composable
+fun ListItemColor(
+    title: String,
+    description: String,
+    changingColor: MutableState<Color>,
+    isEnabled: Boolean = false,
+    border: Boolean = false,
+    onChangeColor: (color: Color) -> Unit
+) {
+    val dialogVisible = remember {
+        mutableStateOf(false)
+    }
+
+    if (dialogVisible.value) {
+        ColorPicker(dialogVisible,
+            oldColorsClick = { genOptions, colorValue ->
+                changingColor.value = colorValue
+                dialogVisible.value = false
+                onChangeColor(colorValue)
+            }, applyColorClick = { genOptions, colorValue ->
+                dialogVisible.value = false
+                changingColor.value = colorValue // меняемый цвет
+                onChangeColor(colorValue)
+            })
+    }
+
+
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clip(RoundedCornerShape(5.dp))
+            .clickable {
+                dialogVisible.value = true
+            }
+    ) {
+        val switcherValue = remember {
+            mutableStateOf(isEnabled)
+        }
+        Column(modifier = Modifier.weight(1f)) {
+            Text(text = title, color = MaterialTheme.colors.surface.copy(0.8f), fontSize = 16.sp)
+            Text(
+                text = description,
+                color = MaterialTheme.colors.surface.copy(0.5f),
+                fontSize = 16.sp
+            )
+        }
+        Card(
+            modifier = Modifier.size(35.dp, 35.dp),
+            shape = CircleShape,
+            border = if (border) {
+                BorderStroke(1.dp, color = MaterialTheme.colors.surface)
+            } else {
+                BorderStroke(0.dp, color = Color.Transparent)
+            },
+            colors = CardDefaults.cardColors(containerColor = changingColor.value),
+        ) {
+
+        }
+    }
+}

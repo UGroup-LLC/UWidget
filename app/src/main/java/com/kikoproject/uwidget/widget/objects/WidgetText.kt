@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.Html
 import android.text.Spanned
 import android.widget.RemoteViews
+import android.widget.TextView
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -46,6 +47,7 @@ fun WidgetTitleText(
             )
         )
     )
+
     Box(modifier = GlanceModifier.fillMaxWidth()) {
         AndroidRemoteViews(remoteViews = textView)
     }
@@ -59,14 +61,14 @@ fun WidgetText(
     options: ScheduleOptions?,
     color: Color? = options?.generalSettings?.textColor
 ) {
-    val textView = RemoteViews(context.packageName, R.layout.widget_text_layout)
-    textView.setTextColor(
+    val remoteTextView = RemoteViews(context.packageName, R.layout.widget_text_layout)
+    remoteTextView.setTextColor(
         R.id.mainText,
         color?.toArgb()
             ?: Color.White.toArgb()
     )
     val colorText =
         text?.variablize(null)?.colorizeWidgetText(schedule = schedule)
-    textView.setTextViewText(R.id.mainText, Html.fromHtml(colorText))
-    AndroidRemoteViews(remoteViews = textView)
+    remoteTextView.setTextViewText(R.id.mainText, Html.fromHtml(colorText))
+    AndroidRemoteViews(remoteViews = remoteTextView)
 }

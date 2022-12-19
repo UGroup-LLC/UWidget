@@ -10,13 +10,10 @@ import androidx.compose.ui.text.font.FontWeight
  */
 data class ScheduleGeneralSettings(
     val backgroundColor: Color, // Цвета заднего фона виджета
-    val glassEffect: Boolean, // Эффект стекла в виджете TODO("НЕ ФАКТ ЧТО ЭТО ВОЗМОЖНО")
 
     val borderColor: Color, // Цвет окантовки виджета
     val borderThickness: Byte, // Размер окантовки виджета
 
     val textColor: Color, // Цвет текста виджета
     val textWeight: FontWeight, // Размер текста виджета
-
-    val textSecondaryColor: Color // Второстепенный цвет текста виджета
 )
