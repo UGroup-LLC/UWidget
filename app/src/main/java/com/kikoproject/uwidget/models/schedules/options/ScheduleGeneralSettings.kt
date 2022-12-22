@@ -15,5 +15,5 @@ data class ScheduleGeneralSettings(
     val borderThickness: Byte, // Размер окантовки виджета
 
     val textColor: Color, // Цвет текста виджета
-    val textWeight: FontWeight, // Размер текста виджета
+    val textSize: Byte // Размер текста виджета
 )

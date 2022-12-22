@@ -47,7 +47,7 @@ fun List<String>.distinctTime(schedules: List<String>): List<ClosedRange<LocalTi
 
     if (timeRanges != null && schedules.isNotEmpty()) {
         schedules.forEachIndexed { index, _ ->
-            if (schedules[pastIndex] != schedules[schedules.lastIndex] && index != 0 && index-1 <= timeRanges.lastIndex) {
+            if (schedules[pastIndex] != schedules[index] && index != 0 && index-1 <= timeRanges.lastIndex) {
                 returnTimeRange.add(timeRanges[pastIndex].start..timeRanges[index - 1].endInclusive)
                 pastIndex = index
             }

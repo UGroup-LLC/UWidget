@@ -49,7 +49,6 @@ fun WidgetScheduleEveningCard(schedule: Schedule = curSchedule!!, context: Conte
         if (!isArrayNotEmpty) {
             title = "На завтра занятий нет\n@Хорошего вечера!@"
         }
-        Column {
             Spacer(modifier = GlanceModifier.padding(4.dp))
             WidgetText(
                 text = title,
@@ -66,6 +65,5 @@ fun WidgetScheduleEveningCard(schedule: Schedule = curSchedule!!, context: Conte
                     options = options
                 )
             }
-        }
     }
 }

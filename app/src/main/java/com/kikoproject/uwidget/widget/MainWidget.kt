@@ -1,56 +1,43 @@
 package com.kikoproject.uwidget.widget
 
-import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import android.content.IntentFilter
 import android.util.Log
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.RelativeLayout
 import android.widget.RemoteViews
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED
+import androidx.core.content.ContextCompat.registerReceiver
 import androidx.glance.*
 import androidx.glance.appwidget.*
-import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.layout.*
-import androidx.glance.text.FontWeight
-import androidx.glance.text.Text
-import androidx.glance.text.TextAlign
-import androidx.glance.text.TextStyle
-import androidx.glance.unit.ColorProvider
-import androidx.room.Room
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.kikoproject.uwidget.R
-import com.kikoproject.uwidget.localdb.MainDataBase
 import com.kikoproject.uwidget.main.curSchedule
 import com.kikoproject.uwidget.main.options
 import com.kikoproject.uwidget.main.prefs
 import com.kikoproject.uwidget.main.roomDb
-import com.kikoproject.uwidget.models.schedules.options.ScheduleOptions
 import com.kikoproject.uwidget.time.getTimeZone
-import com.kikoproject.uwidget.utils.toStandardColor
 import com.kikoproject.uwidget.widget.objects.WidgetTitleSchedule
 import com.kikoproject.uwidget.widget.objects.schedule.WidgetScheduleBodyCard
-import kotlinx.coroutines.runBlocking
-import java.time.LocalDateTime
 import java.util.*
+
 
 class MainWidget : GlanceAppWidget() {
 
     @Composable
     override fun Content() {
         val context = LocalContext.current
-        Firebase.analytics
-        val service = Intent(context, CalibrateUpdateService::class.java)
 
-        context.startService(service)
-
+        val service = Intent(context, WidgetUpdateService::class.java)
+        try {
+            context.startService(service)
+        } catch (exception: Exception) {
+            Log.v("Widget", "Caught service error")
+        }
         prefs = context.getSharedPreferences(
             context.packageName, Context.MODE_PRIVATE
         )
@@ -68,7 +55,7 @@ class MainWidget : GlanceAppWidget() {
         androidx.glance.appwidget.R.layout.glance_list
         val timeZone = curSchedule?.getTimeZone()
         BackgroundView(context) {
-            Column(modifier = GlanceModifier.padding(horizontal = 30.dp, vertical = 30.dp),) {
+            Column(modifier = GlanceModifier.padding(horizontal = 30.dp, vertical = 30.dp)) {
                 if (curSchedule != null && timeZone != null) {
                     WidgetTitleSchedule(
                         schedule = curSchedule!!,
@@ -113,7 +100,13 @@ class MainWidget : GlanceAppWidget() {
             options?.generalSettings?.borderColor?.toArgb()
                 ?: context.resources.getColor(R.color.iconBack)
         )
-        backgroundView.setViewPadding(R.id.backOfMainW, 5, 5, 5, 5)
+        backgroundView.setViewPadding(
+            R.id.backOfMainW,
+            options!!.generalSettings.borderThickness.toInt(),
+            options!!.generalSettings.borderThickness.toInt(),
+            options!!.generalSettings.borderThickness.toInt(),
+            options!!.generalSettings.borderThickness.toInt()
+        )
         AndroidRemoteViews(
             remoteViews = backgroundView,
             containerViewId = R.id.mainBack

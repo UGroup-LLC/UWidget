@@ -59,11 +59,6 @@ fun DrawText(
     schedule: Schedule,
     options: ScheduleOptions?
 ) {
-    Column(
-        modifier = GlanceModifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
         if (schedule.getClosestLesion() != null) {
             WidgetText(
                 text = titleText,
@@ -78,5 +73,4 @@ fun DrawText(
             context = context,
             options = options
         )
-    }
 }

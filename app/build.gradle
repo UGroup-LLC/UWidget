@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId "com.kikoproject.uwidget"
-        minSdk 28
+        minSdk 26
         targetSdk 33
         versionCode 4
         versionName "1.0.7 alpha privateTest"
@@ -81,6 +81,9 @@ dependencies {
 
     implementation "io.github.vanpra.compose-material-dialogs:datetime:0.8.0-beta"
 
+    //ui
+    implementation 'com.github.SmartToolFactory:Compose-Colorful-Sliders:1.1.0'
+
     implementation "com.android.support:multidex:1.0.3"
     implementation "com.github.skydoves:colorpicker-compose:1.0.0"
     implementation 'com.github.devsideal:VectorChildFinder:1.0.0'
@@ -91,6 +94,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.work:work-runtime-ktx:2.7.1'
     kapt "androidx.room:room-compiler:$room_version"
     implementation 'org.jsoup:jsoup:1.14.3'
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.28.0"

@@ -3,6 +3,7 @@ package com.kikoproject.uwidget.widget.objects
 import android.content.Context
 import android.text.Html
 import android.text.Spanned
+import android.util.TypedValue.COMPLEX_UNIT_SP
 import android.widget.RemoteViews
 import android.widget.TextView
 import androidx.compose.runtime.Composable
@@ -31,12 +32,13 @@ fun WidgetTitleText(
     textView.setInt(
         R.id.titleView,
         "setColorFilter",
-        options?.generalSettings?.borderColor?.toStandardColor() ?: context.resources.getColor(R.color.iconBack)
+        options!!.generalSettings.borderColor.toStandardColor()
+            ?: context.resources.getColor(R.color.iconBack)
     )
 
     textView.setTextColor(
         R.id.titleText,
-        options?.generalSettings?.textColor?.toArgb()
+        options.generalSettings.textColor.toArgb()
             ?: Color.White.toStandardColor()
     )
     val colorText = text?.colorizeWidgetText(schedule = schedule)
@@ -46,6 +48,12 @@ fun WidgetTitleText(
                 schedule = schedule
             )
         )
+    )
+
+    textView.setTextViewTextSize(
+        R.id.titleText,
+        COMPLEX_UNIT_SP,
+        options.generalSettings.textSize.toFloat()
     )
 
     Box(modifier = GlanceModifier.fillMaxWidth()) {
@@ -69,6 +77,11 @@ fun WidgetText(
     )
     val colorText =
         text?.variablize(null)?.colorizeWidgetText(schedule = schedule)
+    remoteTextView.setTextViewTextSize(
+        R.id.mainText,
+        COMPLEX_UNIT_SP,
+        options!!.generalSettings.textSize.toFloat()
+    )
     remoteTextView.setTextViewText(R.id.mainText, Html.fromHtml(colorText))
     AndroidRemoteViews(remoteViews = remoteTextView)
 }

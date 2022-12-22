@@ -30,7 +30,7 @@ fun defaultScheduleOption(): ScheduleOptions
             borderColor = materialColors.primary,
             borderThickness = 2,
             textColor = materialColors.surface,
-            textWeight = FontWeight.Normal
+            textSize = 16
         ),
         scheduleMorningSettings = ScheduleMorningSettings(
             7,
