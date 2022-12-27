@@ -6,12 +6,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,7 +36,7 @@ import com.kikoproject.uwidget.ui.theme.themeAppMode
  */
 @Composable
 fun MainHeader(account: GoogleSignInAccount?) {
-    Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.Top) {
+    Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
         if (account != null) {
             Avatar(
                 user = curUser, modifier = Modifier
@@ -52,8 +52,8 @@ fun MainHeader(account: GoogleSignInAccount?) {
             text = "Главная",
             modifier = Modifier
                 .weight(10f),
-            color = MaterialTheme.colors.surface,
-            style = MaterialTheme.typography.h6
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.titleSmall
         )
 
 
@@ -98,7 +98,7 @@ fun MainHeader(account: GoogleSignInAccount?) {
  */
 @Composable
 fun BackHeader(text: String) {
-    Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.Top) {
+    Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
         IconButton(
             onClick = { navController.popBackStack() }, modifier = Modifier
                 .weight(2f)
@@ -107,7 +107,7 @@ fun BackHeader(text: String) {
             Icon(
                 imageVector = Icons.Rounded.ArrowBack,
                 contentDescription = null,
-                tint = MaterialTheme.colors.primary,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.requiredSize(24.dp)
             )
         }
@@ -115,8 +115,8 @@ fun BackHeader(text: String) {
             text = text,
             modifier = Modifier
                 .weight(10f),
-            color = MaterialTheme.colors.surface,
-            style = MaterialTheme.typography.h6
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.titleSmall
         )
         Spacer(modifier = Modifier.requiredSize(24.dp))
     }

@@ -4,10 +4,10 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,7 +35,7 @@ fun increaseButtons(
     inactiveColor: Color,
     activeColor: Color,
     fontSize: TextUnit = 12.sp
-) : Int{
+): Int {
     val activeButtonIndex = remember { mutableStateOf(0) }
 
     LazyRow {
@@ -57,8 +57,8 @@ fun increaseButtons(
                 onClick = {
                     activeButtonIndex.value = index
                 },
-                colors = ButtonDefaults.buttonColors(backgroundColor = if (index != activeButtonIndex.value) inactiveColor else activeColor),
-                elevation = ButtonDefaults.elevation(0.dp,0.dp,0.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = if (index != activeButtonIndex.value) inactiveColor else activeColor),
+                elevation = ButtonDefaults.buttonElevation(0.dp, 0.dp, 0.dp),
                 shape = RoundedCornerShape(
                     topStart = leftStrength,
                     bottomStart = leftStrength,
@@ -66,7 +66,7 @@ fun increaseButtons(
                     bottomEnd = rightStrength
                 )
             ) {
-                Text(text = text, color = MaterialTheme.colors.surface, fontSize = fontSize)
+                Text(text = text, color = MaterialTheme.colorScheme.onSurface, fontSize = fontSize)
             }
         }
     }

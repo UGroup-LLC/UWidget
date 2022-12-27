@@ -21,7 +21,6 @@ class BarcodeAnalyzer(
     @SuppressLint("UnsafeOptInUsageError")
     // Анализируем полученное изображение здесь
     override fun analyze(imageProxy: ImageProxy) {
-        val rotationDegrees = imageProxy.imageInfo.rotationDegrees
         val mediaImage = imageProxy.image
         if (mediaImage != null) {
             val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
@@ -45,8 +44,8 @@ class BarcodeAnalyzer(
                     Log.d("BARCODE", it.message.toString())
                 }
                 .addOnCompleteListener {
-                    mediaImage.close();
-                    imageProxy.close();
+                    mediaImage.close()
+                    imageProxy.close()
                 }
         }
     }

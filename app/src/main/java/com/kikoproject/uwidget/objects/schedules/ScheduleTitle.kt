@@ -1,29 +1,27 @@
 package com.kikoproject.uwidget.objects.schedules
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.kikoproject.uwidget.main.options
-import com.kikoproject.uwidget.models.User
 import com.kikoproject.uwidget.models.schedules.Schedule
-import com.kikoproject.uwidget.models.schedules.options.ScheduleOptions
 import com.kikoproject.uwidget.objects.text.colorize
 import com.kikoproject.uwidget.objects.text.variablize
 import com.kikoproject.uwidget.time.TimeZone
-import com.kikoproject.uwidget.utils.getCloseTimeRange
 import com.kikoproject.uwidget.utils.getClosestLesion
-import com.kikoproject.uwidget.utils.toTimeRange
-import java.time.LocalTime
 import java.util.*
 
 
 /**
  * Выбирает что за текст необходимо отображать в превью в заголовке
  *
- * @param user пользователь имя которого может отобразиться в заголовке
+ * @param schedule расписание
+ * @param timeZone временная зона дня
  *
  * @author Kiko
  */
@@ -53,9 +51,7 @@ fun TitleSchedule(schedule: Schedule, timeZone: TimeZone) {
     ) {
         Text(
             text = text?.colorize() ?: "Хорошего отдыха, @%n!@".variablize().colorize(),
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            style = MaterialTheme.typography.caption,
-            color = MaterialTheme.colors.surface
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
         )
     }
 }
@@ -68,11 +64,10 @@ fun TitleSchedule(schedule: Schedule, timeZone: TimeZone) {
  * @author Kiko
  */
 @Composable
-fun TitleSchedule(text: String) {
+fun TitleSchedule(text: String, color: Color = MaterialTheme.colorScheme.onSurface) {
     Text(
         text = text,
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-        style = MaterialTheme.typography.caption,
-        color = MaterialTheme.colors.surface
+        color = color,
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
     )
 }

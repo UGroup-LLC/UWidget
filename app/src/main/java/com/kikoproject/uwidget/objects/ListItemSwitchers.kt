@@ -2,7 +2,7 @@ package com.kikoproject.uwidget.objects
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -25,11 +25,16 @@ fun ListItemSwitcher(
             mutableStateOf(isEnabled)
         }
         Column(modifier = Modifier.weight(5f)) {
-            Text(text = title, color = MaterialTheme.colors.surface.copy(0.8f), fontSize = 16.sp)
+            Text(
+                text = title,
+                color = MaterialTheme.colorScheme.onSurface.copy(0.8f),
+                fontSize = 16.sp,
+                style = MaterialTheme.typography.labelMedium
+            )
             Text(
                 text = description,
-                color = MaterialTheme.colors.surface.copy(0.5f),
-                fontSize = 16.sp
+                color = MaterialTheme.colorScheme.onSurface.copy(0.5f),
+                style = MaterialTheme.typography.labelMedium
             )
         }
         Switch(
@@ -40,9 +45,9 @@ fun ListItemSwitcher(
                 content(switcherValue.value)
             },
             colors = SwitchDefaults.colors(
-                checkedThumbColor = MaterialTheme.colors.primary,
+                checkedThumbColor = MaterialTheme.colorScheme.primary,
                 checkedBorderColor = Color.Transparent,
-                checkedTrackColor = MaterialTheme.colors.primary.copy(0.25f),
+                checkedTrackColor = MaterialTheme.colorScheme.primary.copy(0.25f),
                 uncheckedThumbColor = Color.White.copy(0.6f),
                 uncheckedBorderColor = Color.Transparent,
                 uncheckedTrackColor = Color.Gray,

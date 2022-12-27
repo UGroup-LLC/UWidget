@@ -5,8 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Lock
@@ -37,7 +37,7 @@ fun AllSchedulesActivity() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colors.background)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(horizontal = 30.dp, vertical = 10.dp),
             contentAlignment = Alignment.TopCenter
         ) {
@@ -69,7 +69,7 @@ fun AllSchedulesActivity() {
                             modifier = Modifier
                                 .fillMaxWidth(0.6f)
                                 .padding(5.dp),
-                            color = MaterialTheme.colors.primary.copy(0.2f),
+                            color = MaterialTheme.colorScheme.primary.copy(0.2f),
                             thickness = 1.dp
                         )
                     }
@@ -93,7 +93,7 @@ fun AllSchedulesActivity() {
                                         3,
                                         border = BorderStroke(0.dp, color = Color.Transparent)
                                     )
-                                    RoundedCard(textColor = MaterialTheme.colors.surface, text = "В галактике нет расписаний", spacing = 2.sp)
+                                    RoundedCard(textColor = MaterialTheme.colorScheme.onSurface, text = "В галактике нет расписаний", spacing = 2.sp)
                                 }
                             }
                         }

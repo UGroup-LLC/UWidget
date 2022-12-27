@@ -52,7 +52,6 @@ fun WidgetScheduleEveningCard(schedule: Schedule = curSchedule!!, context: Conte
             Spacer(modifier = GlanceModifier.padding(4.dp))
             WidgetText(
                 text = title,
-                schedule = schedule,
                 context = context,
                 options = options
             )
@@ -60,7 +59,6 @@ fun WidgetScheduleEveningCard(schedule: Schedule = curSchedule!!, context: Conte
                 Spacer(modifier = GlanceModifier.padding(4.dp))
                 WidgetText(
                     text = scheduleText,
-                    schedule = schedule,
                     context = context,
                     options = options
                 )

@@ -13,7 +13,7 @@ data class ScheduleGeneralSettings(
 
     val borderColor: Color, // Цвет окантовки виджета
     val borderThickness: Byte, // Размер окантовки виджета
+    val isBorderVisible: Boolean, // Видимость обводки
 
-    val textColor: Color, // Цвет текста виджета
     val textSize: Byte // Размер текста виджета
 )

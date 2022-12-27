@@ -8,10 +8,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -76,12 +73,11 @@ fun JoinSchedule() {
         }
 
 
-        Box(
+        Surface(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colors.background)
-                .padding(horizontal = 15.dp, vertical = 10.dp),
-            contentAlignment = Alignment.TopCenter
+                .background(MaterialTheme.colorScheme.background)
+                .padding(horizontal = 15.dp, vertical = 10.dp)
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -94,14 +90,10 @@ fun JoinSchedule() {
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         Text(
-                            text = "Временно ввод кода расписаний недоступен",
-                            style = MaterialTheme.typography.caption,
-                            color = MaterialTheme.colors.surface
+                            text = "Временно ввод кода расписаний недоступен"
                         )
                         Text(
-                            text = "Времени до снятия бана: ${timeUntilBanIslifted.value}",
-                            style = MaterialTheme.typography.caption,
-                            color = MaterialTheme.colors.surface
+                            text = "Времени до снятия бана: ${timeUntilBanIslifted.value}"
                         )
 
                     }
@@ -109,12 +101,11 @@ fun JoinSchedule() {
             }
         }
     } else {
-        Box(
+        Surface(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colors.background)
-                .padding(horizontal = 15.dp, vertical = 10.dp),
-            contentAlignment = Alignment.TopCenter
+                .background(MaterialTheme.colorScheme.background)
+                .padding(horizontal = 15.dp, vertical = 10.dp)
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -128,9 +119,7 @@ fun JoinSchedule() {
                     ) {
 
                         Text(
-                            text = "Введите код приглашения ниже",
-                            style = MaterialTheme.typography.caption,
-                            color = MaterialTheme.colors.surface
+                            text = "Введите код приглашения ниже"
                         )
                         val isComplited = remember { mutableStateOf(false) }
 
@@ -196,10 +185,10 @@ fun JoinSchedule() {
                         .border(
                             2.dp,
                             color = if(isQrUsing.value && isQrError.value) {
-                                MaterialTheme.colors.error
+                                MaterialTheme.colorScheme.error
                             }
                             else{
-                                MaterialTheme.colors.primary
+                                MaterialTheme.colorScheme.primary
                             },
                             RoundedCornerShape(16.dp)
                         )
@@ -218,7 +207,7 @@ fun JoinSchedule() {
  * 6 полей для ввода кода (сами поля)
  * @author Kiko
  */
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun joinCodeInput(
     isError: MutableState<Boolean>,
@@ -304,7 +293,7 @@ fun joinCodeInput(
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     cursorColor = Color.Transparent,
                     errorCursorColor = Color.Transparent,
-                    textColor = MaterialTheme.colors.surface
+                    textColor = MaterialTheme.colorScheme.onSurface
                 )
             )
         }

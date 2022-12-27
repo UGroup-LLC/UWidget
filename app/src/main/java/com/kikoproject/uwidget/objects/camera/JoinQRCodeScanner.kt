@@ -12,11 +12,9 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
@@ -73,6 +71,7 @@ fun JoinQRCodeScanner(
                 val mainExecutor = ContextCompat.getMainExecutor(context)
 
                 coroutineScope.launch {
+
                     val cameraProvider = cameraProviderFuture.get()
                     try {
                         cameraProvider.unbindAll()
@@ -112,7 +111,7 @@ fun JoinQRCodeScanner(
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_no_camera),
                 contentDescription = null,
-                tint = MaterialTheme.colors.primary
+                tint = MaterialTheme.colorScheme.primary
             )
         }
     }

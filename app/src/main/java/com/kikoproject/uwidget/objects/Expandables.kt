@@ -7,7 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material3.*
@@ -38,25 +38,25 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExpandableTextHelper(
+    modifier: Modifier = Modifier,
     title: String,
     titleWeight: FontWeight = FontWeight.Medium,
     titleSize: TextUnit = 18.sp,
-    titleColor: Color = MaterialTheme.colors.surface,
+    titleColor: Color = MaterialTheme.colorScheme.onSurface,
     text: String,
     textAlign: TextAlign = TextAlign.Center,
     textWidthFraction: Float = 0.9f,
     textPadding: Dp = 10.dp,
     fontSize: TextUnit = 12.sp,
     textWeight: FontWeight = FontWeight.Thin,
-    textColor: Color = MaterialTheme.colors.surface,
-    cardColor: Color = MaterialTheme.colors.primary
+    textColor: Color = MaterialTheme.colorScheme.onSurface,
+    cardColor: Color = MaterialTheme.colorScheme.primary
 ) {
     val expandedState = remember { mutableStateOf(false) }
     val rotateState by animateFloatAsState(targetValue = if (expandedState.value) 180f else 0f)
 
     Card(
-        modifier = Modifier
-            .padding(bottom = 5.dp)
+        modifier = modifier.padding(bottom = 5.dp)
             .fillMaxWidth(0.8f)
             .animateContentSize(animationSpec = tween(durationMillis = 50, easing = LinearEasing)),
         border = BorderStroke(
@@ -74,31 +74,32 @@ fun ExpandableTextHelper(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = title,
-                    modifier = Modifier
-                        .weight(6f),
-                    color = titleColor,
-                    fontSize = titleSize,
-                    fontWeight = titleWeight,
-                    textAlign = TextAlign.Center
-                )
-                IconButton(
-                    onClick = { expandedState.value = !expandedState.value },
-                    modifier = Modifier
-                        .weight(1f)
-                        .rotate(rotateState)
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.ArrowDropDown,
-                        contentDescription = "Arrow dropdown",
-                        tint = titleColor,
-                        modifier = Modifier.weight(2f)
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = title,
+                        modifier = Modifier.fillMaxWidth(),
+                        color = titleColor,
+                        fontSize = titleSize,
+                        fontWeight = titleWeight,
+                        textAlign = TextAlign.Center
                     )
+                    Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier.fillMaxWidth()) {
+                        IconButton(
+                            onClick = { expandedState.value = !expandedState.value },
+                            modifier = Modifier
+                                .rotate(rotateState)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.ArrowDropDown,
+                                contentDescription = "Arrow dropdown",
+                                tint = titleColor
+                            )
+                        }
+                    }
                 }
             }
             if (expandedState.value) {
-                androidx.compose.material.Divider(
+                Divider(
                     modifier = Modifier
                         .fillMaxWidth(0.8f)
                         .padding(bottom = 5.dp), color = textColor.copy(alpha = 0.2f)

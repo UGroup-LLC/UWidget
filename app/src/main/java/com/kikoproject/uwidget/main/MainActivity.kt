@@ -9,12 +9,9 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Colors
-import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -49,7 +46,7 @@ var roomDb: MainDataBase? = null
 lateinit var curUser: User
 
 @SuppressLint("StaticFieldLeak")
-lateinit var materialColors: Colors
+lateinit var materialColors: ColorScheme
 
 @SuppressLint("StaticFieldLeak")
 var curSchedule: Schedule? = null // Расписание используемое для передачи в разные окна
@@ -57,11 +54,11 @@ var curSchedule: Schedule? = null // Расписание используемо
 @SuppressLint("StaticFieldLeak")
 var chosenByUserSchedule: Schedule? = null // Расписание используемое пользователем
 
+var options by mutableStateOf<ScheduleOptions?>(null)
+
 @SuppressLint("StaticFieldLeak")
 var prefs: SharedPreferences? = null
 
-@SuppressLint("StaticFieldLeak")
-var options: ScheduleOptions? = null
 
 @SuppressLint("StaticFieldLeak")
 var countOfBan = 0
@@ -81,13 +78,13 @@ val days = listOf(
 )
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         roomDb = Room.databaseBuilder(
-            applicationContext,
+            baseContext.applicationContext,
             MainDataBase::class.java, "main_database"
-        ).allowMainThreadQueries().build()
+        ).allowMainThreadQueries().fallbackToDestructiveMigration().build()
 
 
         setContent {
@@ -105,17 +102,17 @@ class MainActivity : ComponentActivity() {
 
 
             UWidgetTheme {
-                materialColors = MaterialTheme.colors
+                materialColors = MaterialTheme.colorScheme
 
                 if (roomDb!!.optionsDao()
                         .get() == null
                 ) { // Это возможно но ? убран чтобы не ебаться ибо инициализация все равно идет в начале и настройки должны быть созданы
-                    val primColor = MaterialTheme.colors.primary
-                    val primVarColor = MaterialTheme.colors.primaryVariant
-                    val secondaryColor = MaterialTheme.colors.secondary
-                    val backgroundColor = MaterialTheme.colors.background
-                    val errorColor = MaterialTheme.colors.error
-                    val textColor = MaterialTheme.colors.surface
+                    val primColor = MaterialTheme.colorScheme.primary
+                    val primVarColor = MaterialTheme.colorScheme.primaryContainer
+                    val secondaryColor = MaterialTheme.colorScheme.secondary
+                    val backgroundColor = MaterialTheme.colorScheme.background
+                    val errorColor = MaterialTheme.colorScheme.error
+                    val textColor = MaterialTheme.colorScheme.onSurface
 
                     roomDb!!.optionsDao().insertOption(
                         GeneralOptions(
@@ -163,7 +160,7 @@ fun Wait() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.background),
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.TopCenter
     ) {
     }

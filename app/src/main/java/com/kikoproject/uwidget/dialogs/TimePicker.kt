@@ -1,21 +1,26 @@
 package com.kikoproject.uwidget.dialogs
 
 import android.content.Context
+import android.content.Context.VIBRATOR_SERVICE
+import android.os.Vibrator
 import android.text.format.DateFormat
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
-import com.vanpra.composematerialdialogs.MaterialDialog
-import com.vanpra.composematerialdialogs.datetime.time.TimePickerDefaults
-import com.vanpra.composematerialdialogs.datetime.time.timepicker
-import com.vanpra.composematerialdialogs.rememberMaterialDialogState
+import androidx.core.content.ContextCompat.getSystemService
+import com.commandiron.wheel_picker_compose.WheelTimePicker
+import com.commandiron.wheel_picker_compose.core.TimeFormat
+import com.commandiron.wheel_picker_compose.core.WheelPickerDefaults
 import java.time.LocalTime
+
 
 /**
  * Открывает диалог получения времени
- * @param titleText Текст диалога
  * @param timePickerResult возвращает результат диалога в onResult
  *
  * @author Kiko
@@ -23,52 +28,28 @@ import java.time.LocalTime
 @Composable
 fun OpenTimePicker(
     context: Context,
-    titleText: String,
-    timePickerResult: TimePickerResult,
-    range: ClosedRange<LocalTime>
+    timePickerResult: TimePickerResult
 ) {
-    val dialogState = rememberMaterialDialogState()
-
     val is24Hour = DateFormat.is24HourFormat(context)
+    val haptic = LocalHapticFeedback.current
 
-    MaterialDialog(
-        shape = RoundedCornerShape(15.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colors.primary.copy(0.4f)),
-        backgroundColor = MaterialTheme.colors.background,
-        dialogState = dialogState,
-        elevation = 0.dp,
-        onCloseRequest = {
-            dialogState.hide()
-            timePickerResult.onClose()
-        },
-        buttons = {
-            positiveButton("Ок")
-            negativeButton("Отмена")
-        }
-    ) {
-
-        timepicker(
-            title = titleText, colors = TimePickerDefaults.colors(
-                activeBackgroundColor = MaterialTheme.colors.secondary,
-                inactiveBackgroundColor = MaterialTheme.colors.secondary.copy(0.4f),
-                activeTextColor = MaterialTheme.colors.primary,
-                inactiveTextColor = MaterialTheme.colors.primary.copy(0.6f),
-                inactivePeriodBackground = MaterialTheme.colors.background,
-                selectorColor = MaterialTheme.colors.primary.copy(0.6f),
-                selectorTextColor = MaterialTheme.colors.primary,
-                headerTextColor = MaterialTheme.colors.primary,
-                borderColor = MaterialTheme.colors.primary,
-            ),
-            timeRange = range,
-            is24HourClock = is24Hour
-        ) { time ->
-            dialogState.hide()
-            timePickerResult.onResult(time = time)
+    WheelTimePicker(
+        timeFormat = if (is24Hour) TimeFormat.HOUR_24 else TimeFormat.AM_PM,
+        textStyle = MaterialTheme.typography.titleSmall,
+        startTime = LocalTime.MIN,
+        selectorProperties = WheelPickerDefaults.selectorProperties(
+            enabled = true,
+            shape = RoundedCornerShape(16.dp),
+            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
+        )
+    ) { snappedTime ->
+        if(snappedTime != LocalTime.MIN) {
+            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+            timePickerResult.onResult(time = snappedTime)
         }
     }
-    dialogState.show()
 }
-
 /**
  * Интерфейс служащий для возврщения результата времени от TimePicker
  *

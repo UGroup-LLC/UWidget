@@ -44,13 +44,11 @@ fun WidgetScheduleMorningCard(schedule: Schedule = curSchedule!!, context: Conte
 
             WidgetText(
                 text = "Время до первой пары",
-                schedule = schedule,
                 context = context,
                 options = options
             )
             WidgetText(
                 text = "@${formattedTime}@",
-                schedule = schedule,
                 context = context,
                 options = options
             )
@@ -73,14 +71,12 @@ fun WidgetScheduleMorningCard(schedule: Schedule = curSchedule!!, context: Conte
             Spacer(modifier = GlanceModifier.padding(4.dp))
             WidgetText(
                 text = title,
-                schedule = schedule,
                 context = context,
                 options = options
             )
             if (scheduleText != "") {
                 WidgetText(
                     text = scheduleText,
-                    schedule = schedule,
                     context = context,
                     options = options
                 )

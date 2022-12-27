@@ -29,7 +29,7 @@ fun defaultScheduleOption(): ScheduleOptions
             backgroundColor = materialColors.background,
             borderColor = materialColors.primary,
             borderThickness = 2,
-            textColor = materialColors.surface,
+            isBorderVisible = true,
             textSize = 16
         ),
         scheduleMorningSettings = ScheduleMorningSettings(

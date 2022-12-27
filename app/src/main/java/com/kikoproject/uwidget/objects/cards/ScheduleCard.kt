@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -47,7 +45,7 @@ import androidx.compose.ui.unit.sp
 fun scheduleCardCreator(
 
     //card options
-    cardColor: Color = MaterialTheme.colors.surface,
+    cardColor: Color = MaterialTheme.colorScheme.onSurface,
     cardShapeRadius: Dp = 20.dp,
     cardBorderSize: Dp = 1.dp,
 
@@ -55,12 +53,12 @@ fun scheduleCardCreator(
     titleText: String,
     titleFontSize: TextUnit = 14.sp,
     titleFontWeight: FontWeight = FontWeight.Medium,
-    titleColor: Color = MaterialTheme.colors.surface,
+    titleColor: Color = MaterialTheme.colorScheme.onSurface,
 
     //divider options
-    dividerColor: Color = MaterialTheme.colors.surface,
+    dividerColor: Color = MaterialTheme.colorScheme.onSurface,
     //textfield
-    textFieldColor: Color = MaterialTheme.colors.surface
+    textFieldColor: Color = MaterialTheme.colorScheme.onSurface
 ): MutableList<MutableState<TextFieldValue>> {
     val states = remember { mutableListOf(mutableStateOf(TextFieldValue(text = ""))) }
     val count = remember {
@@ -120,11 +118,13 @@ fun scheduleCardCreator(
                         label = {
                             Text(
                                 text = "Поле ${index + 1}",
-                                color = textFieldColor.copy(alpha = 0.4f)
+                                color = textFieldColor.copy(alpha = 0.4f),
+                                style = MaterialTheme.typography.labelMedium
                             )
                         },
                         shape = RoundedCornerShape(16.dp),
-                        textStyle = TextStyle(color = textFieldColor)
+                        textStyle = MaterialTheme.typography.labelMedium
+
                     )
                 }
             }
@@ -161,7 +161,7 @@ fun scheduleCardCreator(
     cardsInt: Int,
 
     //card options
-    cardColor: Color = MaterialTheme.colors.surface,
+    cardColor: Color = MaterialTheme.colorScheme.onSurface,
     cardShapeRadius: Dp = 20.dp,
     cardBorderSize: Dp = 1.dp,
 
@@ -169,13 +169,13 @@ fun scheduleCardCreator(
     titleText: String,
     titleFontSize: TextUnit = 14.sp,
     titleFontWeight: FontWeight = FontWeight.Medium,
-    titleColor: Color = MaterialTheme.colors.surface,
+    titleColor: Color = MaterialTheme.colorScheme.onSurface,
 
     //divider options
-    dividerColor: Color = MaterialTheme.colors.surface,
+    dividerColor: Color = MaterialTheme.colorScheme.onSurface,
 
     //textfield
-    textFieldColor: Color = MaterialTheme.colors.surface
+    textFieldColor: Color = MaterialTheme.colorScheme.onSurface
 ): MutableList<MutableState<TextFieldValue>> {
     val states = mutableListOf<MutableState<TextFieldValue>>()
 

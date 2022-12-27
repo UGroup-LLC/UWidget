@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,8 +50,8 @@ fun OptionsActivity() {
             Text(
                 modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 12.dp),
                 text = "Настройки",
-                style = MaterialTheme.typography.h1,
-                color = MaterialTheme.colors.primary
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary
             )
             MainOptions(scrollState)
 
@@ -61,31 +61,37 @@ fun OptionsActivity() {
 }
 
 @Composable
-private fun AppInfoOptions(){
+private fun AppInfoOptions() {
     Text(
         "О приложении",
-        style = MaterialTheme.typography.h2,
-        color = MaterialTheme.colors.surface.copy(alpha = 0.8f),
-        modifier = Modifier.padding(0.dp,15.dp,0.dp,0.dp)
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+        modifier = Modifier.padding(0.dp, 15.dp, 0.dp, 0.dp)
     )
-    RoundedCard(textColor = MaterialTheme.colors.surface, text = "UWidget Version: ${BuildConfig.VERSION_NAME}(${BuildConfig.BUILD_TYPE})", spacing = 2.sp)
-    RoundedCard(textColor = MaterialTheme.colors.surface, text = "Created by UGroup 2022", spacing = 2.sp)
+    RoundedCard(
+        textColor = MaterialTheme.colorScheme.onSurface,
+        text = "UWidget Version: ${BuildConfig.VERSION_NAME}(${BuildConfig.BUILD_TYPE})",
+        spacing = 2.sp
+    )
+    RoundedCard(
+        textColor = MaterialTheme.colorScheme.onSurface,
+        text = "Created by UGroup 2022",
+        spacing = 2.sp
+    )
 
 }
 
 @Composable
-private fun MainOptions(scrollState: ScrollState){
+private fun MainOptions(scrollState: ScrollState) {
     Text(
         "Интерфейс",
-        style = MaterialTheme.typography.h2,
-        color = MaterialTheme.colors.surface.copy(alpha = 0.8f)
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
     )
 
     CardIllustration(R.drawable.ic_undraw_options_middle, 5, 14)
 
-    val amoledTheme = remember { mutableStateOf(false) }
-
-    if(systemThemeIsEnabled.value) {
+    if (systemThemeIsEnabled.value) {
         ListItemSwitcher(
             "Темная тема",
             "Включает темную тему",
@@ -97,7 +103,7 @@ private fun MainOptions(scrollState: ScrollState){
         }
     }
 
-    if(Build.VERSION.SDK_INT >= 31 && systemThemeIsEnabled.value) {
+    if (Build.VERSION.SDK_INT >= 31 && systemThemeIsEnabled.value) {
         ListItemSwitcher(
             "Движок Monet",
             "Включает цвета Android 12",

@@ -6,6 +6,7 @@ import android.widget.RemoteViews
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.core.content.ContextCompat
 import androidx.glance.appwidget.AndroidRemoteViews
 import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.main.curSchedule
@@ -47,7 +48,7 @@ fun WidgetTitleSchedule(schedule: Schedule, timeZone: TimeZone, context: Context
         || timeZone == TimeZone.DAY_LESION || timeZone == TimeZone.DAY_REST || timeZone == TimeZone.ERROR ||
         (timeZone == TimeZone.EVENING && options?.scheduleEveningSettings?.eveningTitleVisible != false)
     ) {
-        WidgetTitleText(text = text, schedule = schedule, context = context, options = options)
+        WidgetTitleText(text = text, context = context, options = options)
     }
 }
 
@@ -64,7 +65,7 @@ fun WidgetTitleSchedule(text: String, context: Context) {
     titleView.setInt(
         R.id.titleView,
         "setColorFilter",
-        options?.generalSettings?.borderColor?.toArgb() ?: context.resources.getColor(R.color.iconBack)
+        options?.generalSettings?.borderColor?.toArgb() ?: ContextCompat.getColor(context,R.color.iconBack)
     )
     titleView.setTextViewText(R.id.titleText, text)
     AndroidRemoteViews(remoteViews = titleView)

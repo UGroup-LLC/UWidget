@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,14 +34,12 @@ import com.kikoproject.uwidget.ui.theme.themeAppMode
 import com.kikoproject.uwidget.utils.toStandardColor
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListItemColor(
     title: String,
     description: String,
     colorType: MainColors,
     changingColor: MutableState<Color>,
-    isEnabled: Boolean = false,
     border: Boolean = false
 ) {
     val dialogVisible = remember {
@@ -88,22 +86,23 @@ fun ListItemColor(
                 dialogVisible.value = true
             }
     ) {
-        val switcherValue = remember {
-            mutableStateOf(isEnabled)
-        }
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = title, color = MaterialTheme.colors.surface.copy(0.8f), fontSize = 16.sp)
+            Text(
+                text = title,
+                color = MaterialTheme.colorScheme.onSurface.copy(0.8f),
+                fontSize = 16.sp
+            )
             Text(
                 text = description,
-                color = MaterialTheme.colors.surface.copy(0.5f),
-                fontSize = 16.sp
+                color = MaterialTheme.colorScheme.onSurface.copy(0.5f),
+                style = MaterialTheme.typography.labelMedium
             )
         }
         Card(
             modifier = Modifier.size(35.dp, 35.dp),
             shape = CircleShape,
             border = if (border) {
-                BorderStroke(1.dp, color = MaterialTheme.colors.surface)
+                BorderStroke(1.dp, color = MaterialTheme.colorScheme.onSurface)
             } else {
                 BorderStroke(0.dp, color = Color.Transparent)
             },
@@ -119,7 +118,6 @@ fun ListItemColor(
     title: String,
     description: String,
     changingColor: MutableState<Color>,
-    isEnabled: Boolean = false,
     border: Boolean = false,
     onChangeColor: (color: Color) -> Unit
 ) {
@@ -150,22 +148,23 @@ fun ListItemColor(
                 dialogVisible.value = true
             }
     ) {
-        val switcherValue = remember {
-            mutableStateOf(isEnabled)
-        }
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = title, color = MaterialTheme.colors.surface.copy(0.8f), fontSize = 16.sp)
+            Text(
+                text = title,
+                color = MaterialTheme.colorScheme.onSurface.copy(0.8f),
+                style = MaterialTheme.typography.labelMedium
+            )
             Text(
                 text = description,
-                color = MaterialTheme.colors.surface.copy(0.5f),
-                fontSize = 16.sp
+                color = MaterialTheme.colorScheme.onSurface.copy(0.5f),
+                style = MaterialTheme.typography.labelMedium
             )
         }
         Card(
             modifier = Modifier.size(35.dp, 35.dp),
             shape = CircleShape,
             border = if (border) {
-                BorderStroke(1.dp, color = MaterialTheme.colors.surface)
+                BorderStroke(1.dp, color = MaterialTheme.colorScheme.onSurface)
             } else {
                 BorderStroke(0.dp, color = Color.Transparent)
             },

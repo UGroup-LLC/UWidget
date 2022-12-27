@@ -9,8 +9,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -26,7 +26,6 @@ import com.kikoproject.uwidget.dialogs.ShowLoadingDialog
 import com.kikoproject.uwidget.main.*
 import com.kikoproject.uwidget.models.User
 import com.kikoproject.uwidget.models.schedules.Schedule
-import com.kikoproject.uwidget.models.schedules.defaultScheduleOption
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.ui.theme.MainColors
 import com.kikoproject.uwidget.ui.theme.monetEngineIsEnabled
@@ -66,6 +65,7 @@ fun CheckUserInDB(
                 override fun onResult(user: User?) {
                     if (user != null) {
                         curUser = user
+                        roomDb!!.userDao().insertUser(user)
                         state.value = false
 
                         // Проверит есть ли аккаунт в локальной БД и занесет если нет
@@ -205,7 +205,7 @@ fun MembersOnlineContent(
     } else {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
             CircularProgressIndicator(
-                color = MaterialTheme.colors.primary
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }
@@ -250,7 +250,6 @@ fun OnlineContent(
 
     if (showContent.value) {
         val visible = remember { mutableStateOf(true) }
-        val density = LocalDensity.current
         AnimatedVisibility(
             visible = visible.value,
             enter = fadeIn(),
@@ -260,9 +259,7 @@ fun OnlineContent(
         }
     } else {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-            CircularProgressIndicator(
-                color = MaterialTheme.colors.primary
-            )
+            CircularProgressIndicator()
         }
     }
 

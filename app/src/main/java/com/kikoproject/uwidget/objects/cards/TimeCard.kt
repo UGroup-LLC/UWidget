@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material3.*
@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kikoproject.uwidget.dialogs.OpenTimePicker
 import com.kikoproject.uwidget.dialogs.TimePickerResult
 import java.time.LocalTime
 
@@ -53,7 +54,7 @@ class TimeCard {
         cardsInt: Int,
 
         //card options
-        cardColor: Color = MaterialTheme.colors.surface,
+        cardColor: Color = MaterialTheme.colorScheme.onSurface,
         cardShapeRadius: Dp = 20.dp,
         cardBorderSize: Dp = 1.dp,
 
@@ -61,10 +62,10 @@ class TimeCard {
         titleText: String,
         titleFontSize: TextUnit = 14.sp,
         titleFontWeight: FontWeight = FontWeight.Medium,
-        titleColor: Color = MaterialTheme.colors.surface,
+        titleColor: Color = MaterialTheme.colorScheme.onSurface,
 
         //divider options
-        dividerColor: Color = MaterialTheme.colors.surface,
+        dividerColor: Color = MaterialTheme.colorScheme.onSurface,
     ): MutableList<MutableState<TextFieldValue>> {
         val states = mutableListOf<MutableState<TextFieldValue>>()
 
@@ -107,17 +108,23 @@ class TimeCard {
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     for (cardIndex: Int in 0..cardsInt) {
+                        Text(
+                            modifier = Modifier.padding(0.dp,8.dp,0.dp,0.dp),
+                            text = "Занятие ${cardIndex+1}",
+                            fontSize = titleFontSize,
+                            fontWeight = titleFontWeight,
+                            color = titleColor.copy(0.4f)
+                        )
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(7.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(7.dp)
                         ) {
-                            if(cardIndex == 0) { // Если это первая карточка времени то мы ставим интервал от мин до макс
-                                resTime.add(calendarButtons(context = context, LocalTime.MIN..LocalTime.MAX))
-                            }
-                            else {
-                                resTime.add(calendarButtons(context = context, resTime[cardIndex-1].endInclusive..LocalTime.MAX))
-                            }
+                            resTime.add(
+                                calendarButtons(
+                                    context = context,
+                                )
+                            )
                         }
                     }
                 }
@@ -128,16 +135,17 @@ class TimeCard {
 
     /**
      * Карточки с первоначальной иконкой календаря, а в последующем заменяемые на выбранное из диалога
-     * @param timeRange указывает на то какой интервал времени доступен пользователю
-
      * @author Kiko
      */
     @Composable
-    fun calendarButtons(context: Context, timeRange: ClosedRange<LocalTime>) : ClosedRange<LocalTime>{
+    fun calendarButtons(
+        context: Context,
+
+    ): ClosedRange<LocalTime> {
         /*
     Выбор времени начала урока и конца урока
      */
-        val returnTimeRange = remember{ mutableStateOf(LocalTime.MIN..LocalTime.MAX) }
+        val returnTimeRange = remember { mutableStateOf(LocalTime.MIN..LocalTime.MAX) }
 
         val timeFromDialog =
             remember {
@@ -154,94 +162,37 @@ class TimeCard {
             )
         }
 
-        // Здесь идет открытие диалогов для 2-ух кнопок
-        if (timeStateVisible[0].value) {
-            com.kikoproject.uwidget.dialogs.OpenTimePicker(
-                range = timeRange,
-                context = context,
-                titleText = "Выбор времени начала урока",
-                timePickerResult = object : TimePickerResult {
-                    override fun onResult(time: LocalTime) {
-                        timeFromDialog[0].value = time
-                        timeStateVisible[0].value = false
-                        returnTimeRange.value = time..returnTimeRange.value.endInclusive
-                    }
 
-                    override fun onClose() {
-                        timeStateVisible[0].value = false
-                    }
-                })
-        }
+        OpenTimePicker(
+            context = context,
+            timePickerResult = object : TimePickerResult {
+                override fun onResult(time: LocalTime) {
+                    timeFromDialog[0].value = time
+                    timeStateVisible[0].value = false
+                    returnTimeRange.value = time..returnTimeRange.value.endInclusive
+                }
 
-        if (timeStateVisible[1].value) {
-            com.kikoproject.uwidget.dialogs.OpenTimePicker(
-                context = context,
-                range = returnTimeRange.value,
-                titleText = "Выбор времени конца урока",
-                timePickerResult = object : TimePickerResult {
-                    override fun onResult(time: LocalTime) {
-                        timeFromDialog[1].value = time
-                        timeStateVisible[1].value = false
-                        returnTimeRange.value = returnTimeRange.value.start..time
-                    }
+                override fun onClose() {
+                    timeStateVisible[0].value = false
+                    timeStateVisible[1].value = false
+                }
+            })
 
-                    override fun onClose() {
-                        timeStateVisible[1].value = false
-                    }
-                })
-        }
+        OpenTimePicker(
+            context = context,
+            timePickerResult = object : TimePickerResult {
+                override fun onResult(time: LocalTime) {
+                    timeFromDialog[1].value = time
+                    timeStateVisible[1].value = false
+                    returnTimeRange.value = returnTimeRange.value.start..time
+                }
 
+                override fun onClose() {
+                    timeStateVisible[0].value = false
+                    timeStateVisible[1].value = false
+                }
+            })
 
-        OutlinedButton(onClick = {
-            timeStateVisible[0].value = true
-        }) {
-
-            if (timeFromDialog[0].value == LocalTime.MIN) {
-                Icon(
-                    imageVector = Icons.Rounded.DateRange,
-                    contentDescription = null,
-                    tint = MaterialTheme.colors.primary
-                )
-            } else {
-                Text(
-                    timeFromDialog[0].value.toString(),
-                    color = MaterialTheme.colors.primary
-                )
-            }
-        }
-
-        /*
-        Разделитель
-         */
-        Divider(
-            modifier = Modifier
-                .width(20.dp)
-                .padding(horizontal = 5.dp, vertical = 0.dp),
-            thickness = 1.dp,
-            color = MaterialTheme.colors.surface.copy(0.2f)
-        )
-        /*
-        Втораяя кнопка
-         */
-        OutlinedButton(onClick = {
-            timeStateVisible[1].value = true
-        }) {
-
-            if (timeFromDialog[1].value == LocalTime.MIN) {
-                Icon(
-                    imageVector = Icons.Rounded.DateRange,
-                    contentDescription = null,
-                    tint = MaterialTheme.colors.primary
-                )
-            } else {
-                Text(
-                    timeFromDialog[1].value.toString(),
-                    color = MaterialTheme.colors.primary
-                )
-            }
-
-
-        }
         return returnTimeRange.value
     }
 

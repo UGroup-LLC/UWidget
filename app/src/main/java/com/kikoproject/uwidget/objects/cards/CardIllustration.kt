@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,9 +33,9 @@ fun CardIllustration(
     drawable: Int,
     primaryKeys: Int,
     secondaryKeys: Int,
-    color: Color = MaterialTheme.colors.primary,
-    secColor: Color = MaterialTheme.colors.secondary,
-    border: BorderStroke = BorderStroke(2.dp, color = MaterialTheme.colors.surface.copy(0.4f))
+    color: Color = MaterialTheme.colorScheme.primary,
+    secColor: Color = MaterialTheme.colorScheme.secondary,
+    border: BorderStroke = BorderStroke(2.dp, color = MaterialTheme.colorScheme.onSurface.copy(0.4f))
 ) {
     Box(contentAlignment = Alignment.TopCenter) {
         Card(

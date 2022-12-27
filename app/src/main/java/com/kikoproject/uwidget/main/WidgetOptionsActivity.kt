@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -17,46 +15,57 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.glance.appwidget.updateAll
-import androidx.glance.text.FontWeight
 import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.objects.BackHeader
 import com.kikoproject.uwidget.objects.ListItemColor
+import com.kikoproject.uwidget.objects.ListItemSwitcher
+import com.kikoproject.uwidget.objects.home_widget.ScheduleHomeWidgetPreviewDialog
+import com.kikoproject.uwidget.ui.theme.systemThemeIsEnabled
 import com.kikoproject.uwidget.widget.MainWidget
 import com.smarttoolfactory.slider.MaterialSliderDefaults
 import com.smarttoolfactory.slider.SliderBrushColor
 import com.smarttoolfactory.slider.SliderWithLabel
 import kotlinx.coroutines.runBlocking
+import kotlin.math.roundToInt
 
 @Composable
 fun WidgetOptionsActivity() {
+    ScheduleHomeWidgetPreviewDialog {
+        MainWidgetOptionsContent()
+    }
+}
+
+@Composable
+private fun MainWidgetOptionsContent() {
     Column(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         val context = LocalContext.current
         //region Переменные
-        var options = roomDb?.optionsDao()?.get()
-        var sOptions = options?.SchedulesOptions!!
 
-        val generalOptions = sOptions.generalSettings
-        val morningOptions = sOptions.scheduleMorningSettings
-        val eveningOptions = sOptions.scheduleEveningSettings
-        val dayLesionOptions = sOptions.scheduleDayLesionSettings
-        val dayRestOptions = sOptions.scheduleDayRestSettings
+        val generalOptions = options!!.generalSettings
+        val morningOptions = options!!.scheduleMorningSettings
+        val eveningOptions = options!!.scheduleEveningSettings
+        val dayLesionOptions = options!!.scheduleDayLesionSettings
+        val dayRestOptions = options!!.scheduleDayRestSettings
 
         val backgroundColorOnError = Color(
-            context.resources.getColor(
+            ContextCompat.getColor(
+                context,
                 R.color.statusBar
             )
         )
         val borderColorOnError = Color(
-            context.resources.getColor(
+            ContextCompat.getColor(
+                context,
                 R.color.iconBack
             )
         )
@@ -64,64 +73,65 @@ fun WidgetOptionsActivity() {
 
         // Schedule General Settings
         val backgroundColor =
-            remember { mutableStateOf(generalOptions.backgroundColor ?: backgroundColorOnError) }
+            remember { mutableStateOf(generalOptions.backgroundColor) }
         val borderColor =
-            remember { mutableStateOf(generalOptions.borderColor ?: borderColorOnError) }
+            remember { mutableStateOf(generalOptions.borderColor) }
         val borderThickness =
             remember { mutableStateOf((generalOptions.borderThickness / 5).toByte()) }
-        val textColor = remember { mutableStateOf(generalOptions.textColor ?: Color.White) }
+        val isBorderVisible =
+            remember { mutableStateOf((generalOptions.isBorderVisible)) }
         val textSize =
-            remember { mutableStateOf((generalOptions.textSize) ?: 1.toByte()) }
+            remember { mutableStateOf((generalOptions.textSize)) }
         // ScheduleMorningSettings
-        val startMorningTime = remember { mutableStateOf(morningOptions.startMorningTime ?: 0) }
-        val morningTitle = remember { mutableStateOf(morningOptions.morningTitle ?: "") }
-        val morningVisible = remember { mutableStateOf(morningOptions.morningVisible ?: false) }
+        val startMorningTime = remember { mutableStateOf(morningOptions.startMorningTime) }
+        val morningTitle = remember { mutableStateOf(morningOptions.morningTitle) }
+        val morningVisible = remember { mutableStateOf(morningOptions.morningVisible) }
         val beforeLesionVisible =
-            remember { mutableStateOf(morningOptions.beforeLesionVisible ?: false) }
-        val nextPairVisible = remember { mutableStateOf(morningOptions.nextPairVisible ?: false) }
+            remember { mutableStateOf(morningOptions.beforeLesionVisible) }
+        val nextPairVisible = remember { mutableStateOf(morningOptions.nextPairVisible) }
         val showWentTimeVisible =
-            remember { mutableStateOf(morningOptions.showWentTimeVisible ?: false) }
-        val showMap = remember { mutableStateOf(morningOptions.showMap ?: false) }
+            remember { mutableStateOf(morningOptions.showWentTimeVisible) }
+        val showMap = remember { mutableStateOf(morningOptions.showMap) }
 
         // ScheduleEveningSettings
-        val eveningTitleText = remember { mutableStateOf(eveningOptions.eveningTitleText ?: "") }
+        val eveningTitleText = remember { mutableStateOf(eveningOptions.eveningTitleText) }
         val eveningTitleVisible =
-            remember { mutableStateOf(eveningOptions.eveningTitleVisible ?: false) }
+            remember { mutableStateOf(eveningOptions.eveningTitleVisible) }
         val allScheduleVisible =
-            remember { mutableStateOf(eveningOptions.allScheduleVisible ?: false) }
+            remember { mutableStateOf(eveningOptions.allScheduleVisible) }
         val additionalInfoVisible =
-            remember { mutableStateOf(eveningOptions.additionalInfoVisible ?: false) }
+            remember { mutableStateOf(eveningOptions.additionalInfoVisible) }
 
         // ScheduleDayRestSettings
         val lesionStartTitleVisible =
-            remember { mutableStateOf(dayRestOptions.lesionStartTitleVisible ?: false) }
+            remember { mutableStateOf(dayRestOptions.lesionStartTitleVisible) }
         val dayRestNextLesionVisible =
-            remember { mutableStateOf(dayRestOptions.nextLesionVisible ?: false) }
+            remember { mutableStateOf(dayRestOptions.nextLesionVisible) }
         val restCountVisible =
-            remember { mutableStateOf(dayRestOptions.restCountVisible ?: false) }
+            remember { mutableStateOf(dayRestOptions.restCountVisible) }
         val homeRestTimeVisible =
-            remember { mutableStateOf(dayRestOptions.homeTimeVisible ?: false) }
+            remember { mutableStateOf(dayRestOptions.homeTimeVisible) }
 
         // ScheduleDayLesionSettings
         val lesionEndTitleVisible =
-            remember { mutableStateOf(dayLesionOptions.lesionEndTitleVisible ?: false) }
+            remember { mutableStateOf(dayLesionOptions.lesionEndTitleVisible) }
         val dayLesionNextLesionVisible =
-            remember { mutableStateOf(dayLesionOptions.nextLesionVisible ?: false) }
+            remember { mutableStateOf(dayLesionOptions.nextLesionVisible) }
         val lesionCountVisible =
-            remember { mutableStateOf(dayLesionOptions.lesionCountVisible ?: false) }
+            remember { mutableStateOf(dayLesionOptions.lesionCountVisible) }
         val homeLesionTimeVisible =
-            remember { mutableStateOf(dayLesionOptions.homeTimeVisible ?: false) }
+            remember { mutableStateOf(dayLesionOptions.homeTimeVisible) }
 
         //endregion
         fun updateWidgetData() {
             roomDb?.optionsDao()?.updateOption(
                 roomDb?.optionsDao()?.get()!!.copy(
-                    SchedulesOptions = sOptions.copy(
+                    SchedulesOptions = options!!.copy(
                         generalSettings = generalOptions.copy(
                             backgroundColor = backgroundColor.value,
                             borderColor = borderColor.value,
                             borderThickness = (borderThickness.value.toInt() * 5).toByte(),
-                            textColor = textColor.value,
+                            isBorderVisible = isBorderVisible.value,
                             textSize = textSize.value
                         ),
                         scheduleMorningSettings = morningOptions.copy(
@@ -155,6 +165,7 @@ fun WidgetOptionsActivity() {
 
                 )
             )
+
             runBlocking {
                 MainWidget().updateAll(context)
             }
@@ -162,6 +173,7 @@ fun WidgetOptionsActivity() {
 
         val scrollState = rememberScrollState()
         BackHeader("")
+
         Column(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -172,14 +184,14 @@ fun WidgetOptionsActivity() {
             Text(
                 modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 12.dp),
                 text = "Основные настройки",
-                style = MaterialTheme.typography.h1,
-                color = MaterialTheme.colors.primary
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary
             )
             Text(
                 modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 12.dp),
                 text = "Цвета",
-                style = MaterialTheme.typography.h2,
-                color = MaterialTheme.colors.primary
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary
             )
             ListItemColor(
                 title = "Цвет фона",
@@ -198,41 +210,87 @@ fun WidgetOptionsActivity() {
                 updateWidgetData()
             }
             //region borderThickness slider
-            LazySlider(value = borderThickness,text = "Ширина обводки виджета", range = 0f..5f) {
+            LazySlider(
+                value = borderThickness,
+                text = "Ширина обводки виджета",
+                range = 0f..5f,
+                updatingContent = {
+                    options = options!!.copy(
+                        options!!.generalSettings.copy(borderThickness = (borderThickness.value * 5).toByte()),
+                        options!!.scheduleMorningSettings,
+                        options!!.scheduleDayLesionSettings,
+                        options!!.scheduleDayRestSettings,
+                        options!!.scheduleEveningSettings
+                    )
+                }) {
                 updateWidgetData()
             }
             //endregion
             //region textSize slider
-            LazySlider(value = textSize,text = "Размер текста виджета" ,range = 8f..24f) {
+            LazySlider(
+                value = textSize,
+                text = "Размер текста виджета",
+                range = 8f..24f,
+                updatingContent = {
+                    options = options!!.copy(
+                        options!!.generalSettings.copy(textSize = textSize.value),
+                        options!!.scheduleMorningSettings,
+                        options!!.scheduleDayLesionSettings,
+                        options!!.scheduleDayRestSettings,
+                        options!!.scheduleEveningSettings
+                    )
+                })
+            {
                 updateWidgetData()
             }
-            //endregion
-        }
 
+            ListItemSwitcher(
+                "Обводка",
+                "Включает обводку виджета",
+                isBorderVisible.value
+            ) { switchValue ->
+                isBorderVisible.value = switchValue
+                updateWidgetData()
+            }
+
+            //endregion
+
+        }
     }
 }
 
 @Composable
-private fun LazySlider(value: MutableState<Byte>,text: String, range: ClosedFloatingPointRange<Float>,content: () -> Unit) {
+private fun LazySlider(
+    value: MutableState<Byte>,
+    text: String,
+    range: ClosedFloatingPointRange<Float>,
+    updatingContent: () -> Unit = {},
+    content: () -> Unit
+) {
+    val haptic = LocalHapticFeedback.current
     val hideLabel = remember {
         mutableStateOf(true)
     }
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(
             text = text,
-            color = MaterialTheme.colors.surface.copy(0.8f),
-            fontSize = 16.sp
+            color = MaterialTheme.colorScheme.onSurface.copy(0.8f),
+            style = MaterialTheme.typography.labelMedium
         )
         SliderWithLabel(
             value = value.value.toFloat(), onValueChange = {
+                if (value.value.toInt() != it.roundToInt()) {
+                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                }
                 hideLabel.value = false
                 value.value =
-                    it.toInt().toByte()
+                    it.roundToInt().toByte()
+                updatingContent()
             },
-            valueRange = range, steps = (range.endInclusive-1).toInt(),
+            valueRange = range, steps = (range.endInclusive - 1).toInt(),
             colors = MaterialSliderDefaults.materialColors(
-                thumbColor = SliderBrushColor(color = MaterialTheme.colors.primary),
-                activeTrackColor = SliderBrushColor(color = MaterialTheme.colors.primary)
+                thumbColor = SliderBrushColor(color = MaterialTheme.colorScheme.primary),
+                activeTrackColor = SliderBrushColor(color = MaterialTheme.colorScheme.primary)
             ),
             onValueChangeFinished = {
                 hideLabel.value = true
@@ -243,7 +301,7 @@ private fun LazySlider(value: MutableState<Byte>,text: String, range: ClosedFloa
                     Text(
                         text = "${value.value}",
                         modifier = Modifier
-                            .background(MaterialTheme.colors.primary, shape = CircleShape)
+                            .background(MaterialTheme.colorScheme.primary, shape = CircleShape)
                             .padding(5.dp),
                         color = Color.White
                     )

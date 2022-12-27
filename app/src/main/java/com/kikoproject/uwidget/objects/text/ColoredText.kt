@@ -1,6 +1,6 @@
 package com.kikoproject.uwidget.objects.text
 
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -11,6 +11,7 @@ import androidx.compose.ui.text.withStyle
 import com.kikoproject.uwidget.main.options
 import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.models.schedules.options.ScheduleOptions
+import com.kikoproject.uwidget.ui.theme.themeTextColor
 
 /**
  * Возвращает раскрашенный текст
@@ -24,7 +25,11 @@ import com.kikoproject.uwidget.models.schedules.options.ScheduleOptions
  * @author Kiko
  */
 @Composable
-fun String.colorize(colorizeSymbol: Char = '@'): AnnotatedString {
+fun String.colorize(
+    colorizeSymbol: Char = '@',
+    colorPrimary: Color = MaterialTheme.colorScheme.primary,
+    colorOnSurface: Color = MaterialTheme.colorScheme.onSurface
+): AnnotatedString {
     if (this.contains(colorizeSymbol)) {
         val textParts = this.count { it == colorizeSymbol }
         if (textParts != 0) {
@@ -40,7 +45,7 @@ fun String.colorize(colorizeSymbol: Char = '@'): AnnotatedString {
                     returnString += buildAnnotatedString {
                         withStyle(
                             style = SpanStyle(
-                                color = if (index % 2 == 0) MaterialTheme.colors.primary else MaterialTheme.colors.surface
+                                color = if (index % 2 == 0) colorPrimary else colorOnSurface
                             )
                         ) {
                             append(if (index % 2 == 0) primaryArray[index] else secondArray[index])
@@ -50,7 +55,7 @@ fun String.colorize(colorizeSymbol: Char = '@'): AnnotatedString {
                     returnString += buildAnnotatedString {
                         withStyle(
                             style = SpanStyle(
-                                color = if (index % 2 != 0) MaterialTheme.colors.primary else MaterialTheme.colors.surface
+                                color = if (index % 2 != 0) colorPrimary else colorOnSurface
                             )
                         ) {
                             append(if (index % 2 != 0) primaryArray[index] else secondArray[index])
@@ -65,13 +70,14 @@ fun String.colorize(colorizeSymbol: Char = '@'): AnnotatedString {
     return buildAnnotatedString {
         withStyle(
             style = SpanStyle(
-                color = MaterialTheme.colors.surface
+                color = colorOnSurface
             )
         ) {
             append(this@colorize)
         }
     }
 }
+
 
 /**
  * Возвращает раскрашенный текст
@@ -85,7 +91,7 @@ fun String.colorize(colorizeSymbol: Char = '@'): AnnotatedString {
  * @author Kiko
  */
 @Composable
-fun String.colorizeWidgetText(colorizeSymbol: Char = '@', schedule: Schedule): String {
+fun String.colorizeWidgetText(colorizeSymbol: Char = '@'): String {
     val primaryColor = java.lang.String.format(
         "#%06X",
         (0xFFFFFF and (options?.generalSettings?.borderColor?.toArgb()
@@ -93,8 +99,7 @@ fun String.colorizeWidgetText(colorizeSymbol: Char = '@', schedule: Schedule): S
     )
     val surfaceColor = java.lang.String.format(
         "#%06X",
-        0xFFFFFF and (options?.generalSettings?.textColor?.toArgb()
-            ?: Color.White.toArgb())
+        0xFFFFFF and (themeTextColor().toArgb())
     )
 
     if (this.contains(colorizeSymbol)) {

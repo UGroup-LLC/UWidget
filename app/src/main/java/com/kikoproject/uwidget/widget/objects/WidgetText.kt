@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.core.text.HtmlCompat
 import androidx.glance.GlanceModifier
 import androidx.glance.appwidget.AndroidRemoteViews
 import androidx.glance.layout.Box
@@ -20,11 +21,11 @@ import com.kikoproject.uwidget.models.schedules.options.ScheduleOptions
 import com.kikoproject.uwidget.objects.text.colorizeWidgetText
 import com.kikoproject.uwidget.objects.text.variablize
 import com.kikoproject.uwidget.utils.toStandardColor
+import com.kikoproject.uwidget.widget.textThemeWidget
 
 @Composable
 fun WidgetTitleText(
     text: String?,
-    schedule: Schedule,
     context: Context,
     options: ScheduleOptions?
 ) {
@@ -33,20 +34,17 @@ fun WidgetTitleText(
         R.id.titleView,
         "setColorFilter",
         options!!.generalSettings.borderColor.toStandardColor()
-            ?: context.resources.getColor(R.color.iconBack)
     )
 
     textView.setTextColor(
         R.id.titleText,
-        options.generalSettings.textColor.toArgb()
-            ?: Color.White.toStandardColor()
+        textThemeWidget.toArgb()
     )
-    val colorText = text?.colorizeWidgetText(schedule = schedule)
+    val colorText = text?.colorizeWidgetText()
     textView.setTextViewText(
-        R.id.titleText, Html.fromHtml(
-            colorText ?: "Хорошего отдыха, @%n!@".variablize().colorizeWidgetText(
-                schedule = schedule
-            )
+        R.id.titleText, HtmlCompat.fromHtml(
+            colorText ?: "Хорошего отдыха, @%n!@".variablize().colorizeWidgetText(),
+            HtmlCompat.FROM_HTML_MODE_LEGACY
         )
     )
 
@@ -64,10 +62,9 @@ fun WidgetTitleText(
 @Composable
 fun WidgetText(
     text: String?,
-    schedule: Schedule,
     context: Context,
     options: ScheduleOptions?,
-    color: Color? = options?.generalSettings?.textColor
+    color: Color? = textThemeWidget
 ) {
     val remoteTextView = RemoteViews(context.packageName, R.layout.widget_text_layout)
     remoteTextView.setTextColor(
@@ -76,12 +73,15 @@ fun WidgetText(
             ?: Color.White.toArgb()
     )
     val colorText =
-        text?.variablize(null)?.colorizeWidgetText(schedule = schedule)
+        text?.variablize(null)?.colorizeWidgetText()
     remoteTextView.setTextViewTextSize(
         R.id.mainText,
         COMPLEX_UNIT_SP,
         options!!.generalSettings.textSize.toFloat()
     )
-    remoteTextView.setTextViewText(R.id.mainText, Html.fromHtml(colorText))
+    remoteTextView.setTextViewText(
+        R.id.mainText,
+        HtmlCompat.fromHtml(colorText ?: "", HtmlCompat.FROM_HTML_MODE_LEGACY)
+    )
     AndroidRemoteViews(remoteViews = remoteTextView)
 }

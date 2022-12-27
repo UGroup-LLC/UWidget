@@ -3,7 +3,7 @@ package com.kikoproject.uwidget.objects.schedules
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -52,18 +52,12 @@ fun ScheduleEveningCard(schedule: Schedule = curSchedule!!) {
         Spacer(modifier = Modifier.padding(4.dp))
         Text(
             text = title,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.caption,
-            color = MaterialTheme.colors.surface
+            modifier = Modifier.fillMaxWidth()
         )
         if (isArrayNotEmpty) {
             Text(
                 text = scheduleText.colorize(),
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.caption,
-                color = MaterialTheme.colors.surface
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }

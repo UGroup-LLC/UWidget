@@ -7,15 +7,17 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Info
@@ -29,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,6 +42,9 @@ import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import com.holix.android.bottomsheetdialog.compose.BottomSheetBehaviorProperties
+import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
+import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import com.kikoproject.uwidget.main.*
 import com.kikoproject.uwidget.models.GeneralOptions
 import com.kikoproject.uwidget.models.schedules.Schedule
@@ -56,17 +62,15 @@ import com.kikoproject.uwidget.utils.getSelectors
  */
 @Composable
 fun ShowLoadingDialog(state: MutableState<Boolean>) {
-    val textColor = MaterialTheme.colors.surface
     if (state.value) {
         AlertDialog(
             properties = DialogProperties(dismissOnClickOutside = false),
-            containerColor = MaterialTheme.colors.background,
+            containerColor = MaterialTheme.colorScheme.background,
             onDismissRequest = { state.value = false },
             title = {
                 Text(
                     text = "Подождите, идет загрузка",
                     textAlign = TextAlign.Center,
-                    color = textColor
                 )
             },
             text = {
@@ -77,8 +81,8 @@ fun ShowLoadingDialog(state: MutableState<Boolean>) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     LinearProgressIndicator(
-                        trackColor = MaterialTheme.colors.primaryVariant,
-                        color = MaterialTheme.colors.primary
+                        trackColor = MaterialTheme.colorScheme.primaryContainer,
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             },
@@ -91,7 +95,7 @@ fun ShowLoadingDialog(state: MutableState<Boolean>) {
                         state.value = false
                         navController.navigate(ScreenNav.GoogleAuthNav.route)
                     }) {
-                        Text(text = "Автономный режим", color = MaterialTheme.colors.secondary)
+                        Text(text = "Автономный режим", color = MaterialTheme.colorScheme.secondary)
                     }
                 }
             },
@@ -99,7 +103,7 @@ fun ShowLoadingDialog(state: MutableState<Boolean>) {
                 Icon(
                     imageVector = Icons.Rounded.KeyboardArrowDown,
                     contentDescription = null,
-                    tint = MaterialTheme.colors.primary
+                    tint = MaterialTheme.colorScheme.primary
                 )
             },
             confirmButton = {
@@ -180,17 +184,15 @@ fun ShowFoundResult(
     foundCollection: Pair<List<String>, List<String>>,
     result: ScheduleDialogSelector
 ) {
-    val textColor = MaterialTheme.colors.surface
     if (state.value) {
         AlertDialog(
             properties = DialogProperties(dismissOnClickOutside = false),
-            containerColor = MaterialTheme.colors.background,
+            containerColor = MaterialTheme.colorScheme.background,
             onDismissRequest = { state.value = false },
             title = {
                 Text(
                     text = "Надены совпадения",
-                    textAlign = TextAlign.Center,
-                    color = textColor
+                    textAlign = TextAlign.Center
                 )
             },
             text = {
@@ -207,11 +209,11 @@ fun ShowFoundResult(
                                 state.value = false
                             }, modifier = Modifier.padding(bottom = 10.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colors.primary
+                                containerColor = MaterialTheme.colorScheme.primary
                             ),
                             shape = RoundedCornerShape(20.dp)
                         ) {
-                            Text(text = foundItem, color = MaterialTheme.colors.secondary)
+                            Text(text = foundItem, color = MaterialTheme.colorScheme.secondary)
                         }
                     }
                 }
@@ -223,7 +225,7 @@ fun ShowFoundResult(
                 Icon(
                     imageVector = Icons.Rounded.Search,
                     contentDescription = null,
-                    tint = MaterialTheme.colors.primary
+                    tint = MaterialTheme.colorScheme.primary
                 )
             },
             confirmButton = {
@@ -243,14 +245,14 @@ fun ShowFoundResult(
 @Composable
 fun ShowErrorDialog(text: String, needButton: Boolean) {
     val state = remember { mutableStateOf(true) }
-    val textColor = MaterialTheme.colors.surface
+    val textColor = MaterialTheme.colorScheme.onSurface
     if (state.value) {
         AlertDialog(
             properties = DialogProperties(
                 dismissOnClickOutside = false,
                 dismissOnBackPress = false
             ),
-            containerColor = MaterialTheme.colors.background,
+            containerColor = MaterialTheme.colorScheme.background,
             onDismissRequest = { state.value = false },
             title = {
                 Text(
@@ -270,7 +272,7 @@ fun ShowErrorDialog(text: String, needButton: Boolean) {
                             state.value = false
                             navController.navigate(ScreenNav.GoogleAuthNav.route)
                         }) {
-                            Text(text = text, color = MaterialTheme.colors.secondary)
+                            Text(text = text, color = MaterialTheme.colorScheme.secondary)
                         }
                     }
                 }
@@ -279,7 +281,7 @@ fun ShowErrorDialog(text: String, needButton: Boolean) {
                 Icon(
                     imageVector = Icons.Rounded.Close,
                     contentDescription = null,
-                    tint = MaterialTheme.colors.primary
+                    tint = MaterialTheme.colorScheme.primary
                 )
             },
             confirmButton = {
@@ -300,20 +302,18 @@ fun ShowErrorDialog(text: String, needButton: Boolean) {
 @Composable
 fun ShowInfoDialog(text: String, buttonText: String, content: () -> Unit) {
     val state = remember { mutableStateOf(true) }
-    val textColor = MaterialTheme.colors.surface
     if (state.value) {
         AlertDialog(
             properties = DialogProperties(
                 dismissOnClickOutside = false,
                 dismissOnBackPress = false
             ),
-            containerColor = MaterialTheme.colors.background,
+            containerColor = MaterialTheme.colorScheme.background,
             onDismissRequest = { state.value = false },
             title = {
                 Text(
                     text = text,
-                    textAlign = TextAlign.Center,
-                    color = textColor
+                    textAlign = TextAlign.Center
                 )
             },
             text = {},
@@ -325,7 +325,7 @@ fun ShowInfoDialog(text: String, buttonText: String, content: () -> Unit) {
                     Button(onClick = {
                         content()
                     }) {
-                        Text(text = buttonText, color = MaterialTheme.colors.secondary)
+                        Text(text = buttonText, color = MaterialTheme.colorScheme.secondary)
                     }
                 }
             },
@@ -333,7 +333,7 @@ fun ShowInfoDialog(text: String, buttonText: String, content: () -> Unit) {
                 Icon(
                     imageVector = Icons.Rounded.Info,
                     contentDescription = null,
-                    tint = MaterialTheme.colors.primary
+                    tint = MaterialTheme.colorScheme.primary
                 )
             },
             confirmButton = {
@@ -406,11 +406,11 @@ fun ColorPicker(
                 dismissOnClickOutside = true,
                 dismissOnBackPress = true
             ),
-            containerColor = MaterialTheme.colors.background,
+            containerColor = MaterialTheme.colorScheme.background,
             onDismissRequest = { dialogVisibleState.value = false },
             title = {
                 RoundedCard(
-                    textColor = MaterialTheme.colors.surface,
+                    textColor = MaterialTheme.colorScheme.onSurface,
                     text = "Выберите цвет",
                     textSize = 16.sp,
                     spacing = 0.sp
@@ -452,8 +452,7 @@ fun ColorPicker(
                             ) {}
                             Text(
                                 text = colorHex.value.substring(2),
-                                modifier = Modifier.padding(0.dp, 5.dp, 5.dp, 0.dp),
-                                color = MaterialTheme.colors.surface
+                                modifier = Modifier.padding(0.dp, 5.dp, 5.dp, 0.dp)
                             )
                         }
                         LazyRow(
@@ -478,7 +477,7 @@ fun ColorPicker(
                                         RoundedCard(
                                             textColor = Color.White,
                                             text = "OLED",
-                                            textSize = 7.sp,
+                                            textSize = 6.sp,
                                             spacing = 0.sp
                                         )
                                     }
@@ -500,7 +499,10 @@ fun ColorPicker(
                                 Card(
                                     shape = RoundedCornerShape(15.dp),
                                     colors = CardDefaults.cardColors(containerColor = materialColors.background),
-                                    border = BorderStroke(1.dp, color = MaterialTheme.colors.surface),
+                                    border = BorderStroke(
+                                        1.dp,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    ),
                                     modifier = Modifier
                                         .size(50.dp)
                                         .clickable {
@@ -525,7 +527,7 @@ fun ColorPicker(
                                 } else {
                                     item {
                                         RoundedCard(
-                                            textColor = MaterialTheme.colors.surface,
+                                            textColor = MaterialTheme.colorScheme.onSurface,
                                             text = "Цветов пока нет",
                                             spacing = 0.sp
                                         )
@@ -541,9 +543,15 @@ fun ColorPicker(
                     onClick = {
                         dialogVisibleState.value = false
                     },
-                    border = BorderStroke(1.dp, MaterialTheme.colors.surface.copy(alpha = 0.1f))
+                    border = BorderStroke(
+                        1.dp,
+                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                    )
                 ) {
-                    Text(text = "Отмена", color = MaterialTheme.colors.surface.copy(alpha = 0.7f))
+                    Text(
+                        text = "Отмена",
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    )
                 }
             },
             icon = {},
@@ -553,9 +561,15 @@ fun ColorPicker(
                         applyColorClick(genOptions, colorValue.value)
                     },
 
-                    border = BorderStroke(1.dp, MaterialTheme.colors.surface.copy(alpha = 0.1f))
+                    border = BorderStroke(
+                        1.dp,
+                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                    )
                 ) {
-                    Text(text = "Принять", color = MaterialTheme.colors.surface.copy(alpha = 0.7f))
+                    Text(
+                        text = "Принять",
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    )
                 }
             }
         )
@@ -567,59 +581,63 @@ fun ColorPicker(
  *
  * @author Kiko
  */
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ShowSchedulePreviewDialog(
     dialogVisibleState: MutableState<Boolean>,
-    scheduleTitle: String,
     schedule: Schedule
 ) {
-    val textColor = MaterialTheme.colors.surface
 
     if (dialogVisibleState.value) {
-        AlertDialog(
-            properties = DialogProperties(
-                dismissOnClickOutside = true,
-                dismissOnBackPress = true,
-                usePlatformDefaultWidth = false
-            ),
-            containerColor = MaterialTheme.colors.background,
-            onDismissRequest = { dialogVisibleState.value = false },
-            title = {
-                Text(
-                    text = scheduleTitle,
-                    textAlign = TextAlign.Center,
-                    color = textColor
-                )
-            },
-            text = {
-                ScheduleBand(schedule = schedule)
-            },
-            dismissButton = {
-                OutlinedButton(
-                    onClick = {
-                        dialogVisibleState.value = false
-                    },
-                    border = BorderStroke(1.dp, MaterialTheme.colors.surface.copy(alpha = 0.1f))
+        BottomSheetDialog(
+            onDismissRequest = {
+                dialogVisibleState.value = false
+            }
+        ) {
+            Surface(
+                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Text(text = "Отмена", color = MaterialTheme.colors.surface.copy(alpha = 0.7f))
-                }
-            },
-            icon = {},
-            confirmButton = {
-                OutlinedButton(
-                    onClick = {
-                        curSchedule = schedule
-                        prefs?.edit()?.putString("mainSchedule", curSchedule!!.ID)?.apply()
-                        dialogVisibleState.value = false
-                        navController.popBackStack()
-                    },
+                    Box(modifier = Modifier.clip(CircleShape)) {
+                        Divider(
+                            modifier = Modifier
+                                .fillMaxWidth(0.2f)
+                                .padding(16.dp),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+                            thickness = 3.dp
+                        )
+                    }
+                    Text(
+                        schedule.Name,
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.padding(bottom = 16.dp))
 
-                    border = BorderStroke(1.dp, MaterialTheme.colors.surface.copy(alpha = 0.1f))
-                ) {
-                    Text(text = "Выбрать", color = MaterialTheme.colors.surface.copy(alpha = 0.7f))
+                    ScheduleBand(schedule = schedule)
+
+                    OutlinedButton(
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        onClick = {
+                            curSchedule = schedule
+                            prefs?.edit()?.putString("mainSchedule", curSchedule!!.ID)?.apply()
+                            dialogVisibleState.value = false
+                            navController.popBackStack()
+                        })
+                    {
+                        Text(
+                            text = "Выбрать",
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
                 }
-            },
-        modifier = Modifier.fillMaxWidth(0.9f))
+            }
+        }
     }
 }
+
+

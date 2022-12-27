@@ -13,8 +13,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
@@ -97,22 +97,21 @@ fun GoogleAuthScreen() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colors.background),
+                .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.TopStart
         ) {
             Column(
                 horizontalAlignment = Alignment.Start
             ) {
-                val textColor = MaterialTheme.colors.surface
 
                 // Весь текст где у нас правила использования приложения
-                LinkTermsText(textColor, context)
+                LinkTermsText(context)
 
                 // Текст по середине где описано для чего будет использован аккаунт
-                MainText(textColor)
+                MainText()
 
                 // Кнопки Входа и тд
-                AllButtons(context, launchSign, account, textColor)
+                AllButtons(context, launchSign, account)
             }
         }
     }
@@ -123,7 +122,6 @@ fun GoogleAuthScreen() {
  *
  * @param launchSign переменная для вызова авторизации через Google и возращающая результат
  * @param account аккаунт гугл (может быть null)
- * @param textColor цвет текста
  *
  * @author Kiko
  */
@@ -131,8 +129,7 @@ fun GoogleAuthScreen() {
 private fun AllButtons(
     context: Context,
     launchSign: ManagedActivityResultLauncher<Intent, ActivityResult>,
-    account: MutableState<GoogleSignInAccount?>,
-    textColor: Color
+    account: MutableState<GoogleSignInAccount?>
 ) {
     Box(
         modifier = Modifier
@@ -147,10 +144,10 @@ private fun AllButtons(
                 onClick = { googleSignIn(context, launchSign) },
                 border = BorderStroke(
                     1.dp,
-                    color = MaterialTheme.colors.primaryVariant.copy(alpha = 0.6f)
+                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f)
                 ),
                 colors = ButtonDefaults.buttonColors(
-                    MaterialTheme.colors.primaryVariant.copy(
+                    MaterialTheme.colorScheme.primaryContainer.copy(
                         alpha = 0.1f
                     )
                 )
@@ -158,7 +155,7 @@ private fun AllButtons(
                 Box(contentAlignment = Alignment.CenterStart) {
                     Image(
                         colorFilter = ColorFilter.tint(
-                            color = MaterialTheme.colors.primaryVariant,
+                            color = MaterialTheme.colorScheme.primaryContainer,
                             blendMode = BlendMode.SrcAtop
                         ),
                         painter = painterResource(id = R.drawable.google),
@@ -170,7 +167,7 @@ private fun AllButtons(
                 }
                 Text(
                     text = "Войти с помощью Google",
-                    color = MaterialTheme.colors.primaryVariant
+                    color = MaterialTheme.colorScheme.primaryContainer
                 )
             }
 
@@ -197,14 +194,13 @@ private fun AllButtons(
 /**
  * Основной текст в середине который поясняет зачем необходим аккаунт
  *
- * @param textColor цвет текста
- *
  * @author Kiko
  */
 @Composable
-private fun MainText(textColor: Color) {
+private fun MainText() {
+    val onSurfaceColor = MaterialTheme.colorScheme.onSurface
     Divider(
-        color = textColor.copy(alpha = 0.2f),
+        color = onSurfaceColor.copy(alpha = 0.2f),
         modifier = Modifier.padding(top = 20.dp, start = 30.dp, end = 30.dp)
     )
     Text(
@@ -213,7 +209,7 @@ private fun MainText(textColor: Color) {
         modifier = Modifier.padding(top = 20.dp, start = 50.dp, end = 50.dp),
         fontWeight = FontWeight.Medium,
         textAlign = TextAlign.Center,
-        color = textColor
+        color = onSurfaceColor
     )
     Text(
         text = "Вход в аккаунт Google будет использован UWidget для:\n• Индексации другими пользователями вашего аккаунта\n• Индексации вашего аккаунта системой\n• Создания публичных расписаний",
@@ -222,33 +218,30 @@ private fun MainText(textColor: Color) {
         modifier = Modifier.padding(top = 20.dp, start = 30.dp, end = 30.dp),
         fontWeight = FontWeight.Normal,
         textAlign = TextAlign.Start,
-        color = textColor.copy(alpha = 0.8f)
+        color = onSurfaceColor.copy(alpha = 0.8f)
     )
 }
 
 /**
  * Текст хедера где пользователю отображается кликабельный текст политики конфидициальности и тд.
  *
- * @param textColor цвет текста
- *
  * @author Kiko
  */
 @Composable
 private fun LinkTermsText(
-    textColor: Color,
     context: Context
 ) {
     val colorTextAnnotation = buildAnnotatedString {
         withStyle(
             style = SpanStyle(
-                color = textColor
+                color = MaterialTheme.colorScheme.onSurface
             )
         ) {
             append("Weclome to U")
         }
         withStyle(
             style = SpanStyle(
-                color = MaterialTheme.colors.primary
+                color = MaterialTheme.colorScheme.primary
             )
         ) {
             append("Widget")
@@ -258,7 +251,7 @@ private fun LinkTermsText(
     val linksTextAnnotation = buildAnnotatedString {
         withStyle(
             style = SpanStyle(
-                color = textColor
+                color = MaterialTheme.colorScheme.onSurface
             )
         ) {
             append("Продолжая, вы соглашаетесь с ")
@@ -270,7 +263,7 @@ private fun LinkTermsText(
         )
         withStyle(
             style = SpanStyle(
-                color = MaterialTheme.colors.primary,
+                color = MaterialTheme.colorScheme.primary,
                 textDecoration = TextDecoration.Underline
             )
         ) {
@@ -280,7 +273,7 @@ private fun LinkTermsText(
 
         withStyle(
             style = SpanStyle(
-                color = textColor
+                color = MaterialTheme.colorScheme.onSurface
             )
         ) {
             append("и с ")
@@ -293,7 +286,7 @@ private fun LinkTermsText(
 
         withStyle(
             style = SpanStyle(
-                color = MaterialTheme.colors.primary,
+                color = MaterialTheme.colorScheme.primary,
                 textDecoration = TextDecoration.Underline
             )
         ) {
@@ -309,7 +302,7 @@ private fun LinkTermsText(
         modifier = Modifier.padding(top = 20.dp, start = 30.dp),
         fontWeight = FontWeight.Medium,
         textAlign = TextAlign.Center,
-        color = textColor
+        color = MaterialTheme.colorScheme.onSurface
     )
     ClickableText(
         text = linksTextAnnotation,
@@ -413,7 +406,7 @@ fun LoadNextNav(context: Context, state: MutableState<Boolean>, account: GoogleS
  */
 @Composable
 fun SignOutButton(account: MutableState<GoogleSignInAccount?>, context: Context) { // Показывает кнопку выхода из аккаунта если юзер уже залогинен и находится в этом окне
-    val textColor = MaterialTheme.colors.surface
+    val textColor = MaterialTheme.colorScheme.onSurface
     if (account.value != null) {
         OutlinedButton(
             modifier = Modifier.padding(top = 10.dp),

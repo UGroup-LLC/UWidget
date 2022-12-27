@@ -4,8 +4,10 @@ import android.content.ContentValues.TAG
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
 import android.util.Base64
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -15,8 +17,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -58,7 +60,7 @@ import java.io.ByteArrayOutputStream
 @Composable
 fun RegisterScreen() {
     UWidgetTheme {
-        val textColor = MaterialTheme.colors.surface
+        val onSurfaceColor = MaterialTheme.colorScheme.onSurface
         val context = LocalContext.current
         val account = GoogleSignIn.getLastSignedInAccount(context)
         lateinit var customResizedBitmap: Bitmap
@@ -82,16 +84,21 @@ fun RegisterScreen() {
             customImageUri = uri
         }
         customImageUri?.let {
-            val source = ImageDecoder
-                .createSource(context.contentResolver, it)
-            customBitmap.value = ImageDecoder.decodeBitmap(source)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                val source = ImageDecoder
+                    .createSource(context.contentResolver, it)
+                customBitmap.value = ImageDecoder.decodeBitmap(source)
 
-            customBitmap.value?.let { btm ->
-                Image(
-                    bitmap = btm.asImageBitmap(),
-                    contentDescription = null,
-                    modifier = Modifier.size(400.dp)
-                )
+                customBitmap.value?.let { btm ->
+                    Image(
+                        bitmap = btm.asImageBitmap(),
+                        contentDescription = null,
+                        modifier = Modifier.size(400.dp)
+                    )
+                }
+            }
+            else{
+                Toast.makeText(context, "Доступно только с API 28+", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -100,7 +107,7 @@ fun RegisterScreen() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colors.background),
+                .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.TopCenter
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -108,12 +115,11 @@ fun RegisterScreen() {
                 Text(
                     text = "Введите данные профиля",
                     fontFamily = FontFamily(Font(R.font.gogh)),
-                    color = textColor,
                     fontSize = 24.sp
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
                 Divider(
-                    color = textColor.copy(alpha = 0.2f),
+                    color = onSurfaceColor.copy(alpha = 0.2f),
                     modifier = Modifier.fillMaxWidth(0.6f)
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
@@ -126,8 +132,7 @@ fun RegisterScreen() {
                     loading = {
                         // При загрузке показываем индикатор загрузки
                         CircularProgressIndicator(
-                            strokeWidth = 2.dp,
-                            color = MaterialTheme.colors.primary
+                            strokeWidth = 2.dp
                         )
                     },
                     success = {
@@ -155,7 +160,7 @@ fun RegisterScreen() {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(color = MaterialTheme.colors.primary)
+                                .background(color = MaterialTheme.colorScheme.primary)
                         ) {
                             if (account != null && account.givenName != null) {
                                 Text(
@@ -188,7 +193,7 @@ fun RegisterScreen() {
                 Text(
                     textAlign = TextAlign.Center,
                     text = "Отображаемый аватар\n(Нажмите для изменения)",
-                    color = textColor.copy(alpha = 0.4f)
+                    color = onSurfaceColor.copy(alpha = 0.4f)
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
 
@@ -205,7 +210,7 @@ fun RegisterScreen() {
                 }
 
                 // Поля для ввода
-                TextsInput(nameState, textColor, surnameState)
+                TextsInput(nameState, surnameState)
 
                 Spacer(modifier = Modifier.padding(4.dp))
 
@@ -231,11 +236,11 @@ fun RegisterScreen() {
                         }
                         navController.navigate(ScreenNav.Dashboard.route)
                     }, colors = ButtonDefaults.buttonColors(
-                        MaterialTheme.colors.primaryVariant
+                        MaterialTheme.colorScheme.primaryContainer
                     ),
                     modifier = Modifier.fillMaxWidth(0.7f)
                 ) {
-                    Text(text = "Подтвердить выбор", color = MaterialTheme.colors.secondary)
+                    Text(text = "Подтвердить выбор", color = MaterialTheme.colorScheme.secondary)
                 }
             }
         }
@@ -247,27 +252,26 @@ fun RegisterScreen() {
  *
  * @param nameState Введенное имя пользователя
  * @param surnameState Введенная фамилия пользователя
- * @param textColor цвет текста
  *
  * @author Kiko
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TextsInput(
     nameState: MutableState<TextFieldValue>,
-    textColor: Color,
     surnameState: MutableState<TextFieldValue>
 ) {
+    val onSurfaceColor = MaterialTheme.colorScheme.onSurface
     OutlinedTextField(
         value = nameState.value,
         onValueChange = { nameState.value = it },
         label = {
             Text(
                 text = "Введите отображаемое имя",
-                color = textColor.copy(alpha = 0.4f)
+                color = onSurfaceColor.copy(alpha = 0.4f)
             )
         },
-        shape = RoundedCornerShape(16.dp),
-        textStyle = TextStyle(color = textColor)
+        shape = RoundedCornerShape(16.dp)
     )
     Spacer(modifier = Modifier.padding(4.dp))
     OutlinedTextField(
@@ -276,11 +280,10 @@ private fun TextsInput(
         label = {
             Text(
                 text = "Введите отображаемую фамилию",
-                color = textColor.copy(alpha = 0.4f)
+                color = onSurfaceColor.copy(alpha = 0.4f)
             )
         },
-        shape = RoundedCornerShape(16.dp),
-        textStyle = TextStyle(color = textColor)
+        shape = RoundedCornerShape(16.dp)
     )
 }
 
@@ -307,7 +310,7 @@ fun sendToDBMainInfo(
         "id" to account.id
     )
     db.collection("users").document(account.id.toString()).set(user)
-        .addOnSuccessListener { documentReference ->
+        .addOnSuccessListener {
             Log.d(TAG, "DocumentSnapshot setted")
             navController.navigate(ScreenNav.Dashboard.route)
         }

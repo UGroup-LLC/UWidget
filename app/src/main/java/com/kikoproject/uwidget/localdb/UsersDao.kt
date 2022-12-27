@@ -10,12 +10,12 @@ import com.kikoproject.uwidget.models.User
 @Dao
 interface UsersDao {
     @Query("SELECT * FROM users")
-    fun getAll(): List<User>
+    fun get(): User
 
     @Query("SELECT * FROM users WHERE id LIKE :userId")
     fun findById(userId: String): User?
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertUser(vararg user: User)
 
     @Delete

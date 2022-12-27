@@ -29,7 +29,7 @@ fun WidgetScheduleLesionCard(schedule: Schedule = curSchedule!!, context: Contex
                 nowTime,
                 endLesionTime?.endInclusive ?: LocalTime.MAX
             )
-            val time = LocalTime.of(duration.toHours().toInt(), (duration.toMinutes() % 60).toInt())
+            val time = LocalTime.of(duration.toHours().toInt(), (duration.toMinutes()+1 % 60).toInt())
 
             DrawText(
                 titleText = "@@До конца пары: @$time@",
@@ -62,14 +62,12 @@ fun DrawText(
         if (schedule.getClosestLesion() != null) {
             WidgetText(
                 text = titleText,
-                schedule = schedule,
                 context = context,
                 options = options
             )
         }
         WidgetText(
             text = "Следующее занятие: @${nextSchedule ?: "Нет"}@",
-            schedule = schedule,
             context = context,
             options = options
         )

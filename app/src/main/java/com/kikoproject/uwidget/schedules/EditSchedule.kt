@@ -8,9 +8,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.*
@@ -31,7 +28,6 @@ import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.main.curSchedule
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.models.schedules.Schedule
-import com.kikoproject.uwidget.models.schedules.defaultScheduleOption
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.createScheduleInDB
 import com.kikoproject.uwidget.networking.createScheduleInRoomDB
@@ -53,7 +49,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun EditSchedule() {
 
-    val textColor = MaterialTheme.colors.surface
+    val textColor = MaterialTheme.colorScheme.onSurface
     var nameState = remember { mutableStateOf(TextFieldValue("Error")) }
     var categoryState = remember { mutableStateOf(TextFieldValue("Error")) }
     var schedulesState = remember { mutableListOf<MutableList<String>>() }
@@ -74,7 +70,7 @@ fun EditSchedule() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.background),
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.TopCenter
     ) {
         InfoBar(offeredMessage = message) {
@@ -145,7 +141,7 @@ fun EditSchedule() {
                     title = "Что такое категория?",
                     text = "Если у вас множество расписаний, вы можете сгруппировать их в одну категорию (Например: Колледж моды - 1 курс), если вам не нужна категория оставьте поле пустым"
                 )
-                val primaryColor = MaterialTheme.colors.primary
+                val primaryColor = MaterialTheme.colorScheme.primary
 
                 Text(
                     text = "Способ получения расписания",
@@ -199,7 +195,7 @@ fun EditSchedule() {
                                 titleSize = 12.sp,
                                 titleColor = textColor.copy(alpha = 0.25f),
                                 fontSize = 14.sp,
-                                title = "Как заполнить расписание?",
+                                title = "Как заполнить?",
                                 text = "Заполните ваше расписание на каждый день, если у вас есть окна между парами/уроками поставьте пробел для создания доп. поля. Поля будут создаваться бесконечно, поэтому последнее поле всегда будет пустым."
                             )
                         }
@@ -345,7 +341,7 @@ fun EditSchedule() {
                                         )
                                     },
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colors.primary.copy(
+                                        containerColor = MaterialTheme.colorScheme.primary.copy(
                                             alpha = 0.5f
                                         )
                                     ),
@@ -441,7 +437,7 @@ fun EditSchedule() {
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colors.primary.copy(
+                        containerColor = MaterialTheme.colorScheme.primary.copy(
                             alpha = 0.5f
                         )
                     ),
@@ -449,7 +445,7 @@ fun EditSchedule() {
                     Text(
                         text = "Изменить расписание",
                         color = textColor,
-                        style = Typography.button
+                        style = Typography.bodyMedium
                     )
                 }
 
@@ -473,7 +469,7 @@ fun EditSchedule() {
                         Text(
                             text = "Удалить расписание",
                             color = Color.White,
-                            style = Typography.button
+                            style = Typography.bodyMedium
                         )
                     }
                 }

@@ -3,7 +3,7 @@ package com.kikoproject.uwidget.objects.buttons
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.kikoproject.uwidget.R
@@ -38,10 +39,15 @@ import com.kikoproject.uwidget.objects.Avatar
  * @author Kiko
  */
 @Composable
-fun ScheduleButton(schedule: Schedule, isAdmin: Boolean, scheduleAdmin: List<Schedule>, scheduleUser: List<Schedule>) {
-    val showDialog = remember{mutableStateOf(false)}
-    if(showDialog.value){
-        ShowSchedulePreviewDialog(showDialog, schedule.Name, schedule)
+fun ScheduleButton(
+    schedule: Schedule,
+    isAdmin: Boolean,
+    scheduleAdmin: List<Schedule>,
+    scheduleUser: List<Schedule>
+) {
+    val showDialog = remember { mutableStateOf(false) }
+    if (showDialog.value) {
+        ShowSchedulePreviewDialog(showDialog, schedule)
     }
 
     Button(
@@ -52,9 +58,9 @@ fun ScheduleButton(schedule: Schedule, isAdmin: Boolean, scheduleAdmin: List<Sch
         },
         shape = RoundedCornerShape(17.dp),
         border = BorderStroke(0.dp, Color.Transparent),
-        elevation = ButtonDefaults.elevation(0.dp, 0.dp, 0.dp),
+        elevation = ButtonDefaults.buttonElevation(0.dp, 0.dp, 0.dp),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = MaterialTheme.colors.primary.copy(
+            containerColor = MaterialTheme.colorScheme.primary.copy(
                 0.15f
             )
         ),
@@ -66,9 +72,9 @@ fun ScheduleButton(schedule: Schedule, isAdmin: Boolean, scheduleAdmin: List<Sch
         ) {
             Text(
                 text = schedule.Name,
-                style = MaterialTheme.typography.button,
-                color = MaterialTheme.colors.surface,
-                modifier = Modifier.weight(4f)
+                modifier = Modifier.weight(4f),
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.Medium
             )
             FloatingActionButton(
                 onClick = {
@@ -76,7 +82,10 @@ fun ScheduleButton(schedule: Schedule, isAdmin: Boolean, scheduleAdmin: List<Sch
                         curSchedule = schedule
                         navController.navigate(ScreenNav.EditScheduleMenuNav.route)
                     } else {
-                        val nextSchedule = getNextUserSchedule(mySchedulesUser = scheduleUser, mySchedulesAdmin = scheduleAdmin)
+                        val nextSchedule = getNextUserSchedule(
+                            mySchedulesUser = scheduleUser,
+                            mySchedulesAdmin = scheduleAdmin
+                        )
                         if (nextSchedule != null) {
                             prefs?.edit()?.putString(nextSchedule.ID, "null")?.apply()
                             curSchedule = nextSchedule
@@ -85,13 +94,12 @@ fun ScheduleButton(schedule: Schedule, isAdmin: Boolean, scheduleAdmin: List<Sch
                             navController.navigate(ScreenNav.Dashboard.route)
                         }
                         outFromSchedule(schedule = schedule, userId = curUser.Id)
-
                     }
                 },
                 modifier = Modifier
                     .requiredSize(45.dp)
                     .weight(0.75f),
-                backgroundColor = MaterialTheme.colors.primary,
+                containerColor = MaterialTheme.colorScheme.primary,
                 shape = RoundedCornerShape(15.dp)
             ) {
                 val icon =
@@ -131,9 +139,11 @@ fun UserButton(schedule: Schedule, user: User) {
         Card(
             shape = RoundedCornerShape(17.dp),
             border = BorderStroke(0.dp, Color.Transparent),
-            elevation = 0.dp,
-            backgroundColor = MaterialTheme.colors.primary.copy(
-                0.15f
+            elevation = CardDefaults.cardElevation(0.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primary.copy(
+                    0.15f
+                )
             ),
             modifier = Modifier.fillMaxWidth(1f)
         ) {
@@ -145,8 +155,8 @@ fun UserButton(schedule: Schedule, user: User) {
 
                 Text(
                     text = user.Surname + " " + user.Name,
-                    style = MaterialTheme.typography.button,
-                    color = MaterialTheme.colors.surface,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
                         .weight(3f)
                         .fillMaxWidth()
@@ -162,7 +172,7 @@ fun UserButton(schedule: Schedule, user: User) {
                     modifier = Modifier
                         .requiredSize(45.dp)
                         .weight(0.75f),
-                    backgroundColor = MaterialTheme.colors.primary,
+                    containerColor = MaterialTheme.colorScheme.primary,
                     shape = RoundedCornerShape(15.dp)
                 ) {
                     Icon(
@@ -191,9 +201,9 @@ fun StandardButton(content: () -> Unit, text: String, icon: ImageVector) {
         onClick = { content() },
         shape = RoundedCornerShape(17.dp),
         border = BorderStroke(0.dp, Color.Transparent),
-        elevation = ButtonDefaults.elevation(0.dp, 0.dp, 0.dp),
+        elevation = ButtonDefaults.buttonElevation(0.dp, 0.dp, 0.dp),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = MaterialTheme.colors.primary.copy(
+            containerColor = MaterialTheme.colorScheme.primary.copy(
                 0.15f
             )
         ),
@@ -205,16 +215,15 @@ fun StandardButton(content: () -> Unit, text: String, icon: ImageVector) {
         ) {
             Text(
                 text = text,
-                style = MaterialTheme.typography.button,
-                color = MaterialTheme.colors.surface,
-                modifier = Modifier.weight(4f)
+                modifier = Modifier.weight(4f),
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.Medium
             )
 
             Icon(
                 imageVector = icon,
                 modifier = Modifier.padding(12.dp),
-                contentDescription = null,
-                tint = MaterialTheme.colors.primary,
+                contentDescription = null
             )
         }
     }
@@ -236,9 +245,9 @@ fun StandardButton(content: () -> Unit, text: String, icon: Painter) {
         },
         shape = RoundedCornerShape(17.dp),
         border = BorderStroke(0.dp, Color.Transparent),
-        elevation = ButtonDefaults.elevation(0.dp, 0.dp, 0.dp),
+        elevation = ButtonDefaults.buttonElevation(0.dp, 0.dp, 0.dp),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = MaterialTheme.colors.primary.copy(
+            containerColor = MaterialTheme.colorScheme.primary.copy(
                 0.15f
             )
         ),
@@ -250,16 +259,15 @@ fun StandardButton(content: () -> Unit, text: String, icon: Painter) {
         ) {
             Text(
                 text = text,
-                style = MaterialTheme.typography.button,
-                color = MaterialTheme.colors.surface,
-                modifier = Modifier.weight(4f)
+                modifier = Modifier.weight(4f),
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Icon(
                 painter = icon,
                 modifier = Modifier.padding(12.dp),
                 contentDescription = null,
-                tint = MaterialTheme.colors.primary,
             )
         }
     }

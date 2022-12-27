@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.*
@@ -37,7 +37,6 @@ import com.kikoproject.uwidget.main.days
 import com.kikoproject.uwidget.main.navController
 import com.kikoproject.uwidget.main.prefs
 import com.kikoproject.uwidget.models.schedules.Schedule
-import com.kikoproject.uwidget.models.schedules.defaultScheduleOption
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.networking.GeneratedCodeResult
 import com.kikoproject.uwidget.networking.createScheduleInDB
@@ -68,7 +67,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddSchedule() {
-    val textColor = MaterialTheme.colors.surface
+    val textColor = MaterialTheme.colorScheme.onSurface
     val nameState = remember { mutableStateOf(TextFieldValue(text = "")) }
     val categoryState = remember { mutableStateOf(TextFieldValue(text = "")) }
     var schedulesState = remember { mutableListOf<MutableList<String>>() }
@@ -77,18 +76,17 @@ fun AddSchedule() {
     val coroutineScope = rememberCoroutineScope()
     val timeCount = remember { mutableStateOf(0) }
     val timeState = mutableListOf<MutableState<TextFieldValue>>()
-    val materialColor = MaterialTheme.colors
+    val materialColor = MaterialTheme.colorScheme
 
     val timeCard = TimeCard()
 
     // Штука которая будет нам показывать что мы чето не правильно сделали и тд
     var message: CustomToastBar? by remember { mutableStateOf(null) }
 
-    Box(
+    Surface(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.background),
-        contentAlignment = Alignment.TopCenter
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
         // Ошибка сверху
@@ -109,7 +107,6 @@ fun AddSchedule() {
                     modifier = Modifier.padding(top = 10.dp),
                     text = "Создание расписания",
                     fontFamily = FontFamily(Font(R.font.gogh)),
-                    color = textColor,
                     fontSize = 24.sp
                 )
 
@@ -164,18 +161,16 @@ fun AddSchedule() {
                     title = "Что такое категория?",
                     text = "Если у вас множество расписаний, вы можете сгруппировать их в одну категорию (Например: Колледж моды - 1 курс), если вам не нужна категория оставьте поле пустым"
                 )
-                val primaryColor = MaterialTheme.colors.primary
+                val primaryColor = MaterialTheme.colorScheme.primary
 
                 Text(
                     text = "Способ получения расписания",
-                    color = textColor,
                     modifier = Modifier.padding(top = 20.dp, bottom = 10.dp),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
+                    style = MaterialTheme.typography.labelMedium
                 )
 
                 val scheduleGetMode = increaseButtons(
-                    texts = listOf("Ручное заполнение", "Получение с сайта"),
+                    texts = listOf("Ручное заполнение", "С сайта"),
                     inactiveColor = textColor.copy(0.1f),
                     roundStrength = 30f,
                     activeColor = primaryColor.copy(0.5f),
@@ -210,7 +205,7 @@ fun AddSchedule() {
                                 titleSize = 12.sp,
                                 titleColor = textColor.copy(alpha = 0.25f),
                                 fontSize = 14.sp,
-                                title = "Как заполнить расписание?",
+                                title = "Как заполнить?",
                                 text = "Заполните ваше расписание на каждый день, если у вас есть окна между парами/уроками поставьте пробел для создания доп. поля. Поля будут создаваться бесконечно, поэтому последнее поле всегда будет пустым."
                             )
                         }
@@ -356,7 +351,7 @@ fun AddSchedule() {
                                         )
                                     },
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colors.primary.copy(
+                                        containerColor = MaterialTheme.colorScheme.primary.copy(
                                             alpha = 0.5f
                                         )
                                     ),
@@ -371,7 +366,7 @@ fun AddSchedule() {
                     }
                 }
                 Text(
-                    text = "Способ заполнения времени",
+                    text = "Заполнение времени",
                     color = textColor,
                     modifier = Modifier.padding(top = 20.dp, bottom = 10.dp),
                     fontSize = 16.sp,
@@ -409,34 +404,6 @@ fun AddSchedule() {
                                     text = "Ошибка, ни в одном из полей расписания ничего не введенно",
                                     materialColor = materialColor
                                 )
-                                return@Button
-                            }
-                        }
-
-
-                        timeState.forEach { time ->
-                            if (time.value.text != "") {
-                                if (
-                                    !time.value.text.contains(":")
-                                    && time.value.text.filter { it.isDigit() }.length != 4
-                                    && time.value.text.substringBefore(":").toInt() < 24
-                                    && time.value.text.substringBefore(":").toInt() >= 0
-                                    && time.value.text.substringAfter(":").toInt() < 60
-                                    && time.value.text.substringAfter(":").toInt() >= 0
-                                ) {
-                                    message =
-                                        CustomToastBar(
-                                            text = "Ошибка, время введенно некорректно, пример: 09:08",
-                                            materialColor = materialColor
-                                        )
-                                    return@Button
-                                }
-                            } else {
-                                message =
-                                    CustomToastBar(
-                                        text = "Ошибка, одно из полей времени не заполнено",
-                                        materialColor = materialColor
-                                    )
                                 return@Button
                             }
                         }
@@ -498,7 +465,7 @@ fun AddSchedule() {
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colors.primary.copy(
+                        containerColor = MaterialTheme.colorScheme.primary.copy(
                             alpha = 0.5f
                         )
                     ),
@@ -506,7 +473,7 @@ fun AddSchedule() {
                     Text(
                         text = "Создать расписание",
                         color = textColor,
-                        style = Typography.button
+                        style = Typography.bodyMedium
                     )
                 }
             }
@@ -523,6 +490,7 @@ fun AddSchedule() {
  *
  * @author Kiko
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FastOutlineTextField(
     text: String,
@@ -542,11 +510,12 @@ fun FastOutlineTextField(
         label = {
             Text(
                 text = text,
-                color = textColor.copy(alpha = 0.4f)
+                color = textColor.copy(alpha = 0.4f),
+                style = MaterialTheme.typography.labelMedium
             )
         },
         shape = RoundedCornerShape(16.dp),
-        textStyle = TextStyle(color = textColor)
+        textStyle = MaterialTheme.typography.labelMedium
     )
 }
 
@@ -562,6 +531,7 @@ fun FastOutlineTextField(
  *
  * @author Kiko
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FastOutlineTextField(
     text: String,
@@ -601,7 +571,7 @@ fun FastOutlineTextField(
                     Icon(
                         imageVector = imageVector,
                         contentDescription = "Search",
-                        tint = MaterialTheme.colors.primary,
+                        tint = MaterialTheme.colorScheme.primary,
                     )
                 }
             }
@@ -609,11 +579,12 @@ fun FastOutlineTextField(
         label = {
             Text(
                 text = text,
-                color = textColor.copy(alpha = 0.4f)
+                color = textColor.copy(alpha = 0.4f),
+                style = MaterialTheme.typography.labelMedium
             )
         },
         shape = RoundedCornerShape(16.dp),
-        textStyle = TextStyle(color = textColor)
+        textStyle = MaterialTheme.typography.labelMedium
     )
 }
 

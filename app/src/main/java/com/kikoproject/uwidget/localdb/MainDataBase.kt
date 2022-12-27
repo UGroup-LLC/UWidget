@@ -11,7 +11,7 @@ import com.kikoproject.uwidget.models.schedules.Schedule
  * Главная локальная БД
  * @author Kiko
  */
-@Database(entities = [User::class, Schedule::class, GeneralOptions::class], version = 1)
+@Database(entities = [User::class, Schedule::class, GeneralOptions::class], version = 2)
 @TypeConverters(MainConverter::class)
 abstract class MainDataBase : RoomDatabase() {
     abstract fun userDao(): UsersDao

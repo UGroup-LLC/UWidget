@@ -2,10 +2,10 @@ package com.kikoproject.uwidget.ui.theme
 
 import android.annotation.SuppressLint
 import android.os.Build
-import androidx.compose.material.Colors
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
@@ -37,17 +37,17 @@ val systemThemeIsEnabled = mutableStateOf(true)
 @SuppressLint("StaticFieldLeak")
 val monetEngineIsEnabled = mutableStateOf(true)
 
-private val DarkColorPalette = darkColors(
+private val DarkColorPalette = darkColorScheme(
     background = Background,
     primary = Main,
-    primaryVariant = MainSec,
+    primaryContainer = MainSec,
     secondary = Second
 )
 
-private val LightColorPalette = lightColors(
+private val LightColorPalette = lightColorScheme(
     background = LightBackground,
     primary = Main,
-    primaryVariant = MainSec,
+    primaryContainer = MainSec,
     secondary = Second
 )
 
@@ -55,28 +55,43 @@ private val LightColorPalette = lightColors(
 fun UWidgetTheme(content: @Composable () -> Unit) {
 
     val systemUiController = rememberSystemUiController()
-    val colors = Colors(
+    val colors = ColorScheme(
         primary = themePrimaryColor.value,
-        primaryVariant = themePrimaryVarColor.value,
+        onPrimary = themeTextColor(),
+        primaryContainer = themePrimaryColor.value,
+        onPrimaryContainer = themeBackgroundColor.value ,
+        inversePrimary = Color(0xFF000000),
         secondary = themeSecondaryColor.value,
-        secondaryVariant = themeSecondaryColor.value.copy(0.8f),
-        surface = themeTextColor(),
+        onSecondary = Color(0xFF963F42),
+        secondaryContainer = themeSecondaryColor.value,
+        onSecondaryContainer = Color(0xffffffff),
+        tertiary = themePrimaryColor.value,
+        onTertiary = Color(0xffffffff),
+        tertiaryContainer = themePrimaryColor.value,
+        onTertiaryContainer = Color(0xffffffff),
         background = themeBackgroundColor.value,
-        error = themeErrorColor.value,
-        // Дальше не нужные цвета
-        onPrimary = themePrimaryColor.value,
-        onSecondary = themeSecondaryColor.value,
-        onBackground = themePrimaryColor.value,
+        onBackground = themeTextColor(),
+        surface = themeBackgroundColor.value,
         onSurface = themeTextColor(),
+        surfaceVariant = themeBackgroundColor.value,
+        onSurfaceVariant = themeBackgroundColor.value,
+        surfaceTint = themeBackgroundColor.value,
+        inverseSurface = themeBackgroundColor.value,
+        inverseOnSurface = Color(0xFF000000),
+        error = themeErrorColor.value.copy(0.5f),
         onError = themeErrorColor.value,
-        isLight = false // Поскольку это динамический цвет нам все равно это темный или нет
+        errorContainer = themeErrorColor.value.copy(0.5f),
+        onErrorContainer = themeErrorColor.value,
+        outline = themePrimaryColor.value,
+        outlineVariant = themeBackgroundColor.value,
+        scrim = Color(0xffffffff),
     )
 
     systemUiController.setStatusBarColor(color = themeBackgroundColor.value)
     systemUiController.setNavigationBarColor(color = themeBackgroundColor.value)
 
     MaterialTheme(
-        colors = colors,
+        colorScheme = colors,
         typography = Typography,
         shapes = Shapes,
         content = content
@@ -127,12 +142,12 @@ fun SystemThemeSet() {
     } else { // Если меньше андроида 12
         if (darkTheme) {
             themePrimaryColor.value = DarkColorPalette.primary
-            themePrimaryVarColor.value = DarkColorPalette.primaryVariant
+            themePrimaryVarColor.value = DarkColorPalette.primaryContainer
             themeSecondaryColor.value = DarkColorPalette.secondary
             themeBackgroundColor.value = DarkColorPalette.background
         } else {
             themePrimaryColor.value = LightColorPalette.primary
-            themePrimaryVarColor.value = LightColorPalette.primaryVariant
+            themePrimaryVarColor.value = LightColorPalette.primaryContainer
             themeSecondaryColor.value = LightColorPalette.secondary
             themeBackgroundColor.value = LightColorPalette.background
         }
