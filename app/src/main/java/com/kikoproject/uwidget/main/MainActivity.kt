@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -22,6 +23,7 @@ import androidx.room.Room
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.kikoproject.uwidget.BuildConfig
 import com.kikoproject.uwidget.localdb.MainDataBase
 import com.kikoproject.uwidget.models.GeneralOptions
 import com.kikoproject.uwidget.models.User
@@ -30,7 +32,12 @@ import com.kikoproject.uwidget.models.schedules.defaultScheduleOption
 import com.kikoproject.uwidget.models.schedules.options.ScheduleOptions
 import com.kikoproject.uwidget.navigation.NavigationSetup
 import com.kikoproject.uwidget.networking.CheckUserInDB
+import com.kikoproject.uwidget.networking.GitReleases
+import com.kikoproject.uwidget.networking.appCheckUpdate
 import com.kikoproject.uwidget.ui.theme.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 @SuppressLint("StaticFieldLeak")
@@ -59,6 +66,8 @@ var options by mutableStateOf<ScheduleOptions?>(null)
 @SuppressLint("StaticFieldLeak")
 var prefs: SharedPreferences? = null
 
+val updateState = mutableStateOf(false) // Есть ли обновление
+val gitReleases: MutableState<GitReleases?> = mutableStateOf(GitReleases())
 
 @SuppressLint("StaticFieldLeak")
 var countOfBan = 0
@@ -86,6 +95,26 @@ class MainActivity : ComponentActivity() {
             MainDataBase::class.java, "main_database"
         ).allowMainThreadQueries().fallbackToDestructiveMigration().build()
 
+        //region Update
+        appCheckUpdate(object : Callback<GitReleases> { // Вход
+            override fun onResponse(
+                call: Call<GitReleases>,
+                response: Response<GitReleases>
+            ) {
+                if(response.isSuccessful){
+                    val body = response.body()
+                    if((body?.tag_name ?: "") != BuildConfig.VERSION_NAME) {
+                        updateState.value = true
+                        gitReleases.value = body
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<GitReleases>, t: Throwable) {
+                Toast.makeText(this@MainActivity, "Ошибка git api", Toast.LENGTH_SHORT).show()
+            }
+        })
+        //endregion
 
         setContent {
 

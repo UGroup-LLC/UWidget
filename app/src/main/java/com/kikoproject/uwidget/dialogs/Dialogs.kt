@@ -51,6 +51,7 @@ import com.kikoproject.uwidget.models.schedules.Schedule
 import com.kikoproject.uwidget.navigation.ScreenNav
 import com.kikoproject.uwidget.objects.ScheduleBand
 import com.kikoproject.uwidget.objects.cards.RoundedCard
+import com.kikoproject.uwidget.objects.cards.StandardBottomSheet
 import com.kikoproject.uwidget.utils.ScheduleGetterSelectors
 import com.kikoproject.uwidget.utils.getSelectors
 
@@ -588,56 +589,35 @@ fun ShowSchedulePreviewDialog(
 ) {
 
     if (dialogVisibleState.value) {
-        BottomSheetDialog(
-            onDismissRequest = {
-                dialogVisibleState.value = false
-            }
-        ) {
-            Surface(
-                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Box(modifier = Modifier.clip(CircleShape)) {
-                        Divider(
-                            modifier = Modifier
-                                .fillMaxWidth(0.2f)
-                                .padding(16.dp),
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
-                            thickness = 3.dp
-                        )
-                    }
-                    Text(
-                        schedule.Name,
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(modifier = Modifier.padding(bottom = 16.dp))
+        StandardBottomSheet(dialogVisibleState) {
+            Text(
+                schedule.Name,
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.padding(bottom = 16.dp))
 
-                    ScheduleBand(schedule = schedule)
+            ScheduleBand(schedule = schedule)
 
-                    OutlinedButton(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        onClick = {
-                            curSchedule = schedule
-                            prefs?.edit()?.putString("mainSchedule", curSchedule!!.ID)?.apply()
-                            dialogVisibleState.value = false
-                            navController.popBackStack()
-                        })
-                    {
-                        Text(
-                            text = "Выбрать",
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-                }
+            OutlinedButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                onClick = {
+                    curSchedule = schedule
+                    prefs?.edit()?.putString("mainSchedule", curSchedule!!.ID)?.apply()
+                    dialogVisibleState.value = false
+                    navController.popBackStack()
+                })
+            {
+                Text(
+                    text = "Выбрать",
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Medium
+                )
             }
         }
     }
 }
-
 

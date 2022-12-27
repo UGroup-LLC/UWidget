@@ -14,8 +14,11 @@ import androidx.compose.ui.unit.dp
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.updateAll
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.navigation.ScreenNav
+import com.kikoproject.uwidget.networking.GitReleases
+import com.kikoproject.uwidget.networking.NewVersionSheet
 import com.kikoproject.uwidget.networking.OnlineContent
 import com.kikoproject.uwidget.networking.getNextUserSchedule
 import com.kikoproject.uwidget.objects.MainHeader
@@ -42,6 +45,10 @@ fun DashboardActivity() {
         runBlocking {
             MainWidget().updateAll(context)
         }
+
+
+        NewVersionSheet(gitReleases.value ?: GitReleases()) // Проверяет есть ли обновление и выдает карточку обновления
+
 
         curSchedule = prefs?.getString(
             "mainSchedule",
@@ -92,7 +99,6 @@ fun DashboardActivity() {
                     }
 
                     if (!isWidgetCreated.value) {
-
                         Text(text = "Добавьте виджет на главный экран")
                         OutlinedButton(
                             modifier = Modifier.fillMaxWidth(),
