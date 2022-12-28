@@ -16,4 +16,5 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "UWidget"
-include ':app'
+include ':uwidget_app'
+include ':uwidget_wear'
