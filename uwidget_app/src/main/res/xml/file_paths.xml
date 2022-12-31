@@ -4,4 +4,5 @@
         name="pathName"
         path="pathValue"/>
     <root-path name="root" path="." />
+    <cache-path name="output" path="." />
 </paths>

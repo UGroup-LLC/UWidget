@@ -90,7 +90,8 @@ fun ListItemColor(
             Text(
                 text = title,
                 color = MaterialTheme.colorScheme.onSurface.copy(0.8f),
-                fontSize = 16.sp
+                fontSize = 16.sp,
+                style = MaterialTheme.typography.labelMedium
             )
             Text(
                 text = description,

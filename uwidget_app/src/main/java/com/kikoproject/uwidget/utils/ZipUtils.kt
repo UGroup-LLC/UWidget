@@ -1,6 +1,7 @@
 package com.kikoproject.uwidget.utils
 
 import java.io.File
+import java.io.FileNotFoundException
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 
@@ -30,9 +31,19 @@ fun File.unzip(filename: String,content: () -> Unit) {
             }
             .filter { !it.entry.isDirectory }
             .forEach { (entry, output) ->
-                zip.getInputStream(entry).use { input ->
-                    output.outputStream().use { output ->
-                        input.copyTo(output)
+                try {
+                    zip.getInputStream(entry).use { input ->
+                        output.outputStream().use { output ->
+                            input.copyTo(output)
+                        }
+                    }
+                }
+                catch (exception: FileNotFoundException){
+                    output.delete()
+                    zip.getInputStream(entry).use { input ->
+                        output.outputStream().use { output ->
+                            input.copyTo(output)
+                        }
                     }
                 }
             }

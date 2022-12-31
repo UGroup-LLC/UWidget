@@ -61,6 +61,9 @@ fun DashboardActivity() {
                 it
             )
         }
+        if(curSchedule != null) {
+            prefs?.edit()?.putString("mainSchedule", curSchedule!!.ID)?.apply()
+        }
 
         val timeZone = curSchedule?.getTimeZone()
 

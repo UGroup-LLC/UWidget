@@ -60,66 +60,70 @@ data class GitAssets(
     constructor() : this("", "")
 }
 
-val isDownloaded = mutableStateOf(false)
-val isZipped = mutableStateOf(false)
+private val isDownloaded = mutableStateOf(false)
+private val isZipped = mutableStateOf(false)
 
 @Composable
 fun NewVersionSheet(release: GitReleases) {
-    val tmpFileZip =  File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path, "app-release.apk")
+    val tmpFileZip = File(
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path,
+        "app-release.apk"
+    )
     tmpFileZip.delete()
-    val updateFileZip =  File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path, "update.zip")
+    val updateFileZip = File(
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path,
+        "update.zip"
+    )
     updateFileZip.delete()
 
-    if (updateState.value) {
-        StandardBottomSheet(dialogVisibleState = updateState) {
-            Column(
-                modifier = Modifier.verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "✨Вышла новая версия ${release.tag_name}✨",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontSize = 18.sp
-                )
-                Divider(
-                    modifier = Modifier.fillMaxWidth(0.5f),
-                    thickness = 2.dp,
-                    color = MaterialTheme.colorScheme.onSurface.copy(0.25f)
-                )
-                Text(
-                    text = "@✍Заметки релиза✍@\n ${release.body}".colorize(),
-                    style = MaterialTheme.typography.titleSmall,
-                )
+    StandardBottomSheet(dialogVisibleState = updateState) {
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "✨Вышла новая версия ${release.tag_name}✨",
+                style = MaterialTheme.typography.titleSmall,
+                fontSize = 18.sp
+            )
+            Divider(
+                modifier = Modifier.fillMaxWidth(0.5f),
+                thickness = 2.dp,
+                color = MaterialTheme.colorScheme.onSurface.copy(0.25f)
+            )
+            Text(
+                text = "@✍Заметки релиза✍@\n ${release.body}".colorize(),
+                style = MaterialTheme.typography.titleSmall,
+            )
 
 
-                val context = LocalContext.current
-                if (!isDownloaded.value && !isZipped.value) {
-                    OutlinedButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        onClick = {
-                            downloadFile(
-                                context = context,
-                                release.assets.first().browser_download_url
-                            )
-                        }) {
-                        Text(
-                            text = "Установить",
+            val context = LocalContext.current
+            if (!isDownloaded.value && !isZipped.value) {
+                OutlinedButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    onClick = {
+                        downloadFile(
+                            context = context,
+                            release.assets.first().browser_download_url
                         )
-                    }
-                } else {
-                    LinearProgressIndicator(
-                        modifier = Modifier
-                            .height(5.dp)
-                            .clip(CircleShape)
-                            .fillMaxWidth()
+                    }) {
+                    Text(
+                        text = "Установить",
                     )
                 }
-                if (isZipped.value) {
-                    deArchiveApk(context = context)
-                }
+            } else {
+                LinearProgressIndicator(
+                    modifier = Modifier
+                        .height(5.dp)
+                        .clip(CircleShape)
+                        .fillMaxWidth()
+                )
+            }
+            if (isZipped.value) {
+                deArchiveApk(context = context)
             }
         }
     }
@@ -160,10 +164,14 @@ fun deArchiveApk(
     file.unzip("update.zip") {
 
 
-
-        val tmpFile =  File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path, "app-release.apk")
-        val fileUri = FileProvider.getUriForFile(context.applicationContext,
-            BuildConfig.APPLICATION_ID + ".provider", tmpFile)
+        val tmpFile = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path,
+            "app-release.apk"
+        )
+        val fileUri = FileProvider.getUriForFile(
+            context.applicationContext,
+            BuildConfig.APPLICATION_ID + ".provider", tmpFile
+        )
         val intent = Intent(Intent.ACTION_VIEW, fileUri)
         intent.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
         intent.setDataAndType(fileUri, "application/vnd.android" + ".package-archive")

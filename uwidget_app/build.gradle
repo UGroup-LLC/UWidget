@@ -44,6 +44,11 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
     buildFeatures {
         compose true
     }
@@ -60,6 +65,14 @@ android {
 }
 
 dependencies {
+    //Wi-Fi
+    implementation 'com.github.tejmagar:AndroidWiFiTools:1.0.2'
+
+    //ADB
+    implementation 'com.github.MuntashirAkon:libadb-android:2.2.0'
+    implementation 'org.conscrypt:conscrypt-android:2.5.2'
+    implementation 'com.github.MuntashirAkon:sun-security-android:1.1'
+
     //REST
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
@@ -102,6 +115,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.work:work-runtime-ktx:2.7.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
     kapt "androidx.room:room-compiler:$room_version"
     implementation 'org.jsoup:jsoup:1.14.3'
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.28.0"
@@ -123,6 +137,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore-ktx:24.4.1'
     implementation 'com.google.firebase:firebase-perf-ktx:20.3.0'
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.3.2"

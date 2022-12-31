@@ -4,10 +4,13 @@ import android.os.Build
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,6 +18,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.ColorUtils
@@ -26,12 +31,18 @@ import com.kikoproject.uwidget.objects.ListItemColor
 import com.kikoproject.uwidget.objects.ListItemSwitcher
 import com.kikoproject.uwidget.objects.cards.CardIllustration
 import com.kikoproject.uwidget.objects.cards.RoundedCard
+import com.kikoproject.uwidget.objects.watch.*
 import com.kikoproject.uwidget.ui.theme.*
 import com.kikoproject.uwidget.utils.toStandardColor
+import io.github.muntashirakon.adb.AbsAdbConnectionManager
+
+
+lateinit var manager: AbsAdbConnectionManager
 
 /**
 Окно настроек
  */
+@Preview(showBackground = true)
 @Composable
 fun OptionsActivity() {
     Column(
@@ -54,7 +65,7 @@ fun OptionsActivity() {
                 color = MaterialTheme.colorScheme.primary
             )
             MainOptions(scrollState)
-
+            WearOption()
             AppInfoOptions()
         }
     }
@@ -80,6 +91,64 @@ private fun AppInfoOptions() {
     )
 
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun WearOption() {
+    Text(
+        "Часы",
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+    )
+
+    val firstStepStatus = remember { mutableStateOf(false) }
+    val secondDialogVisibleState = remember { mutableStateOf(false) }
+    val thirdDialogVisibleState = remember { mutableStateOf(false) }
+    val fourthDialogVisibleState = remember { mutableStateOf(false) }
+    val fifthDialogVisibleState = remember { mutableStateOf(false) }
+    val sixDialogVisibleState = remember { mutableStateOf(false) }
+    val chosenIp = remember { mutableStateOf(TextFieldValue("")) }
+
+    CardIllustration(R.drawable.ic_undraw_watch, 3, 7)
+
+    //region Шаги
+    FirstConnectSheet(
+        dialogVisibleState = firstStepStatus,
+        secondDialogVisibleState = secondDialogVisibleState
+    )
+    SecondConnectSheet(
+        dialogVisibleState = secondDialogVisibleState,
+        thirdDialogVisibleState = thirdDialogVisibleState
+    )
+    ThirdConnectSheet(
+        dialogVisibleState = thirdDialogVisibleState,
+        fourthDialogVisibleState = fourthDialogVisibleState,
+        chosenIp = chosenIp
+    )
+    FourthConnectSheet(
+        dialogVisibleState = fourthDialogVisibleState,
+        thirdDialogVisibleState = thirdDialogVisibleState,
+        fifthDialogVisibleState = fifthDialogVisibleState,
+        chosenIp = chosenIp
+    )
+    FifthConnectSheet(
+        dialogVisibleState = fifthDialogVisibleState,
+        sixDialogVisibleState = sixDialogVisibleState,
+        chosenIp = chosenIp
+    )
+    //endregion
+
+    OutlinedButton(
+        onClick = {
+            firstStepStatus.value = true
+        },
+        modifier = Modifier.fillMaxWidth()
+    )
+    {
+        Text(text = "Подключить часы")
+    }
+}
+
 
 @Composable
 private fun MainOptions(scrollState: ScrollState) {
@@ -141,12 +210,6 @@ private fun MainOptions(scrollState: ScrollState) {
             description = "Выберите основной цвет приложения",
             MainColors.PRIMARY,
             themePrimaryColor
-        )
-        ListItemColor(
-            title = "Вариантный цвет",
-            description = "Выберите 2 основной цвет приложения",
-            MainColors.PRIMARY_VAR,
-            themePrimaryVarColor
         )
         ListItemColor(
             title = "Вторичный цвет",

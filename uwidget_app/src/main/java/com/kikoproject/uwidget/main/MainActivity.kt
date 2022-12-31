@@ -3,6 +3,7 @@ package com.kikoproject.uwidget.main
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -87,6 +88,9 @@ val days = listOf(
 )
 
 class MainActivity : ComponentActivity() {
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,9 +105,9 @@ class MainActivity : ComponentActivity() {
                 call: Call<GitReleases>,
                 response: Response<GitReleases>
             ) {
-                if(response.isSuccessful){
+                if (response.isSuccessful) {
                     val body = response.body()
-                    if((body?.tag_name ?: "") != BuildConfig.VERSION_NAME) {
+                    if ((body?.tag_name ?: "") != BuildConfig.VERSION_NAME) {
                         updateState.value = true
                         gitReleases.value = body
                     }

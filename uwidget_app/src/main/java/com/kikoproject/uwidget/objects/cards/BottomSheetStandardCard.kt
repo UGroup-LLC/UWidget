@@ -21,29 +21,32 @@ fun StandardBottomSheet(
     dialogVisibleState: MutableState<Boolean>,
     content: @Composable () -> Unit
 ) {
-    BottomSheetDialog(
-        onDismissRequest = {
-            dialogVisibleState.value = false
-        },
-        properties = BottomSheetDialogProperties()
-    ) {
-        Surface(
-            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+    if(dialogVisibleState.value) {
+        BottomSheetDialog(
+            onDismissRequest = {
+                dialogVisibleState.value = false
+            },
+            properties = BottomSheetDialogProperties()
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+            Surface(
+                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
             ) {
-                Box(modifier = Modifier.clip(CircleShape)) {
-                    Divider(
-                        modifier = Modifier
-                            .fillMaxWidth(0.2f)
-                            .padding(16.dp),
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
-                        thickness = 3.dp
-                    )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.padding(16.dp, 0.dp)
+                ) {
+                    Box(modifier = Modifier.clip(CircleShape)) {
+                        Divider(
+                            modifier = Modifier
+                                .fillMaxWidth(0.2f)
+                                .padding(16.dp),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+                            thickness = 3.dp
+                        )
+                    }
+                    content()
                 }
-                content()
             }
         }
     }
