@@ -1,4 +1,5 @@
-package com.kikoproject.uwidget.ui.theme
+package com.kiko.uwidget_wear.ui.theme
+
 
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font

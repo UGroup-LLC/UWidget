@@ -17,7 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.compose.material.MaterialTheme
-import com.kikoproject.uwidget.ui.theme.UWidgetTheme
+import com.kiko.uwidget_wear.ui.theme.UWidgetTheme
 
 var prefs: SharedPreferences? = null
 

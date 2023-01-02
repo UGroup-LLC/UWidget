@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Environment
 import android.util.Base64.DEFAULT
 import android.util.Base64OutputStream
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,7 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,25 +32,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kikoproject.uwidget.objects.cards.StandardBottomSheet
-import com.kikoproject.uwidget.utils.AdbConnectionManager
-import com.kikoproject.uwidget.utils.unzip
 import io.github.muntashirakon.adb.AbsAdbConnectionManager
-import io.github.muntashirakon.adb.LocalServices
 import okio.use
 import retrofit2.Call
 import retrofit2.Callback
-import java.io.BufferedReader
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.InputStreamReader
+import java.io.*
 import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.math.ceil
-import kotlin.math.round
 
 
-fun getLastWearRelease(callback: Callback<GitReleases>) {
-    val server = Server("https://api.github.com/repos/UGroup-LLC/UWidget-WearReleases/")
+fun getLastWearReleaseInstaller(callback: Callback<GitReleases>) {
+    val server = Server("https://api.github.com/repos/UGroup-LLC/UWidget-WearAPKInstaller/")
 
     val call: Call<GitReleases> = server.api.getLastRelease()
 
@@ -59,8 +52,10 @@ fun getLastWearRelease(callback: Callback<GitReleases>) {
 
 private val isDownloaded = mutableStateOf(false)
 private val isZipped = mutableStateOf(false)
-val title = mutableStateOf("\uD83D\uDC7D Скачивание приложения \uD83D\uDC7D")
-val percentage = mutableStateOf(0f)
+private val title = mutableStateOf("\uD83D\uDC7D Скачивание приложения \uD83D\uDC7D")
+private val body = mutableStateOf("")
+val wearPercentage = mutableStateOf(0f)
+val isWearUploading = mutableStateOf(false)
 
 @Composable
 fun DownloadWearAppSheet(
@@ -69,6 +64,9 @@ fun DownloadWearAppSheet(
     dialogVisible: MutableState<Boolean>,
     secondDialogVisible: MutableState<Boolean>
 ) {
+    if (wearPercentage.value != 0f) {
+        isWearUploading.value = !dialogVisible.value
+    }
     StandardBottomSheet(dialogVisibleState = dialogVisible) {
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState()),
@@ -85,7 +83,13 @@ fun DownloadWearAppSheet(
                 thickness = 2.dp,
                 color = MaterialTheme.colorScheme.onSurface.copy(0.25f)
             )
-            if (percentage.value == 0f) {
+            if (body.value != "") {
+                Text(
+                    "Это будет очень долго, скажите спасибо разработчику который больше ничего не придумал",
+                    style = MaterialTheme.typography.titleSmall,
+                )
+            }
+            if (wearPercentage.value == 0f) {
                 LinearProgressIndicator(
                     modifier = Modifier
                         .height(5.dp)
@@ -94,7 +98,7 @@ fun DownloadWearAppSheet(
                 )
             } else {
                 LinearProgressIndicator(
-                    progress = percentage.value,
+                    progress = wearPercentage.value,
                     modifier = Modifier
                         .height(5.dp)
                         .clip(CircleShape)
@@ -134,10 +138,14 @@ fun downloadWearFile(context: Context, url: String) {
     downloadManager?.enqueue(request)
 
     isDownloaded.value = true
-    context.registerReceiver(
-        onCompleteWearDownload,
-        IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
-    );
+    try {
+        context.registerReceiver(
+            onCompleteWearDownload,
+            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+        );
+    } catch (e: Exception) {
+
+    }
 }
 
 private var onCompleteWearDownload: BroadcastReceiver = object : BroadcastReceiver() {
@@ -145,6 +153,7 @@ private var onCompleteWearDownload: BroadcastReceiver = object : BroadcastReceiv
         if (ctxt != null) {
             isZipped.value = true
             isDownloaded.value = false
+
         }
     }
 }
@@ -156,13 +165,14 @@ private fun deArchiveWearApk(
         "update.zip"
     )
 ) {
+    val isDownloadedInWear = mutableStateOf(false)
     isZipped.value = false
     val thread = Thread {
         val shellStream = manager.openStream("shell:")
         val fileBase64 = convertFileToBase64(file)
 
         shellStream.openOutputStream().use { os ->
-            title.value = "\uD83D\uDEF0 Очистка \uD83D\uDEF0"
+            title.value = "\uD83D\uDEF0 Очистка tmp \uD83D\uDEF0"
             os.write(
                 String.format(
                     "%1\$s\n",
@@ -172,12 +182,23 @@ private fun deArchiveWearApk(
             os.flush()
 
         }
+        shellStream.openOutputStream().use { os ->
+            title.value = "\uD83D\uDEF0 Очистка Download \uD83D\uDEF0"
+            os.write(
+                String.format(
+                    "%1\$s\n",
+                    "rm  /storage/emulated/0/Download/*"
+                ).toByteArray(StandardCharsets.UTF_8)
+            )
+            os.flush()
 
-        fileBase64.chunked(1000).forEachIndexed { index, it ->
+        }
+
+        fileBase64.chunked(10000).forEachIndexed { index, it ->
             shellStream.openOutputStream().use { os ->
-                percentage.value = (index * it.length.toFloat() / fileBase64.length)
-                title.value = "\uD83D\uDEF0 Отправка на часы, ${
-                    (percentage.value * 100).toString().dropLast(3)
+                wearPercentage.value = (index * it.length.toFloat() / fileBase64.length)
+                title.value = "\uD83D\uDEF0 Отправка на часы инсталлера, ${
+                    (wearPercentage.value * 100).toString().dropLast(3)
                 }% \uD83D\uDEF0"
                 os.write(
                     String.format(
@@ -189,7 +210,10 @@ private fun deArchiveWearApk(
 
             }
         }
-        title.value = "\uD83E\uDE90 Декодирование \uD83E\uDE90"
+
+        wearPercentage.value = 0f
+
+        title.value = "\uD83E\uDE90 Декодирование инсталлера \uD83E\uDE90"
         shellStream.openOutputStream().use { os ->
             os.write(
                 String.format(
@@ -201,7 +225,7 @@ private fun deArchiveWearApk(
             os.flush()
         }
 
-        title.value = "\uD83D\uDC7E Распаковка \uD83D\uDC7E"
+        title.value = "\uD83D\uDC7E Распаковка инсталлера \uD83D\uDC7E"
         shellStream.openOutputStream().use { os ->
             os.write(
                 String.format(
@@ -212,7 +236,106 @@ private fun deArchiveWearApk(
             )
             os.flush()
         }
-        title.value = "\uD83C\uDF1F Установка \uD83C\uDF1F"
+        title.value = "\uD83C\uDF1F Установка инсталлера \uD83C\uDF1F"
+        shellStream.openOutputStream().use { os ->
+            os.write(
+                String.format(
+                    "%1\$s\n",
+                    "pm install /data/local/tmp/uwidget_wear_launcher-release.apk"
+                )
+                    .toByteArray(StandardCharsets.UTF_8)
+            )
+            os.flush()
+        }
+        val shellLSStream = manager.openStream("shell:")
+        val shellOnScreenStream = manager.openStream("shell:")
+
+
+        title.value = "\uD83D\uDC7E Открытие инсталлера \uD83D\uDC7E"
+        shellStream.openOutputStream().use { os ->
+            os.write(
+                String.format(
+                    "%1\$s\n",
+                    "monkey -p com.kiko.uwidget_wear -c android.intent.category.LAUNCHER 1"
+                )
+                    .toByteArray(StandardCharsets.UTF_8)
+            )
+            os.flush()
+        }
+
+
+        title.value = "\uD83D\uDEF0 Ожидание приложения \uD83D\uDEF0"
+        val threadDownloadChecker = Thread {
+            try {
+                BufferedReader(InputStreamReader(shellLSStream.openInputStream())).use { reader ->
+                    var s: String?
+                    while (reader.readLine().also { s = it } != null) {
+                        if (s?.contains("downloaded") == true) {
+                            isDownloadedInWear.value = true
+                            shellLSStream.close()
+                            shellOnScreenStream.close()
+                        }
+                    }
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+        threadDownloadChecker.start()
+
+        while (!shellOnScreenStream.isClosed) {
+            try {
+                shellLSStream.openOutputStream().use { os ->
+                    os.write(
+                        String.format(
+                            "%1\$s\n",
+                            "ls /storage/emulated/0/Download/"
+                        )
+                            .toByteArray(StandardCharsets.UTF_8)
+                    )
+                    os.flush()
+                }
+                if (isDownloadedInWear.value) {
+                    threadDownloadChecker.interrupt()
+                    break
+                }
+            }
+            catch (e: Exception){
+                Log.e("STREAM", "Closed")
+            }
+        }
+        title.value = "\uD83D\uDC7E Перемещение приложения \uD83D\uDC7E"
+        shellStream.openOutputStream().use { os ->
+            os.write(
+                String.format(
+                    "%1\$s\n",
+                    "mv /storage/emulated/0/Download/update.zip /data/local/tmp/"
+                )
+                    .toByteArray(StandardCharsets.UTF_8)
+            )
+            os.flush()
+        }
+        title.value = "\uD83D\uDC7E Распаковка приложения \uD83D\uDC7E"
+        shellStream.openOutputStream().use { os ->
+            os.write(
+                String.format(
+                    "%1\$s\n",
+                    "unzip /data/local/tmp/update.zip -d /data/local/tmp/"
+                )
+                    .toByteArray(StandardCharsets.UTF_8)
+            )
+            os.flush()
+        }
+        /*title.value = "\uD83C\uDF1F Удаление инсталлера \uD83C\uDF1F"
+        shellStream.openOutputStream().use { os ->
+            os.write(
+                String.format("%1\$s\n", "pm uninstall com.kiko.uwidget_wear")
+                    .toByteArray(StandardCharsets.UTF_8)
+            )
+            os.flush()
+        }
+*/
+        title.value = "\uD83C\uDF1F Установка приложения \uD83C\uDF1F"
         shellStream.openOutputStream().use { os ->
             os.write(
                 String.format("%1\$s\n", "pm install /data/local/tmp/uwidget_wear-release.apk")
@@ -220,11 +343,14 @@ private fun deArchiveWearApk(
             )
             os.flush()
         }
-        shellStream.openInputStream().use {
-            val buf = it.bufferedReader().lines()
-            buf
-        }
+
+        val updateFileZip = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path,
+            "update.zip"
+        )
+        updateFileZip.delete()
     }
+
     thread.start()
 }
 

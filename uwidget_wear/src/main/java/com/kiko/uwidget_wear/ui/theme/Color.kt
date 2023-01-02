@@ -1,4 +1,4 @@
-package com.kikoproject.uwidget.ui.theme
+package com.kiko.uwidget_wear.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -55,9 +55,10 @@ data class GitReleases(
 
 data class GitAssets(
     val url: String,
-    val browser_download_url: String
+    val browser_download_url: String,
+    val size: Int
 ) {
-    constructor() : this("", "")
+    constructor() : this("", "", 0)
 }
 
 private val isDownloaded = mutableStateOf(false)

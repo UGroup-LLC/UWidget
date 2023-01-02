@@ -41,7 +41,7 @@ fun FifthConnectSheet(
         if(canExecute.value) {
 
 
-            getLastWearRelease(object : Callback<GitReleases> { // Вход
+            getLastWearReleaseInstaller(object : Callback<GitReleases> { // Вход
                 override fun onResponse(
                     call: Call<GitReleases>,
                     response: Response<GitReleases>
