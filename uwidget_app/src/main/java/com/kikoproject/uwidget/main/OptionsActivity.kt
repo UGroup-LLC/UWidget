@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.ColorUtils
 import com.kikoproject.uwidget.BuildConfig
 import com.kikoproject.uwidget.R
+import com.kikoproject.uwidget.networking.DownloadWearAppSheet
 import com.kikoproject.uwidget.networking.changeMonetEngine
 import com.kikoproject.uwidget.objects.BackHeader
 import com.kikoproject.uwidget.objects.ListItemColor
@@ -131,10 +132,8 @@ private fun WearOption() {
         fifthDialogVisibleState = fifthDialogVisibleState,
         chosenIp = chosenIp
     )
-    FifthConnectSheet(
-        dialogVisibleState = fifthDialogVisibleState,
-        sixDialogVisibleState = sixDialogVisibleState,
-        chosenIp = chosenIp
+    DownloadWearAppSheet(
+        dialogVisible = fifthDialogVisibleState
     )
     //endregion
 

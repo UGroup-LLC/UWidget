@@ -46,12 +46,17 @@ val Typography = Typography(
         letterSpacing = 1.sp
     ),
     caption3 = TextStyle(
-        fontSize = 16.sp,
+        fontSize = 24.sp,
         fontFamily = monserratFamily,
-        fontWeight = FontWeight.SemiBold
+        fontWeight = FontWeight.Bold
     ),
     caption2 = TextStyle(
         fontSize = 16.sp,
+        fontFamily = monserratFamily,
+        fontWeight = FontWeight.Medium
+    ),
+    caption1 = TextStyle(
+        fontSize = 12.sp,
         fontFamily = monserratFamily,
         fontWeight = FontWeight.Medium
     )

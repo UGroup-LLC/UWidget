@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kikoproject.uwidget.main.manager
 import com.kikoproject.uwidget.objects.cards.StandardBottomSheet
 import io.github.muntashirakon.adb.AbsAdbConnectionManager
 import okio.use
@@ -42,15 +43,8 @@ import java.util.*
 import kotlin.math.ceil
 
 
-fun getLastWearReleaseInstaller(callback: Callback<GitReleases>) {
-    val server = Server("https://api.github.com/repos/UGroup-LLC/UWidget-WearAPKInstaller/")
-
-    val call: Call<GitReleases> = server.api.getLastRelease()
-
-    call.enqueue(callback)
-}
-
 private val isDownloaded = mutableStateOf(false)
+private val isDownloading = mutableStateOf(false)
 private val isZipped = mutableStateOf(false)
 private val title = mutableStateOf("\uD83D\uDC7D Скачивание приложения \uD83D\uDC7D")
 private val body = mutableStateOf("")
@@ -59,10 +53,7 @@ val isWearUploading = mutableStateOf(false)
 
 @Composable
 fun DownloadWearAppSheet(
-    release: GitReleases,
-    manager: AbsAdbConnectionManager,
-    dialogVisible: MutableState<Boolean>,
-    secondDialogVisible: MutableState<Boolean>
+    dialogVisible: MutableState<Boolean>
 ) {
     if (wearPercentage.value != 0f) {
         isWearUploading.value = !dialogVisible.value
@@ -107,14 +98,14 @@ fun DownloadWearAppSheet(
             }
             val context = LocalContext.current
             if (isZipped.value) {
-                deArchiveWearApk(manager = manager)
+                deArchiveWearApk()
             }
-            if (secondDialogVisible.value) {
+            if (!isDownloading.value) {
                 val thread = Thread {
-                    downloadWearFile(context, release.assets[0].browser_download_url)
-                    secondDialogVisible.value = false
+                    downloadWearFile(context, "https://github.com/UGroup-LLC/UWidget-WearAPKInstaller/releases/latest/download/uwidget_wear_launcher-release.zip")
                 }
                 thread.start()
+                isDownloading.value = true
             }
         }
     }
@@ -159,7 +150,6 @@ private var onCompleteWearDownload: BroadcastReceiver = object : BroadcastReceiv
 }
 
 private fun deArchiveWearApk(
-    manager: AbsAdbConnectionManager,
     file: File = File(
         (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)).path,
         "update.zip"
@@ -256,13 +246,22 @@ private fun deArchiveWearApk(
             os.write(
                 String.format(
                     "%1\$s\n",
-                    "monkey -p com.kiko.uwidget_wear -c android.intent.category.LAUNCHER 1"
+                    "monkey -p com.kiko.uwidget_wear_launcher -c android.intent.category.LAUNCHER 1"
                 )
                     .toByteArray(StandardCharsets.UTF_8)
             )
             os.flush()
         }
-
+        shellStream.openOutputStream().use { os ->
+            os.write(
+                String.format(
+                    "%1\$s\n",
+                    "adb shell dumpsys deviceidle whitelist +com.kiko.uwidget_wear_launcher"
+                )
+                    .toByteArray(StandardCharsets.UTF_8)
+            )
+            os.flush()
+        }
 
         title.value = "\uD83D\uDEF0 Ожидание приложения \uD83D\uDEF0"
         val threadDownloadChecker = Thread {
@@ -326,19 +325,30 @@ private fun deArchiveWearApk(
             )
             os.flush()
         }
-        /*title.value = "\uD83C\uDF1F Удаление инсталлера \uD83C\uDF1F"
+        title.value = "\uD83C\uDF1F Удаление инсталлера \uD83C\uDF1F"
         shellStream.openOutputStream().use { os ->
             os.write(
-                String.format("%1\$s\n", "pm uninstall com.kiko.uwidget_wear")
+                String.format("%1\$s\n", "pm uninstall com.kiko.uwidget_wear_launcher")
                     .toByteArray(StandardCharsets.UTF_8)
             )
             os.flush()
         }
-*/
         title.value = "\uD83C\uDF1F Установка приложения \uD83C\uDF1F"
         shellStream.openOutputStream().use { os ->
             os.write(
                 String.format("%1\$s\n", "pm install /data/local/tmp/uwidget_wear-release.apk")
+                    .toByteArray(StandardCharsets.UTF_8)
+            )
+            os.flush()
+        }
+
+        title.value = "\uD83D\uDC7E Открытие приложения \uD83D\uDC7E"
+        shellStream.openOutputStream().use { os ->
+            os.write(
+                String.format(
+                    "%1\$s\n",
+                    "monkey -p com.kiko.uwidget_wear -c android.intent.category.LAUNCHER 1"
+                )
                     .toByteArray(StandardCharsets.UTF_8)
             )
             os.flush()

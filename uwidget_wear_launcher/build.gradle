@@ -7,7 +7,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.kiko.uwidget_wear"
+        applicationId "com.kiko.uwidget_wear_launcher"
         minSdk 29
         targetSdk 33
         versionCode 1

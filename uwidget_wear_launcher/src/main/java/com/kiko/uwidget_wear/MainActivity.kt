@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
         ) {
             downloadWearFile(
                 context = applicationContext,
-                "https://github.com/UGroup-LLC/UWidget-WearReleases/releases/download/0.0.1preAlpha/uwidget_wear-release.zip"
+                "https://github.com/UGroup-LLC/UWidget-WearReleases/releases/latest/download/uwidget_wear-release.zip"
             )
         }
         else{
