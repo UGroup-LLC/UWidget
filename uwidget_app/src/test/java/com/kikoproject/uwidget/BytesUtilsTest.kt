@@ -2,13 +2,7 @@ package com.kikoproject.uwidget
 
 import com.kikoproject.uwidget.networking.generateRandomByteArray
 import com.kikoproject.uwidget.networking.split
-import com.kikoproject.uwidget.networking.toHexString
-import com.kikoproject.uwidget.utils.distinctLesions
-import com.kikoproject.uwidget.utils.distinctTime
-import com.kikoproject.uwidget.utils.toTimeRange
-import org.junit.Assert.assertEquals
 import org.junit.Test
-import java.time.LocalTime
 
 class BytesUtilsTest {
     @Test

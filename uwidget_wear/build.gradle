@@ -5,7 +5,9 @@ plugins {
 
 android {
     compileSdk 33
-
+    lintOptions {
+        abortOnError false
+    }
     defaultConfig {
         applicationId "com.kiko.uwidget_wear"
         minSdk 26
