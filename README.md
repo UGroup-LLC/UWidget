@@ -1,6 +1,12 @@
 # UWidget
-[![Maintainability Rating](http://badkiko.ddns.net:9000/api/project_badges/measure?project=UGroup-LLC_UWidget_AYUK1B1-vl74rDW6Kjeu&metric=sqale_rating&token=df81254f833d2c81548de86fce5df04b925a32cd)](http://badkiko.ddns.net:9000/dashboard?id=UGroup-LLC_UWidget_AYUK1B1-vl74rDW6Kjeu)
-[![Lines of Code](http://badkiko.ddns.net:9000/api/project_badges/measure?project=UGroup-LLC_UWidget_AYUK1B1-vl74rDW6Kjeu&metric=ncloc&token=df81254f833d2c81548de86fce5df04b925a32cd)](http://badkiko.ddns.net:9000/dashboard?id=UGroup-LLC_UWidget_AYUK1B1-vl74rDW6Kjeu)
+[![Quality Gate Status](http://badkiko.ddns.net:9000/api/project_badges/measure?project=UGroup-LLC_UWidget_AYXLjpz3EVHjo3h5y-_7&metric=alert_status&token=5c7698ca57c828792c87ea35696488b8d5e2b693)](http://badkiko.ddns.net:9000/dashboard?id=UGroup-LLC_UWidget_AYXLjpz3EVHjo3h5y-_7)
+[![Maintainability Rating](http://badkiko.ddns.net:9000/api/project_badges/measure?project=UGroup-LLC_UWidget_AYXLjpz3EVHjo3h5y-_7&metric=sqale_rating&token=5c7698ca57c828792c87ea35696488b8d5e2b693)](http://badkiko.ddns.net:9000/dashboard?id=UGroup-LLC_UWidget_AYXLjpz3EVHjo3h5y-_7)
+[![Reliability Rating](http://badkiko.ddns.net:9000/api/project_badges/measure?project=UGroup-LLC_UWidget_AYXLjpz3EVHjo3h5y-_7&metric=reliability_rating&token=5c7698ca57c828792c87ea35696488b8d5e2b693)](http://badkiko.ddns.net:9000/dashboard?id=UGroup-LLC_UWidget_AYXLjpz3EVHjo3h5y-_7)
+[![Security Rating](http://badkiko.ddns.net:9000/api/project_badges/measure?project=UGroup-LLC_UWidget_AYXLjpz3EVHjo3h5y-_7&metric=security_rating&token=5c7698ca57c828792c87ea35696488b8d5e2b693)](http://badkiko.ddns.net/dashboard?id=UGroup-LLC_UWidget_AYXLjpz3EVHjo3h5y-_7)
+
+[![Lines of Code](http://badkiko.ddns.net:9000/api/project_badges/measure?project=UGroup-LLC_UWidget_AYXLjpz3EVHjo3h5y-_7&metric=ncloc&token=5c7698ca57c828792c87ea35696488b8d5e2b693)](http://badkiko.ddns.net:9000/dashboard?id=UGroup-LLC_UWidget_AYXLjpz3EVHjo3h5y-_7)
+
+
 [![wakatime](https://wakatime.com/badge/user/28a2f792-7e9a-4dd3-97e0-a2515ca044d0/project/3cea3d49-8ae3-43b3-bdb0-fd5dabd61080.svg)](https://wakatime.com/badge/user/28a2f792-7e9a-4dd3-97e0-a2515ca044d0/project/3cea3d49-8ae3-43b3-bdb0-fd5dabd61080)
 ## 📄 Описание 📄
 UWidget - является клиент-серверным приложением для отображения расписания занятий в виде виджета на рабочем столе устройства и распространения расписаний между пользователями
