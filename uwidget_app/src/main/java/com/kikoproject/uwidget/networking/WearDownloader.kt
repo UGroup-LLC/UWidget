@@ -1,42 +1,37 @@
 package com.kikoproject.uwidget.networking
 
-import android.app.DownloadManager
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Context.DOWNLOAD_SERVICE
-import android.content.Intent
-import android.content.IntentFilter
 import android.net.Uri
 import android.os.Environment
+import android.util.Base64
 import android.util.Base64.DEFAULT
 import android.util.Base64OutputStream
 import android.util.Log
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Divider
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.main.manager
 import com.kikoproject.uwidget.objects.cards.StandardBottomSheet
-import io.github.muntashirakon.adb.AbsAdbConnectionManager
+import com.thin.downloadmanager.DefaultRetryPolicy
+import com.thin.downloadmanager.DownloadRequest
+import com.thin.downloadmanager.DownloadStatusListenerV1
+import com.thin.downloadmanager.ThinDownloadManager
 import okio.use
-import retrofit2.Call
-import retrofit2.Callback
 import java.io.*
 import java.nio.charset.StandardCharsets
 import java.util.*
@@ -45,15 +40,15 @@ import kotlin.math.ceil
 
 private val isDownloaded = mutableStateOf(false)
 private val isDownloading = mutableStateOf(false)
-private val isZipped = mutableStateOf(false)
 private val title = mutableStateOf("\uD83D\uDC7D Скачивание приложения \uD83D\uDC7D")
-private val body = mutableStateOf("")
-val wearPercentage = mutableStateOf(0f)
-val isWearUploading = mutableStateOf(false)
+private val wearPercentage = mutableStateOf(0f)
+private val isWearUploading = mutableStateOf(false)
+private val isError = mutableStateOf(false)
 
 @Composable
 fun DownloadWearAppSheet(
-    dialogVisible: MutableState<Boolean>
+    dialogVisible: MutableState<Boolean>,
+    sixDialogVisible: MutableState<Boolean>
 ) {
     if (wearPercentage.value != 0f) {
         isWearUploading.value = !dialogVisible.value
@@ -67,106 +62,178 @@ fun DownloadWearAppSheet(
             Text(
                 text = title.value,
                 style = MaterialTheme.typography.titleSmall,
-                fontSize = 18.sp
+                fontSize = 18.sp,
             )
             Divider(
                 modifier = Modifier.fillMaxWidth(0.5f),
                 thickness = 2.dp,
                 color = MaterialTheme.colorScheme.onSurface.copy(0.25f)
             )
-            if (body.value != "") {
+            if(!isError.value) {
+                if (wearPercentage.value == 0f) {
+                    LinearProgressIndicator(
+                        modifier = Modifier
+                            .height(5.dp)
+                            .clip(CircleShape)
+                            .fillMaxWidth()
+                    )
+                } else {
+                    LinearProgressIndicator(
+                        progress = wearPercentage.value,
+                        modifier = Modifier
+                            .height(5.dp)
+                            .clip(CircleShape)
+                            .fillMaxWidth()
+                    )
+                }
+                val context = LocalContext.current
+                if (!isDownloading.value) {
+                    val thread = Thread {
+                        downloadWearFile(
+                            context,
+                            "https://github.com/UGroup-LLC/UWidget-WearAPKInstaller/releases/latest/download/uwidget_wear_launcher-release.zip",
+                            dialogVisible,
+                            sixDialogVisible
+                        )
+                    }
+                    thread.start()
+                    isDownloading.value = true
+                }
+            }
+            else{
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_adb_error),
+                    "error",
+                    tint = MaterialTheme.colorScheme.error
+                )
                 Text(
-                    "Это будет очень долго, скажите спасибо разработчику который больше ничего не придумал",
+                    "Ошибка, скачки!",
                     style = MaterialTheme.typography.titleSmall,
                 )
-            }
-            if (wearPercentage.value == 0f) {
-                LinearProgressIndicator(
+                OutlinedButton(
                     modifier = Modifier
-                        .height(5.dp)
-                        .clip(CircleShape)
                         .fillMaxWidth()
-                )
-            } else {
-                LinearProgressIndicator(
-                    progress = wearPercentage.value,
-                    modifier = Modifier
-                        .height(5.dp)
-                        .clip(CircleShape)
-                        .fillMaxWidth()
-                )
-            }
-            val context = LocalContext.current
-            if (isZipped.value) {
-                deArchiveWearApk()
-            }
-            if (!isDownloading.value) {
-                val thread = Thread {
-                    downloadWearFile(context, "https://github.com/UGroup-LLC/UWidget-WearAPKInstaller/releases/latest/download/uwidget_wear_launcher-release.zip")
+                        .padding(16.dp),
+                    onClick = {
+                        isError.value = false
+                        dialogVisible.value = false
+                    },
+                    border = BorderStroke(
+                        1.dp,
+                        if (isError.value) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Text(
+                        text = "Назад",
+                        color = if (isError.value) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+                    )
                 }
-                thread.start()
-                isDownloading.value = true
+                Spacer(modifier = Modifier.padding(4.dp))
             }
         }
     }
 }
 
-fun downloadWearFile(context: Context, url: String) {
-    val updateFileZip = File(
+fun downloadWearFile(
+    context: Context, url: String,
+    dialogVisible: MutableState<Boolean>,
+    sixDialogVisible: MutableState<Boolean>
+) {
+    val sendApkFile = File(
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path,
-        "update.zip"
+        "installer.zip"
     )
-    updateFileZip.delete()
-    val request = DownloadManager.Request(Uri.parse(url))
-        .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-        .setTitle("Update")
-        .setDescription("Download Update")
-        .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-        .setAllowedOverMetered(true)
-        .setAllowedOverRoaming(false)
-        .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "update.zip")
-    val downloadManager = context.getSystemService(DOWNLOAD_SERVICE) as DownloadManager?
-    downloadManager?.enqueue(request)
+    sendApkFile.delete() //Удаляю файл перед скачкой
+
+
+    val downloadRequest = DownloadRequest(Uri.parse(url))
+        .setRetryPolicy(DefaultRetryPolicy())
+        .setDestinationURI(
+            Uri.parse(
+                File(
+                    (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)).path,
+                    "installer.zip"
+                ).path
+            )
+        )
+        .setPriority(DownloadRequest.Priority.HIGH)
+        .setStatusListener(object : DownloadStatusListenerV1 {
+            override fun onDownloadComplete(downloadRequest: DownloadRequest) {
+                Log.d("TAG", "onDownloadComplete: ")
+                sendInstallerToWear(
+                    sixDialogVisible = sixDialogVisible,
+                    dialogVisible = dialogVisible
+                )
+                wearPercentage.value = 0f
+            }
+
+            override fun onDownloadFailed(
+                downloadRequest: DownloadRequest,
+                errorCode: Int,
+                errorMessage: String
+            ) {
+                Log.d("TAG", "onDownloadFailed: $errorCode : $errorMessage")
+                title.value = "\uD83E\uDDE8 Ошибка! \uD83E\uDDE8"
+                isError.value = true
+            }
+
+            override fun onProgress(
+                downloadRequest: DownloadRequest,
+                totalBytes: Long,
+                downloadedBytes: Long,
+                progress: Int
+            ) {
+                Log.d("TAG", "downloading: $progress")
+                wearPercentage.value = progress.toFloat()/100
+            }
+        })
+    val downloadManager = ThinDownloadManager()
+    downloadManager.add(downloadRequest)
 
     isDownloaded.value = true
-    try {
-        context.registerReceiver(
-            onCompleteWearDownload,
-            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
-        );
-    } catch (e: Exception) {
+} // Тут скачка файла
 
-    }
-}
 
-private var onCompleteWearDownload: BroadcastReceiver = object : BroadcastReceiver() {
-    override fun onReceive(ctxt: Context?, intent: Intent?) {
-        if (ctxt != null) {
-            isZipped.value = true
-            isDownloaded.value = false
-
-        }
-    }
-}
-
-private fun deArchiveWearApk(
+private fun sendInstallerToWear(
     file: File = File(
         (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)).path,
-        "update.zip"
-    )
+        "installer.zip"
+    ),
+    sixDialogVisible: MutableState<Boolean>,
+    dialogVisible: MutableState<Boolean>
 ) {
     val isDownloadedInWear = mutableStateOf(false)
-    isZipped.value = false
     val thread = Thread {
         val shellStream = manager.openStream("shell:")
         val fileBase64 = convertFileToBase64(file)
+
+        shellStream.openOutputStream().use { os ->
+            os.write(
+                String.format(
+                    "%1\$s\n",
+                    "dumpsys battery set wireless 1"
+                )
+                    .toByteArray(StandardCharsets.UTF_8)
+            )
+            os.flush()
+        }
+        shellStream.openOutputStream().use { os ->
+            os.write(
+                String.format(
+                    "%1\$s\n",
+                    "dumpsys battery set status 2"
+                )
+                    .toByteArray(StandardCharsets.UTF_8)
+            )
+            os.flush()
+        }
 
         shellStream.openOutputStream().use { os ->
             title.value = "\uD83D\uDEF0 Очистка tmp \uD83D\uDEF0"
             os.write(
                 String.format(
                     "%1\$s\n",
-                    "rm /data/local/tmp/*"
+                    "rm -r /data/local/tmp/*"
                 ).toByteArray(StandardCharsets.UTF_8)
             )
             os.flush()
@@ -177,12 +244,13 @@ private fun deArchiveWearApk(
             os.write(
                 String.format(
                     "%1\$s\n",
-                    "rm  /storage/emulated/0/Download/*"
+                    "rm -r /storage/emulated/0/Download/*"
                 ).toByteArray(StandardCharsets.UTF_8)
             )
             os.flush()
 
         }
+
 
         fileBase64.chunked(10000).forEachIndexed { index, it ->
             shellStream.openOutputStream().use { os ->
@@ -298,12 +366,22 @@ private fun deArchiveWearApk(
                     threadDownloadChecker.interrupt()
                     break
                 }
-            }
-            catch (e: Exception){
+            } catch (e: Exception) {
                 Log.e("STREAM", "Closed")
             }
         }
-        title.value = "\uD83D\uDC7E Перемещение приложения \uD83D\uDC7E"
+        shellStream.openOutputStream().use { os ->
+            os.write(
+                String.format(
+                    "%1\$s\n",
+                    "dumpsys battery reset"
+                )
+                    .toByteArray(StandardCharsets.UTF_8)
+            )
+            os.flush()
+        }
+
+
         shellStream.openOutputStream().use { os ->
             os.write(
                 String.format(
@@ -314,6 +392,7 @@ private fun deArchiveWearApk(
             )
             os.flush()
         }
+
         title.value = "\uD83D\uDC7E Распаковка приложения \uD83D\uDC7E"
         shellStream.openOutputStream().use { os ->
             os.write(
@@ -325,6 +404,7 @@ private fun deArchiveWearApk(
             )
             os.flush()
         }
+
         title.value = "\uD83C\uDF1F Удаление инсталлера \uD83C\uDF1F"
         shellStream.openOutputStream().use { os ->
             os.write(
@@ -333,6 +413,7 @@ private fun deArchiveWearApk(
             )
             os.flush()
         }
+
         title.value = "\uD83C\uDF1F Установка приложения \uD83C\uDF1F"
         shellStream.openOutputStream().use { os ->
             os.write(
@@ -354,11 +435,21 @@ private fun deArchiveWearApk(
             os.flush()
         }
 
+
+        title.value = "\uD83D\uDEF0 Ожидание установки \uD83D\uDEF0"
+
+        Thread.sleep(30000)
+
+
         val updateFileZip = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path,
-            "update.zip"
+            "installer.zip"
         )
         updateFileZip.delete()
+
+        sixDialogVisible.value = true
+        dialogVisible.value = false
+        manager.disconnect()
     }
 
     thread.start()
@@ -384,7 +475,6 @@ fun generateRandomByteArray(size: Int): ByteArray {
     return ByteArray(size) { random.nextInt().toByte() }
 }
 
-fun ByteArray.toHexString() = joinToString(" ") { "%02x".format(it) }
 
 fun convertFileToBase64(file: File): String {
     return ByteArrayOutputStream().use { outputStream ->

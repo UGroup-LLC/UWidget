@@ -25,7 +25,82 @@ import java.util.*
 @Composable
 fun WidgetScheduleMorningCard(schedule: Schedule = curSchedule!!, context: Context) {
     val day = (Calendar.getInstance() as GregorianCalendar).toZonedDateTime().dayOfWeek.ordinal
-    var lesion: String
+    HeightBased(schedule, day, context)
+}
+
+@Composable
+private fun HeightBased(
+    schedule: Schedule,
+    day: Int,
+    context: Context
+) {
+    var lesion = ""
+    var scheduleText = ""
+    Column {
+
+        // Отображение времени до первой пары
+        if (options?.scheduleMorningSettings?.beforeLesionVisible != false &&
+            schedule.Schedule[day.toString()]?.deleteWhitespaces()?.isNotEmpty() == true
+        ) {
+
+            val nowTime = LocalTime.now()
+            val lesionTime = schedule.Time.first().toTimeRange().start.toLocalTime()
+
+            val duration = Duration.between(nowTime, lesionTime)
+
+            val time = LocalTime.of(duration.toHours().toInt(), (duration.toMinutes() % 60).toInt())
+            val formattedTime = time.format(DateTimeFormatter.ofPattern("HH:mm"))
+
+            WidgetText(
+                text = "Время до первой пары",
+                context = context,
+                options = options
+            )
+            WidgetText(
+                text = "@${formattedTime}@",
+                context = context,
+                options = options
+            )
+        }
+
+        // Отображение первой пары
+        if (options?.scheduleMorningSettings?.nextPairVisible != false) {
+            var title = "@@Первое занятие"
+            try {
+                lesion = schedule.Schedule[day.toString()]!!
+                    .deleteWhitespaces()
+                    .first()
+                    .replace("..", " - ")
+
+                val time = schedule.Time.first().replace("..", " - ")
+                scheduleText = "@$time@ $lesion"
+            } catch (exception: Exception) {
+                title = "Сегодня занятий нет\n@Хорошего дня!@"
+            }
+            Spacer(modifier = GlanceModifier.padding(4.dp))
+            WidgetText(
+                text = title,
+                context = context,
+                options = options
+            )
+            if (scheduleText != "") {
+                WidgetText(
+                    text = scheduleText,
+                    context = context,
+                    options = options
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun WidthBased(
+    schedule: Schedule,
+    day: Int,
+    context: Context
+) {
+    var lesion = ""
     var scheduleText = ""
     Column {
 

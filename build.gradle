@@ -18,7 +18,7 @@ plugins {
 }
 sonarqube {
     properties {
-        property "sonar.projectKey", "UGroup-LLC_UWidget_AYUK1B1-vl74rDW6Kjeu"
+        property "sonar.projectKey", "UGroup-LLC_UWidget_AYXLjpz3EVHjo3h5y-_7"
         property "sonar.login", "admin"
         property "sonar.password", "kiko123"
     }

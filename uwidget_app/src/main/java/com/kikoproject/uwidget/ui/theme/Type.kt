@@ -23,12 +23,12 @@ val monserratFamily = FontFamily(
 val Typography = Typography(
     titleLarge = TextStyle(
         fontFamily = monserratFamily,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Bold,
         fontSize = 32.sp
     ),
     titleMedium = TextStyle(
         fontFamily = monserratFamily,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 24.sp
     ),
     titleSmall = TextStyle(

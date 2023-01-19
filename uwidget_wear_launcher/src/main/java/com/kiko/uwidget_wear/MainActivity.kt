@@ -1,73 +1,97 @@
 package com.kiko.uwidget_wear
 
-import android.app.DownloadManager
-import android.content.BroadcastReceiver
+import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.Color
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.util.Base64
 import android.util.Log
 import android.view.WindowManager
+import android.widget.TextView
 import androidx.activity.ComponentActivity
+import com.mikhaellopez.circularprogressbar.CircularProgressBar
+import com.thin.downloadmanager.DefaultRetryPolicy
+import com.thin.downloadmanager.DownloadRequest
+import com.thin.downloadmanager.DownloadStatusListenerV1
+import com.thin.downloadmanager.ThinDownloadManager
 import java.io.File
 import kotlin.system.exitProcess
 
+@SuppressLint("StaticFieldLeak")
+lateinit var progressBar: CircularProgressBar
+@SuppressLint("StaticFieldLeak")
+lateinit var textView: TextView
+
 class MainActivity : ComponentActivity() {
+    @SuppressLint("PrivateResource")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.v("DOWNLOAD", "Скачка")
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        val draw = GradientDrawable()
-        draw.setColor(Color.parseColor("#181b20"))
-        window.setBackgroundDrawable(draw)
-        registerReceiver(
-            onCompleteWearDownload,
-            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+        setContentView(R.layout.main)
+        progressBar = findViewById(R.id.progressbar)
+        textView= findViewById(R.id.progressbar_text)
+        downloadWearFile(
+            context = applicationContext,
+            "https://github.com/UGroup-LLC/UWidget-WearReleases/releases/latest/download/uwidget_wear-release.zip"
         )
-        if (!File(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path,
-                "update.zip"
-            ).exists()
-        ) {
-            downloadWearFile(
-                context = applicationContext,
-                "https://github.com/UGroup-LLC/UWidget-WearReleases/releases/latest/download/uwidget_wear-release.zip"
-            )
-        }
-        else{
-            exitProcess(0)
-        }
-    }
-}
-
-private var onCompleteWearDownload: BroadcastReceiver = object : BroadcastReceiver() {
-    override fun onReceive(ctxt: Context?, intent: Intent?) {
-        var i = 0
-        while(!File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path + "//downloaded$i"
-        ).createNewFile()){
-            i++
-            Log.d("CREATE", "FILE $i")
-        }
-        exitProcess(0)
     }
 }
 
 fun downloadWearFile(context: Context, url: String) {
+    val downloadRequest = DownloadRequest(Uri.parse(url))
+        .setRetryPolicy(DefaultRetryPolicy())
+        .setDestinationURI(
+            Uri.parse(
+                File(
+                    (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)).path,
+                    "update.zip"
+                ).path
+            )
+        )
+        .setPriority(DownloadRequest.Priority.HIGH)
+        .setStatusListener(object : DownloadStatusListenerV1 {
+            override fun onDownloadComplete(downloadRequest: DownloadRequest) {
 
-    val request = DownloadManager.Request(Uri.parse(url))
-        .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-        .setTitle("Download APK")
-        .setDescription("Download full apk")
-        .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-        .setAllowedOverMetered(true)
-        .setAllowedOverRoaming(false)
-        .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "update.zip")
-    val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager?
-    downloadManager?.enqueue(request)
+
+                Log.d("TAG", "onDownloadComplete: ")
+                var i = 0
+                while (!File(
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path + "//downloaded$i"
+                    ).createNewFile()
+                ) {
+                    i++
+                    Log.d("CREATE", "FILE $i")
+                }
+                exitProcess(0)
+            }
+
+            @SuppressLint("SetTextI18n")
+            override fun onDownloadFailed(
+                downloadRequest: DownloadRequest,
+                errorCode: Int,
+                errorMessage: String
+            ) {
+                Log.d("TAG", "onDownloadFailed: $errorCode : $errorMessage")
+                progressBar.progressBarColor = Color.RED
+                textView.setTextColor(Color.RED)
+                textView.text = "Ошибка!\n $errorMessage"
+            }
+
+            @SuppressLint("SetTextI18n")
+            override fun onProgress(
+                downloadRequest: DownloadRequest,
+                totalBytes: Long,
+                downloadedBytes: Long,
+                progress: Int
+            ) {
+                Log.d("TAG", "downloading: $progress")
+                progressBar.progress = progress.toFloat()
+                textView.text = "${progress}%"
+            }
+        })
+    val downloadManager = ThinDownloadManager()
+    downloadManager.add(downloadRequest)
 }

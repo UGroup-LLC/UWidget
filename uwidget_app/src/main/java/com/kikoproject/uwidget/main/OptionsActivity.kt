@@ -1,6 +1,7 @@
 package com.kikoproject.uwidget.main
 
 import android.os.Build
+import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,11 +19,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.ColorUtils
+import com.google.android.gms.tasks.OnSuccessListener
+import com.google.android.gms.wearable.CapabilityClient
+import com.google.android.gms.wearable.CapabilityInfo
+import com.google.android.gms.wearable.Wearable
 import com.kikoproject.uwidget.BuildConfig
 import com.kikoproject.uwidget.R
 import com.kikoproject.uwidget.networking.DownloadWearAppSheet
@@ -111,7 +117,14 @@ private fun WearOption() {
     val chosenIp = remember { mutableStateOf(TextFieldValue("")) }
 
     CardIllustration(R.drawable.ic_undraw_watch, 3, 7)
+    val context = LocalContext.current
+    val capabilityClient = Wearable.getCapabilityClient(context)
 
+    capabilityClient.addListener({ capabilityInfo ->
+        run {
+            Log.d("wow", "Wow")
+        }
+    }, "uwidget_capabilities")
     //region Шаги
     FirstConnectSheet(
         dialogVisibleState = firstStepStatus,
@@ -132,8 +145,10 @@ private fun WearOption() {
         fifthDialogVisibleState = fifthDialogVisibleState,
         chosenIp = chosenIp
     )
+    FifthConnectSheet(sixDialogVisibleState)
     DownloadWearAppSheet(
-        dialogVisible = fifthDialogVisibleState
+        dialogVisible = fifthDialogVisibleState,
+        sixDialogVisible = sixDialogVisibleState
     )
     //endregion
 

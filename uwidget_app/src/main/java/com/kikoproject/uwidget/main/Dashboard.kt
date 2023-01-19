@@ -1,8 +1,11 @@
 package com.kikoproject.uwidget.main
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -47,7 +50,9 @@ fun DashboardActivity() {
         }
 
 
-        NewVersionSheet(gitReleases.value ?: GitReleases()) // Проверяет есть ли обновление и выдает карточку обновления
+        NewVersionSheet(
+            gitReleases.value ?: GitReleases()
+        ) // Проверяет есть ли обновление и выдает карточку обновления
 
 
         curSchedule = prefs?.getString(
@@ -61,7 +66,7 @@ fun DashboardActivity() {
                 it
             )
         }
-        if(curSchedule != null) {
+        if (curSchedule != null) {
             prefs?.edit()?.putString("mainSchedule", curSchedule!!.ID)?.apply()
         }
 
@@ -77,42 +82,49 @@ fun DashboardActivity() {
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 MainHeader(account = account)
-                Text(
-                    text = "Текущее расписание: @${curSchedule?.Name ?: "Нету"}@".colorize()
-                )
-                if (timeZone != null) {
-                    HomeWidgetPreview(timeZone = timeZone)
-                }
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(50.dp),
-                    verticalAlignment = Alignment.Top,
-                    modifier = Modifier.padding(vertical = 5.dp, horizontal = 15.dp)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier.verticalScroll(rememberScrollState())
                 ) {
-                    DashboardButtons()
-                }
-
-
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    var isWidgetCreated: MutableState<Boolean>
-                    runBlocking {
-                        isWidgetCreated = mutableStateOf(
-                            GlanceAppWidgetManager(context).getGlanceIds(
-                                MainWidget::class.java
-                            ).isNotEmpty())
+                    Text(
+                        text = "Текущее расписание: @${curSchedule?.Name ?: "Нету"}@".colorize()
+                    )
+                    if (timeZone != null) {
+                        HomeWidgetPreview(timeZone = timeZone)
+                    }
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(50.dp),
+                        verticalAlignment = Alignment.Top,
+                        modifier = Modifier.padding(vertical = 5.dp, horizontal = 15.dp)
+                    ) {
+                        DashboardButtons()
                     }
 
-                    if (!isWidgetCreated.value) {
-                        Text(text = "Добавьте виджет на главный экран")
-                        OutlinedButton(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {
-                                GlanceAppWidgetManager(context).requestPinGlanceAppWidget(
-                                    MainWidgetReceiver::class.java,
-                                    MainWidget()
-                                )
-                                isWidgetCreated.value = true
-                            }) {
-                            Text(text = "Добавить")
+
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        var isWidgetCreated: MutableState<Boolean>
+                        runBlocking {
+                            isWidgetCreated = mutableStateOf(
+                                GlanceAppWidgetManager(context).getGlanceIds(
+                                    MainWidget::class.java
+                                ).isNotEmpty()
+                            )
+                        }
+
+                        if (!isWidgetCreated.value) {
+                            Text(text = "Добавьте виджет на главный экран")
+                            OutlinedButton(
+                                modifier = Modifier.fillMaxWidth(),
+                                onClick = {
+                                    GlanceAppWidgetManager(context).requestPinGlanceAppWidget(
+                                        MainWidgetReceiver::class.java,
+                                        MainWidget()
+                                    )
+                                    isWidgetCreated.value = true
+                                }) {
+                                Text(text = "Добавить")
+                            }
                         }
                     }
                 }

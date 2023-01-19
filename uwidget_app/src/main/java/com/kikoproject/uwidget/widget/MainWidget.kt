@@ -40,8 +40,7 @@ class MainWidget : GlanceAppWidget() {
 
     @Composable
     override fun Content() {
-//        val height = LocalSize.current.height
-
+        val size = LocalSize.current
         val context = LocalContext.current
         roomDb = Room.databaseBuilder(
             context.applicationContext,
@@ -95,11 +94,16 @@ class MainWidget : GlanceAppWidget() {
                 }
                 Spacer(modifier = GlanceModifier.padding(4.dp))
                 if (timeZone != null) {
-                    WidgetScheduleBodyCard(
-                        schedule = curSchedule!!,
-                        timeZone = timeZone,
-                        context = context
-                    )
+                    if (size.height > 250.dp) {
+                        WidgetScheduleBodyCard(
+                            schedule = curSchedule!!,
+                            timeZone = timeZone,
+                            context = context
+                        )
+                    }
+                    else{
+
+                    }
                 }
             }
         }
@@ -117,7 +121,7 @@ class MainWidget : GlanceAppWidget() {
             R.id.backOfMainW,
             "setColorFilter",
             options?.generalSettings?.backgroundColor?.toArgb()
-                ?: ContextCompat.getColor(context,R.color.statusBar)
+                ?: ContextCompat.getColor(context, R.color.statusBar)
         )
 
         backgroundView.setInt(
@@ -125,10 +129,10 @@ class MainWidget : GlanceAppWidget() {
             "setColorFilter",
             if (options?.generalSettings?.isBorderVisible == true) {
                 options?.generalSettings?.borderColor?.toArgb()
-                    ?: ContextCompat.getColor(context,R.color.iconBack)
+                    ?: ContextCompat.getColor(context, R.color.iconBack)
             } else {
                 options?.generalSettings?.backgroundColor?.toArgb()
-                    ?: ContextCompat.getColor(context,R.color.statusBar)
+                    ?: ContextCompat.getColor(context, R.color.statusBar)
             }
         )
         backgroundView.setViewPadding(

@@ -1,16 +1,15 @@
 package com.kikoproject.uwidget.utils
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
-import android.provider.Settings
 import android.sun.misc.BASE64Encoder
 import android.sun.security.provider.X509Factory
 import android.sun.security.x509.*
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import io.github.muntashirakon.adb.AbsAdbConnectionManager
-import java.io.*
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.security.*
 import java.security.cert.Certificate
@@ -21,9 +20,9 @@ import java.security.spec.EncodedKeySpec
 import java.security.spec.InvalidKeySpecException
 import java.security.spec.PKCS8EncodedKeySpec
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 
+//region Maybe Later
 /*
 class ADB(private val context: Context) {
     companion object {
@@ -238,7 +237,7 @@ class ADB(private val context: Context) {
     }
 }
 */
-
+//endregion
 
 class AdbConnectionManager private constructor(context: Context) :
     AbsAdbConnectionManager() {
