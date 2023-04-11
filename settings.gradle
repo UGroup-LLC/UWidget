@@ -18,5 +18,4 @@ dependencyResolutionManagement {
 rootProject.name = "UWidget"
 include ':uwidget_app'
 include ':uwidget_wear_launcher'
-//include ':libadb'
 include ':uwidget_wear'
